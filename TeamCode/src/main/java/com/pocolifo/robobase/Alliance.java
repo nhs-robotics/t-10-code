@@ -2,6 +2,7 @@ package com.pocolifo.robobase;
 
 import centerstage.SpikePosition;
 
+//Useful, possibly
 public enum Alliance {
     RED,
     BLUE;
