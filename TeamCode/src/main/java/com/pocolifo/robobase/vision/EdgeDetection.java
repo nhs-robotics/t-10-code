@@ -1,7 +1,6 @@
 package com.pocolifo.robobase.vision;
 
 import centerstage.Constants;
-import org.checkerframework.checker.units.qual.C;
 import org.firstinspires.ftc.robotcore.external.Const;
 import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
