@@ -5,16 +5,15 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import t10.bootstrap.Hardware;
-import t10.novel.OdometryCoefficientSet;
-import t10.novel.OmniDriveCoefficients;
-import t10.novel.hardware.NovelEncoder;
-import t10.novel.hardware.NovelMotor;
-import t10.novel.hardware.NovelOdometry;
-import t10.novel.motion.NovelMecanumDriver;
-import t10.utils.RobotConfiguration;
+import t10.novel.odometry.OdometryCoefficientSet;
+import t10.novel.NovelEncoder;
+import t10.novel.NovelMotor;
+import t10.novel.odometry.NovelOdometry;
+import t10.novel.mecanum.MecanumDriver;
+import t10.bootstrap.AbstractRobotConfiguration;
 import t10.vision.Webcam;
 
-public class SamuelRobotConfiguration extends RobotConfiguration {
+public class SamuelRobotConfiguration extends AbstractRobotConfiguration {
     @Hardware(name = "Webcam")
     public Webcam webcam;
 
@@ -77,14 +76,15 @@ public class SamuelRobotConfiguration extends RobotConfiguration {
         );
     }
 
-    public NovelMecanumDriver createDriver(OmniDriveCoefficients coefficients) {
-        return new NovelMecanumDriver(
+    @Override
+    public MecanumDriver createMecanumDriver() {
+        return new MecanumDriver(
                 this.fl,
                 this.fr,
                 this.bl,
                 this.br,
                 this.imu,
-                coefficients
+                Constants.Coefficients.PRODUCTION_COEFFICIENTS
         );
     }
 
@@ -93,7 +93,9 @@ public class SamuelRobotConfiguration extends RobotConfiguration {
                 new OdometryCoefficientSet(1, 1, 1),
                 new NovelEncoder(this.odometryRight.motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
                 new NovelEncoder(this.odometryLeft.motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
-                new NovelEncoder(this.odometryPerpendicular.motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION)
+                new NovelEncoder(this.odometryPerpendicular.motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
+                Constants.Odometry.ODOMETRY_LATERAL_WHEEL_DISTANCE,
+                Constants.Odometry.ODOMETRY_PERPENDICULAR_WHEEL_OFFSET
         );
     }
 }

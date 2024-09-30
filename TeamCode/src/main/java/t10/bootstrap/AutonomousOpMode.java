@@ -1,9 +1,7 @@
 package t10.bootstrap;
 
 /**
- * Base class for Autonomous code to go.
- *
- * @author youngermax
+ * Base class for Autonomous code.
  */
 public abstract class AutonomousOpMode extends BootstrappedOpMode {
     @Override

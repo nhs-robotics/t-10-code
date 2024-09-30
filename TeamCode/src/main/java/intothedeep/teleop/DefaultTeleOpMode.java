@@ -5,18 +5,18 @@ import intothedeep.Constants;
 import intothedeep.SamuelRobotConfiguration;
 import t10.bootstrap.TeleOpOpMode;
 import t10.gamepad.GController;
-import t10.novel.motion.NovelMecanumDriver;
+import t10.novel.mecanum.MecanumDriver;
 
 @TeleOp
 public class DefaultTeleOpMode extends TeleOpOpMode {
-    private NovelMecanumDriver driver;
+    private MecanumDriver driver;
     private GController gamepadController;
     private SamuelRobotConfiguration c;
 
     @Override
     public void initialize() {
         this.c = new SamuelRobotConfiguration(this.hardwareMap);
-        this.driver = this.c.createDriver(Constants.Coefficients.PRODUCTION_COEFFICIENTS);
+        this.driver = this.c.createMecanumDriver();
         this.gamepadController = new GController(this.gamepad1)
                 .x.initialToggleState(true).ok();  // micro-movement
     }

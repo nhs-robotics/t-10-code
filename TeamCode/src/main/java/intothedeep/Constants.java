@@ -1,6 +1,6 @@
 package intothedeep;
 
-import t10.novel.OmniDriveCoefficients;
+import t10.novel.mecanum.MecanumCoefficientMatrix;
 
 public class Constants {
     /**
@@ -35,7 +35,7 @@ public class Constants {
         /**
          * Distance (in) from the perpendicular odometry wheel to the center of rotation of the robot.
          */
-        public static final double ODOMETRY_ROTATIONAL_WHEEL_OFFSET = 7;
+        public static final double ODOMETRY_PERPENDICULAR_WHEEL_OFFSET = 7;
 
         public static final double ODOMETRY_WHEEL_DIAMETER_IN = 2.0;
         public static final double TICKS_PER_ODOMETRY_REVOLUTION = 8192;
@@ -43,11 +43,11 @@ public class Constants {
     }
 
     public static class Coefficients {
-        public static final OmniDriveCoefficients PRODUCTION_COEFFICIENTS = new OmniDriveCoefficients(new double[]{
+        public static final MecanumCoefficientMatrix PRODUCTION_COEFFICIENTS = new MecanumCoefficientMatrix(new double[]{
                 1, -1, 1, -1
         });
 
-        public static final OmniDriveCoefficients SOFTWARE_ROBOT_COEFFICIENTS = new OmniDriveCoefficients(new double[]{
+        public static final MecanumCoefficientMatrix SOFTWARE_ROBOT_COEFFICIENTS = new MecanumCoefficientMatrix(new double[]{
                 -1, -1, 1, 1
         });
 

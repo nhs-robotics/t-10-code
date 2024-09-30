@@ -3,6 +3,9 @@ package t10.reconstructor;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
+/**
+ * A 2D Point with a direction.
+ */
 public class Pose extends Point {
     protected double headingRadians;
 

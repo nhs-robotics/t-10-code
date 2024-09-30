@@ -65,12 +65,16 @@ public abstract class BootstrappedOpMode extends OpMode {
         SystemClock.sleep(milliseconds);
     }
 
+    /**
+     * Returns if the stop button has been pressed and the program should close.
+     * @return True if the stop button has been pressed and the program should close.
+     */
+    public boolean isStopRequested() {
+        return Thread.currentThread().isInterrupted();
+    }
+
     @Override
     public void init() {
         this.configureSystemOut();
-    }
-
-    public boolean isStopRequested() {
-        return Thread.currentThread().isInterrupted();
     }
 }

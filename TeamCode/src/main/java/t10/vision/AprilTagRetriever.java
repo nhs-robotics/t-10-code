@@ -5,17 +5,32 @@ import intothedeep.Constants;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-import org.firstinspires.ftc.vision.apriltag.AprilTagLibrary;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+import org.firstinspires.ftc.vision.apriltag.*;
 
 import java.util.List;
 
+/**
+ * Wrapper for the FTC April Tag library to get what you really want: April Tag detection/position/pose information.
+ */
 public class AprilTagRetriever {
     private final VisionPortal visionPortal;
     private final AprilTagProcessor aprilTagProcessor;
     public final AprilTagLibrary library;
 
+    /**
+     * Creates an April Tag Retriever with the current April Tags for the current season's game.
+     * @param webcam The webcam to use for vision.
+     */
+    public AprilTagRetriever(Webcam webcam) {
+        this(webcam, AprilTagGameDatabase.getCurrentGameTagLibrary());
+    }
+
+    /**
+     * Creates an April Tag Retriever with a webcam for a specific season's game.
+     * @see AprilTagGameDatabase
+     * @param webcam The webcam to use for vision.
+     * @param library The April Tag Library to use/April Tag data, found in {@link AprilTagGameDatabase}
+     */
     public AprilTagRetriever(Webcam webcam, AprilTagLibrary library) {
         int cameraMonitorView = webcam.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", webcam.hardwareMap.appContext.getPackageName());
         this.library = library;
@@ -37,6 +52,10 @@ public class AprilTagRetriever {
                 .build();
     }
 
+    /**
+     * Returns the currently identified April Tags from the webcam.
+     * @return The list of currently visible April Tags.
+     */
     public List<AprilTagDetection> getDetections() {
         return this.aprilTagProcessor.getDetections();
     }

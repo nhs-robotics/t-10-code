@@ -1,8 +1,9 @@
-package t10.utils;
+package t10.bootstrap;
 
-import t10.bootstrap.Hardware;
-import t10.novel.hardware.NovelEncoder;
-import t10.novel.hardware.NovelMotor;
+import t10.novel.NovelEncoder;
+import t10.novel.NovelMotor;
+import t10.novel.odometry.NovelOdometry;
+import t10.novel.mecanum.MecanumDriver;
 import t10.vision.Webcam;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -18,7 +19,7 @@ import java.lang.reflect.Field;
  * variables just like normal. RoboBase does the initialization for you. The example class:
  *
  * <pre>{@code
- * public class MyRobotConfiguration extends RobotConfiguration {
+ * public class MyRobotConfiguration extends AbstractRobotConfiguration {
  *      @Hardware(name = "Webcam")
  *      public Webcam webcam;
  *
@@ -38,8 +39,8 @@ import java.lang.reflect.Field;
  *     <li>Hardware not found will throw an exception; all hardware defined in the configuration must be present.</li>
  * </ul>
  */
-public class RobotConfiguration {
-    public RobotConfiguration(HardwareMap hardwareMap) {
+public abstract class AbstractRobotConfiguration {
+    public AbstractRobotConfiguration(HardwareMap hardwareMap) {
         try {
             for (Field field : this.getClass().getFields()) {
                 Hardware hardware = field.getAnnotation(Hardware.class);
@@ -65,7 +66,21 @@ public class RobotConfiguration {
                 }
             }
         } catch (IllegalAccessException e) {
-            throw new RuntimeException("could not create RobotConfiguration");
+            throw new RuntimeException("could not create AbstractRobotConfiguration");
         }
     }
+
+    /**
+     * Creates a Mecanum driver using this configuration. This method specifies what coefficients to use.
+     * This method may throw an exception if it is not implemented/available for this configuration.
+     * @return A Mecanum driver using this configuration
+     */
+    public abstract MecanumDriver createMecanumDriver();
+
+    /**
+     * Creates an odometry instance. This method specifies what coefficients to use.
+     * This method may throw an exception if it is not implemented/available for this configuration.
+     * @return An odometry instance using this configuration
+     */
+    public abstract NovelOdometry createOdometry();
 }

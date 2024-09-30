@@ -1,5 +1,8 @@
 package t10.reconstructor;
 
+/**
+ * Represents a point (x, y)
+ */
 public class Point {
     protected double x;
     protected double y;
@@ -25,6 +28,10 @@ public class Point {
         return this.y;
     }
 
+    /**
+     * @param point The other point to find the distance between
+     * @return The Euclidean distance between this point and {@code point}.
+     */
     public double distanceTo(Point point) {
         double dx = point.x - this.x;
         double dy = point.y - this.y;

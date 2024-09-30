@@ -4,6 +4,9 @@ import t10.gamepad.input.types.GButton;
 import t10.gamepad.input.types.GTrigger;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+/**
+ * Declarative gamepad input framework.
+ */
 public class GController {
     // Gamepad buttons
     public final GButton x;
@@ -27,6 +30,10 @@ public class GController {
     public final GTrigger rightTrigger;
     public final GTrigger leftTrigger;
 
+    /**
+     * Allows a gamepad's inputs to be mapped declaratively.
+     * @param gamepad The gamepad to use from the op-mode.
+     */
     public GController(Gamepad gamepad) {
         this.x = new GButton(this, () -> gamepad.x);
         this.y = new GButton(this, () -> gamepad.y);
@@ -48,6 +55,10 @@ public class GController {
         this.rightTrigger = new GTrigger(this, () -> gamepad.right_trigger);
     }
 
+    /**
+     * Updates the underlying state of the gamepad.
+     * IMPORTANT: Call this method in loop.
+     */
     public void update() {
         this.x.update();
         this.y.update();

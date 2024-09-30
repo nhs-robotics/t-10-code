@@ -12,8 +12,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Abstracts away certain parts of {@link OpenCvCamera}.
- *
- * @author youngermax
  */
 public class Webcam implements AutoCloseable {
 	/**
@@ -58,7 +56,6 @@ public class Webcam implements AutoCloseable {
 	 *
 	 * @param pipeline The initial pipeline which will process camera input.
 	 * @throws RuntimeException If there was an error while opening the camera.
-	 * @author youngermax
 	 */
 	public void open(AbstractResultCvPipeline<?> pipeline) throws RuntimeException {
 		// Yes, this is equivalent to R.id.cameraMonitorViewId, but it doesn't explicitly require the
@@ -106,8 +103,6 @@ public class Webcam implements AutoCloseable {
 
 	/**
 	 * Unsets the webcam pipeline; no data will be able to be processed since there is no pipeline active.
-	 *
-	 * @author youngermax
 	 */
 	public void clearPipeline() {
 		this.webcam.stopStreaming();
@@ -116,8 +111,6 @@ public class Webcam implements AutoCloseable {
 	}
 
 	/**
-	 * Gets the current active pipeline of the webcam.
-	 *
 	 * @return The current active pipeline.
 	 */
 	public AbstractResultCvPipeline<?> getPipeline() {
@@ -128,7 +121,6 @@ public class Webcam implements AutoCloseable {
 	 * Closes the camera. <strong>THIS SHOULD BE CALLED AFTER THE CAMERA IS UNNECESSARY TO THE PROGRAM!</strong>
 	 *
 	 * @throws Exception If an error occurred while closing the camera.
-	 * @author youngermax
 	 */
 	@Override
 	public void close() throws Exception {

@@ -1,6 +1,6 @@
 package t10.reconstructor;
 
-import t10.novel.hardware.NovelOdometry;
+import t10.novel.odometry.NovelOdometry;
 import t10.utils.MathUtils;
 import t10.vision.AprilTagRetriever;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -37,7 +37,7 @@ public class UnstableLocalizationEngine {
 
         if (aprilTagEstimate != null && !Double.isNaN(aprilTagEstimate.getX()) && !Double.isNaN(aprilTagEstimate.getY())) {
             this.mostRecentAprilTagEstimate = aprilTagEstimate;
-            this.odometry.resetRelativePose(new Pose(0, 0, 0, AngleUnit.RADIANS));
+            this.odometry.setRelativePose(new Pose(0, 0, 0, AngleUnit.RADIANS));
         }
 
         Pose odometryEstimate = this.odometry.getRelativePose();

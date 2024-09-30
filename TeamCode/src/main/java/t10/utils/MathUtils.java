@@ -57,4 +57,29 @@ public class MathUtils {
 
         return normalized;
     }
+
+    // The following are derived from basic kinematic equations.
+    private static double solveVelocity(double initialVelocity, double acceleration, double displacement) {
+        return Math.sqrt(Math.pow(initialVelocity, 2) + 2 * acceleration * displacement);
+    }
+
+    private static double solveDisplacement(double finalVelocity, double initialVelocity, double acceleration) {
+        return (Math.pow(finalVelocity, 2) - Math.pow(initialVelocity, 2)) / (2 * acceleration);
+    }
+
+    private static double solveTime(double displacement, double initialVelocity, double acceleration) {
+        return solveQuadraticFormula(
+                0.5 * acceleration,
+                initialVelocity,
+                -displacement
+        );
+    }
+
+    private static double solveQuadraticFormula(double a, double b, double c) {
+        double determinant = Math.pow(b, 2) - 4 * a * c;
+        double numerator = -b + Math.sqrt(determinant);
+        double denominator = 2 * a;
+
+        return numerator / denominator;
+    }
 }
