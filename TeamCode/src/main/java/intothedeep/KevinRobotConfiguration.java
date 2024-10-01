@@ -13,7 +13,7 @@ import t10.novel.mecanum.MecanumDriver;
 import t10.bootstrap.AbstractRobotConfiguration;
 import t10.vision.Webcam;
 
-public class SamuelRobotConfiguration extends AbstractRobotConfiguration {
+public class KevinRobotConfiguration extends AbstractRobotConfiguration {
     @Hardware(name = "Webcam")
     public Webcam webcam;
 
@@ -65,7 +65,7 @@ public class SamuelRobotConfiguration extends AbstractRobotConfiguration {
     @Hardware(name = "Roller")
     public NovelMotor odometryLeft;
 
-    public SamuelRobotConfiguration(HardwareMap hardwareMap) {
+    public KevinRobotConfiguration(HardwareMap hardwareMap) {
         super(hardwareMap);
 
         this.imu.initialize(
@@ -90,7 +90,7 @@ public class SamuelRobotConfiguration extends AbstractRobotConfiguration {
 
     public NovelOdometry createOdometry() {
         return new NovelOdometry(
-                new OdometryCoefficientSet(1, 1, 1),
+                new OdometryCoefficientSet(1, 1, -1),
                 new NovelEncoder(this.odometryRight.motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
                 new NovelEncoder(this.odometryLeft.motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
                 new NovelEncoder(this.odometryPerpendicular.motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
