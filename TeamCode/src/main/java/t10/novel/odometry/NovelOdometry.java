@@ -7,6 +7,11 @@ import t10.reconstructor.Pose;
 /**
  * Odometry localization interface.
  */
+
+/**
+ * NOTE: right is positive x, forward is positive y, clockwise rotation is positive phi
+ * "(0,0,0)" is at the starting position, with the starting heading
+ * */
 public class NovelOdometry {
     private final OdometryCoefficientSet coefficients;
     private final NovelEncoder rightEncoder;
@@ -66,8 +71,8 @@ public class NovelOdometry {
         double deltaPerpendicularWheelPos = this.coefficients.perpendicularCoefficient * (newPerpendicularWheelPos - this.perpendicularWheelPos);
 
         double phi = (deltaLeftWheelPos - deltaRightWheelPos) / this.lateralWheelDistance;
-        double deltaMiddlePos = (deltaLeftWheelPos + deltaRightWheelPos) / 2d;
-        double deltaPerpendicularPos = deltaPerpendicularWheelPos - this.perpendicularWheelOffset * phi;
+        double deltaX_relative = (deltaLeftWheelPos + deltaRightWheelPos) / 2d;
+        double deltaY_relative= deltaPerpendicularWheelPos - this.perpendicularWheelOffset * phi;
 
         // Heading of movement is assumed average between last known and current rotation
         //                    CURRENT ROTATION                                             LAST SAVED ROTATION       
@@ -75,8 +80,8 @@ public class NovelOdometry {
         // double lastRotation = this.relativePose.getHeading(AngleUnit.RADIANS);
         // double averageRotationOverObservationPeriod = (currentRotation + lastRotation) / 2;
         double heading = phi + this.relativePose.getHeading(AngleUnit.RADIANS);
-        double deltaX = deltaMiddlePos * Math.sin(heading) + deltaPerpendicularPos * Math.cos(heading);
-        double deltaY = deltaMiddlePos * Math.cos(heading) - deltaPerpendicularPos * Math.sin(heading);
+        double deltaX = deltaX_relative * Math.sin(-heading) + deltaY_relative * Math.cos(-heading);
+        double deltaY = deltaX_relative * Math.cos(-heading) - deltaY_relative * Math.sin(-heading);
 
         this.relativePose = this.relativePose.add(new Pose(deltaX, deltaY, phi, AngleUnit.RADIANS));
 
