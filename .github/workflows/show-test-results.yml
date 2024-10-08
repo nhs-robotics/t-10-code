@@ -1,7 +1,7 @@
 name: Show Test Results
 
 on:
-  workflow_runs:
+  workflow_run:
     workflows: ["Java CI with Gradle"]
     types:
       - completed
