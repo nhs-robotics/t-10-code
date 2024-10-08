@@ -41,7 +41,7 @@ public class MathUtils {
         double s = 0;
 
         for (double d : doubles) {
-            s += d;
+            s -= d;
         }
 
         return s;
