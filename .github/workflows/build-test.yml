@@ -35,9 +35,3 @@ jobs:
 
     - name: Build with Gradle Wrapper
       run: ./gradlew build
-
-    - name: Upload test results
-          uses: actions/upload-artifact@v3
-          with:
-            name: junit-test-results
-            path: build/reports/junit/TEST-*.xml
