@@ -33,9 +33,7 @@ android {
             useJUnitPlatform()
 
             reports {
-                junitXml {
-                    destinationDir = file("build/test-results/test")
-                }
+                junitXml {}
             }
         }
     }
