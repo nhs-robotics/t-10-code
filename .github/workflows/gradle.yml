@@ -1,33 +1,21 @@
-name: Build and Lint on Pull Request
+name: Run Tests on Pull Request
 
 on:
-  workflow_dispatch:
   pull_request:
-    types: ["opened", "synchronize", "ready_for_review"]
+    types: [opened, reopened, edited]
 
 jobs:
-  get-changed-files:
-    if: github.event.pull_request.draft == false
-    runs-on: ubuntu-latest
-    outputs:
-      apiserver_changed: ${{ steps.changed-files.outputs.apiserver_any_changed }}
-      admin_changed: ${{ steps.changed-files.outputs.admin_any_changed }}
-      space_changed: ${{ steps.changed-files.outputs.space_any_changed }}
-      web_changed: ${{ steps.changed-files.outputs.web_any_changed }}
-    steps:
-      - uses: actions/checkout@v4
-      - name: Get changed files
-        id: changed-files
-        uses: tj-actions/changed-files@v44
-
-  build-web:
-    needs: get-changed-files
+  build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v3
+      - name: Install dependencies
+        run: npm install
+      - name: Run tests   
+ with JUnit reporter
+        run: npm test -- --reporter junit --reporter-output test-results.xml
+      - name: Upload test results
+        uses: actions/upload-artifact@v3
         with:
-          node-version: 18.x
-      - run: yarn install
-      - run: yarn build --filter=web
+          name: test-results
+          path: test-results.xml
