@@ -53,4 +53,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: Test Results
-        path: TeamCode/build/reports/tests/TEST-*.xml    
+        path: TeamCode/build/test-results/tests/testDebugUnitTest/TEST-*.xml    

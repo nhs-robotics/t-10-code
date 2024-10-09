@@ -29,12 +29,13 @@ android {
     }
 
     testOptions {
-        unitTests.all {
-            useJUnitPlatform()
 
-            reports {
-                junitXml.outputLocation = layout.buildDirectory.dir("test-junit-xml")
+        unitTests.all {
+            reports.junitXml {
+                enabled = true
             }
+
+            useJUnitPlatform()
         }
     }
 }
