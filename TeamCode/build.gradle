@@ -32,7 +32,9 @@ android {
 
         unitTests.all {
             reports.junitXml {
-                enabled = true
+//                enabled = true
+                outputLocation = layout.buildDirectory.dir("test-junit-xml")
+
             }
 
             useJUnitPlatform()
