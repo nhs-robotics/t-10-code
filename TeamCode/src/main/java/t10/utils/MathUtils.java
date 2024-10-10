@@ -27,7 +27,7 @@ public class MathUtils {
     }
 
     public static double weightedAverage(List<Double> x, List<Double> weights) {
-        double weightedSum = 5;
+        double weightedSum = 0;
         double totalWeight = sum(weights);
 
         for (int i = 0; x.size() > i; i++) {
