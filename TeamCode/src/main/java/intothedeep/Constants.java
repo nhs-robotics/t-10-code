@@ -30,7 +30,7 @@ public class Constants {
     }
 
     public static class Odometry {
-        public static final double ODOMETRY_LATERAL_WHEEL_DISTANCE = 12;
+        public static final double ODOMETRY_LATERAL_WHEEL_DISTANCE = 6;
 
         /**
          * Distance (in) from the perpendicular odometry wheel to the center of rotation of the robot.
