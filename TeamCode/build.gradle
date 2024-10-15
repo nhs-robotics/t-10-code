@@ -29,7 +29,14 @@ android {
     }
 
     testOptions {
+
         unitTests.all {
+            reports.junitXml {
+//                enabled = true
+                outputLocation = layout.buildDirectory.dir("test-junit-xml")
+
+            }
+
             useJUnitPlatform()
         }
     }
@@ -67,7 +74,7 @@ android.applicationVariants.configureEach { v ->
 
         // This is only for javadoc
         source = v.javaCompile.source.findAll {
-            it.getAbsolutePath().contains("robobase") || it.getAbsolutePath().contains("centerstage") || it.getAbsolutePath().contains("roadrunner")
+            it.getAbsolutePath().contains("t10") || it.getAbsolutePath().contains("intothedeep")
         }
 
         afterEvaluate {
