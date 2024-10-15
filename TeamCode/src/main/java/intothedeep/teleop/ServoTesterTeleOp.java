@@ -4,31 +4,33 @@ import t10.bootstrap.TeleOpOpMode;
 import t10.gamepad.GController;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-@TeleOp(name = "Servo Tester")
-public class ServoTester extends TeleOpOpMode {
-    private GController gamepadController;
-    private ServoTesterRobotConfiguration c;
+import java.util.List;
 
+@TeleOp(name = "Servo Tester")
+public class ServoTesterTeleOp extends TeleOpOpMode {
+    private GController gamepadController;
+    public List<CRServo> servos;
     private Telemetry.Item selectedServoTelemetry;
 
-    private int selectedServo = 0;
+    private int selectedServoIndex = 0;
     private float speed = 0;
 
     @Override
     public void initialize() {
-        this.c = new ServoTesterRobotConfiguration(this.hardwareMap);
+        servos = hardwareMap.getAll(CRServo.class);
 
         this.gamepadController = new GController(this.gamepad1)
                 .rightBumper.onPress(() -> {
-                    selectedServo = (selectedServo + 1) % (this.c.servos.size());
+                    selectedServoIndex = (selectedServoIndex + 1) % (this.servos.size());
                 }).ok()
                 .leftBumper.onPress(() -> {
-                    selectedServo -= 1;
-                    if (selectedServo < 0) {
-                        selectedServo = (this.c.servos.size() - 1);
+                    selectedServoIndex -= 1;
+                    if (selectedServoIndex < 0) {
+                        selectedServoIndex = (this.servos.size() - 1);
                     }
                 }).ok()
                 .x.onPress(() -> {
@@ -41,13 +43,13 @@ public class ServoTester extends TeleOpOpMode {
                 }).onRelease(() -> {
                     speed = 0;
                 }).ok();
-        this.selectedServoTelemetry = this.telemetry.addData("Selected Servo ", selectedServo);
+        this.selectedServoTelemetry = this.telemetry.addData("Selected Servo ", selectedServoIndex);
     }
 
     @Override
     public void loop() {
         this.gamepadController.update();
-        this.c.servos.get(selectedServo).setPower(speed);
-        this.selectedServoTelemetry.setValue(selectedServo);
+        this.servos.get(selectedServoIndex).setPower(speed);
+        this.selectedServoTelemetry.setValue(selectedServoIndex);
     }
 }
