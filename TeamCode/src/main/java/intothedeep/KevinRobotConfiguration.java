@@ -54,17 +54,17 @@ public class KevinRobotConfiguration extends AbstractRobotConfiguration {
     @Hardware(name = "imu")
     public IMU imu;
 
-    // NOTE: LinearSlideLeft has the perpendicular  odometer encoder
+    // NOTE: LinearSlideLeft has the right odometer encoder
     @Hardware(name = "LinearSlideLeft")
-    public NovelMotor odometryPerpendicular;
-
-    // NOTE: SpinningIntake has the right odometer encoder
-    @Hardware(name = "SpinningIntake")
     public NovelMotor odometryRight;
 
-    // NOTE: Roller has the left odometer encoder
-    @Hardware(name = "Roller")
+    // NOTE: SpinningIntake has the left odometer encoder
+    @Hardware(name = "SpinningIntake")
     public NovelMotor odometryLeft;
+
+    // NOTE: Roller has the perpendicular odometer encoder
+    @Hardware(name = "Roller")
+    public NovelMotor odometryPerpendicular;
 
     public KevinRobotConfiguration(HardwareMap hardwareMap) {
         super(hardwareMap);

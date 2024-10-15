@@ -74,7 +74,7 @@ public class NaiveOdometry {
 
         double phi = (deltaLeftWheelPos - deltaRightWheelPos) / this.lateralWheelDistance;
         double deltaX_relative = (deltaLeftWheelPos + deltaRightWheelPos) / 2d;
-        double deltaY_relative= deltaPerpendicularWheelPos - this.perpendicularWheelOffset * phi;
+        double deltaY_relative = deltaPerpendicularWheelPos;
 
         // Heading of movement is assumed average between last known and current rotation
         //                    CURRENT ROTATION                                             LAST SAVED ROTATION

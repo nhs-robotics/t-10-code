@@ -2,6 +2,7 @@ package intothedeep.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
@@ -25,6 +26,8 @@ public class OdometryTestingTeleOp extends TeleOpOpMode {
     private Telemetry.Item y;
     private Telemetry.Item r;
     private Telemetry.Item x_dumb, y_dumb, r_dumb;
+    private double distance;
+    private double final_position;
 
     @Override
     public void initialize() {
@@ -44,6 +47,9 @@ public class OdometryTestingTeleOp extends TeleOpOpMode {
         this.x_dumb = this.telemetry.addData("x_naive: ", "0");
         this.y_dumb = this.telemetry.addData("y_naive: ", "0");
         this.r_dumb = this.telemetry.addData("r_naive: ", "0");
+
+        distance = 20;
+        final_position = odometry.getRelativePose().getY() + distance;
 /*
         this.leftWheel = this.telemetry.addData("Left Wheel: ", "0");
         this.rightWheel = this.telemetry.addData("Right Wheel: ", "0");
@@ -64,9 +70,12 @@ public class OdometryTestingTeleOp extends TeleOpOpMode {
         this.y_dumb.setValue(this.dumb_odometry.getRelativePose().getY());
         this.r_dumb.setValue(this.dumb_odometry.getRelativePose().getHeading(AngleUnit.DEGREES));
 
-        if(gamepadController.a.isToggled())
+        if(Math.abs(final_position - odometry.getRelativePose().getY()) > 2)
         {
-            navigator.driveLateral(20);
+            driver.setVelocity(new Vector3D(Math.signum(final_position - odometry.getRelativePose().getY())*10,0,0));
+        }
+        else {
+            driver.setVelocity(new Vector3D(0,0,0));
         }
 
         this.telemetry.update();
