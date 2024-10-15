@@ -17,7 +17,7 @@ public class AzazelRobotCapabilities {
         this.c.linearSlideRight.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         this.c.linearSlideLeft.setPower(Math.abs(power));
-        this.c.linearSlideRight.setPower(Math.abs(power));
+        //this.c.linearSlideRight.setPower(Math.abs(power));
 //        if (Math.abs(this.c.linearSlideRight.motor.getCurrentPosition()) > 0) {
 //        } else {
 //            this.stopLift();
@@ -28,7 +28,7 @@ public class AzazelRobotCapabilities {
         this.c.linearSlideRight.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         this.c.linearSlideLeft.setPower(-Math.abs(power));
-        this.c.linearSlideRight.setPower(-Math.abs(power));
+        //this.c.linearSlideRight.setPower(-Math.abs(power));
 //        if (Math.abs(this.c.linearSlideRight.motor.getCurrentPosition()) < LIFT_FULLY_EXTENDED_ENCODER_POS) {
 //        } else {
 //            this.stopLift();
