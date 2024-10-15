@@ -52,15 +52,15 @@ public class TestRobotConfiguration extends AbstractRobotConfiguration {
     @Hardware(name = "imu")
     public IMU imu;
 
-    @Hardware(name = "odometryPerpendicular")
+    @Hardware(name = "LinearSlideLeft")
     public NovelMotor odometryPerpendicular;
 
     // NOTE: SpinningIntake has the right odometer encoder
-    @Hardware(name = "odometryRight")
+    @Hardware(name = "SpinningIntake")
     public NovelMotor odometryRight;
 
     // NOTE: Roller has the left odometer encoder
-    @Hardware(name = "odometryLeft")
+    @Hardware(name = "Roller")
     public NovelMotor odometryLeft;
 
     public TestRobotConfiguration(HardwareMap hardwareMap) {

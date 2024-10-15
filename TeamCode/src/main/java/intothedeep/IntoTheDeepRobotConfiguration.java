@@ -74,15 +74,15 @@ public class IntoTheDeepRobotConfiguration extends AbstractRobotConfiguration {
         );
     }
 
-    @Hardware(name = "odometryPerpendicular")
+    @Hardware(name = "LinearSlideLeft")
     public NovelMotor odometryPerpendicular;
 
     // NOTE: SpinningIntake has the right odometer encoder
-    @Hardware(name = "odometryRight")
+    @Hardware(name = "SpinningIntake")
     public NovelMotor odometryRight;
 
     // NOTE: Roller has the left odometer encoder
-    @Hardware(name = "odometryLeft")
+    @Hardware(name = "Roller")
     public NovelMotor odometryLeft;
 
     public NovelOdometry createOdometry() {
