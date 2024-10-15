@@ -52,7 +52,7 @@ public class Constants {
         });
 
     }
-
+    public static final String BASE_JSON_FILE_PATH = "/JSONAutos/";
     public static final double APRIL_TAG_SIZE_METERS = 0.0508;
 
 }
