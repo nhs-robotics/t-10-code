@@ -27,7 +27,16 @@ public abstract class EasyAuto extends AutonomousOpMode {
                 Constants.Coefficients.PRODUCTION_COEFFICIENTS
         );
     }
-    public void lateralMovement(double distX, double distY, double time) {
+
+    public void horizontalMovement(double distX, double time) {
+        diagonalMovement(distX, 0, time);
+    }
+
+    public void verticalMovement(double distY, double time) {
+        diagonalMovement(0, distY, time);
+    }
+
+    public void diagonalMovement(double distX, double distY, double time) {
         this.driver.setVelocity(new Vector3D(-distY / time, distX / time, 0));
 
         sleep(time);
@@ -36,7 +45,10 @@ public abstract class EasyAuto extends AutonomousOpMode {
     }
 
     public void rotationalMovement(double degrees, double time) {
-        this.driver.setVelocity(new Vector3D(0, 0, degrees/time));
+        //Convert degrees to inches along circumference.
+        double headingInches = (degrees / 360L) * (2 * Math.PI * Constants.Robot.ROBOT_DIAMETER_IN);
+
+        this.driver.setVelocity(new Vector3D(0, 0, headingInches/time));
 
         sleep(time);
 
