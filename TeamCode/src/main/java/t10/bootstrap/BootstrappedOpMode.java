@@ -59,10 +59,10 @@ public abstract class BootstrappedOpMode extends OpMode {
      * Waits a desired number of milliseconds.
      * <strong>{@link Thread#sleep(long)} does not work, use this instead!</strong>
      *
-     * @param milliseconds Number of milliseconds to wait
+     * @param seconds Number of seconds to wait
      */
-    public void sleep(long milliseconds) throws InterruptedException {
-        SystemClock.sleep(milliseconds);
+    public void sleep(double seconds) {
+        SystemClock.sleep((long) (1000L * seconds));
     }
 
     /**
