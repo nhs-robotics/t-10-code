@@ -56,10 +56,10 @@ public class OdometryNavigation {
             return new Vector3D(0,0, findTurnSpeed(currentAngle,targetAngle) * maxAngVelocity);
         }
         else if (deltaX != 0) {
-            velocityHorizontal = (Math.cos(currentAngle) + (deltaY / deltaX) * Math.sin(currentAngle)) / (Math.sin(currentAngle) - (deltaY / deltaX) * Math.cos(currentAngle));
+            velocityHorizontal = ((deltaY / deltaX) * Math.sin(currentAngle) - Math.cos(currentAngle)) / (Math.sin(currentAngle) - (deltaY / deltaX) * Math.cos(currentAngle));
         }
         else {
-            velocityHorizontal = ((Math.sin(currentAngle) + (deltaX / deltaY) * Math.cos(currentAngle) / Math.cos(currentAngle) - (deltaX / deltaY) * Math.sin(currentAngle)));
+            velocityHorizontal = (((deltaX / deltaY) * Math.cos(currentAngle) - Math.sin(currentAngle)) / (Math.cos(currentAngle) - (deltaX / deltaY) * Math.sin(currentAngle)));
         }
 
         if(velocityHorizontal > velocityVertical) {
