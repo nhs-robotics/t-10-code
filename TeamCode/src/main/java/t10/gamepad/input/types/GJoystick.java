@@ -27,7 +27,9 @@ public class GJoystick implements GInput, GAnalog<GJoystick> {
         if (xValueSupplier.get() != lastX || yValueSupplier.get() != lastY) {
             lastX = xValueSupplier.get();
             lastY = yValueSupplier.get();
-            onMove.run();
+            if (onMove != null) {
+                onMove.run();
+            }
         }
     }
 

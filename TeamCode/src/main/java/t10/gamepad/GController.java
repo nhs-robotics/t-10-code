@@ -1,5 +1,6 @@
 package t10.gamepad;
 
+import intothedeep.Constants;
 import t10.gamepad.input.types.GButton;
 import t10.gamepad.input.types.GJoystick;
 import t10.gamepad.input.types.GTrigger;
@@ -55,8 +56,8 @@ public class GController {
         this.leftJoystickButton = new GButton(this, () -> gamepad.left_stick_button);
         this.rightJoystickButton = new GButton(this, () -> gamepad.right_stick_button);
 
-        this.leftJoystick = new GJoystick(this, () -> gamepad.left_stick_x, () -> gamepad.left_stick_y);
-        this.rightJoystick = new GJoystick(this, () -> gamepad.right_stick_x, () -> gamepad.right_stick_y);
+        this.leftJoystick = new GJoystick(this, () -> gamepad.left_stick_x, () -> gamepad.left_stick_y * Constants.GAMEPAD_JOYSTICK_Y_COEFFICIENT);
+        this.rightJoystick = new GJoystick(this, () -> gamepad.right_stick_x, () -> gamepad.right_stick_y * Constants.GAMEPAD_JOYSTICK_Y_COEFFICIENT);
 
         this.leftTrigger = new GTrigger(this, () -> gamepad.left_trigger);
         this.rightTrigger = new GTrigger(this, () -> gamepad.right_trigger);
