@@ -83,7 +83,7 @@ public class NovelOdometry {
         double deltaY = deltaY_relative * Math.sin(-heading) + deltaX_relative * Math.cos(-heading);
         double deltaX = deltaY_relative * Math.cos(-heading) - deltaX_relative * Math.sin(-heading);
 
-        this.relativePose = this.relativePose.add(new Pose(deltaY, deltaX, phi, AngleUnit.RADIANS));
+        this.relativePose = this.relativePose.add(new Pose(deltaY, -deltaX, phi, AngleUnit.RADIANS));
 
         // Update encoder wheel position
         this.leftWheelPos = newLeftWheelPos;

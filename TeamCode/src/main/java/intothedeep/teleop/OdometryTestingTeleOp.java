@@ -96,8 +96,8 @@ public class OdometryTestingTeleOp extends TeleOpOpMode {
     }
 
     private void driveForward() {
-        if (Math.abs(distance - odometry.getRelativePose().getX()) > 2) {
-            driver.setVelocity(new Vector3D(10, 0, 0));
+        if (Math.abs(distance - odometry.getRelativePose().getY()) > 2) {
+            driver.setVelocity(new Vector3D(-10, 0, 0));
         } else {
             driver.setVelocity(new Vector3D(0, 0, 0));
         }
