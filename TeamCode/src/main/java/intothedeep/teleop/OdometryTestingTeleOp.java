@@ -76,10 +76,13 @@ public class OdometryTestingTeleOp extends TeleOpOpMode {
             driveRight();
         }
         if (gamepadController.b.isToggled()) {
-            navigator.driveSmart(new Pose(new Vector3D(0, 0, 0), Constants.Odometry.ODOMETRY_PERPENDICULAR_WHEEL_OFFSET));
+            navigator.driveSmart(init_pose);
         }
-        if (gamepadController.y.isToggled()) {
+        else if (gamepadController.y.isToggled()) {
             turnRight();
+        }
+        else if (gamepadController.rightBumper.isToggled()) {
+            driveForwardAbsolute();
         }
 
         this.telemetry.update();
@@ -106,6 +109,13 @@ public class OdometryTestingTeleOp extends TeleOpOpMode {
     private void turnRight() {
         if (Math.abs(90 - odometry.getRelativePose().getNegativeHeading(AngleUnit.DEGREES)) > 5) {
             driver.setVelocity(new Vector3D(0, 0, 5));
+        } else {
+            driver.setVelocity(new Vector3D(0, 0, 0));
+        }
+    }
+    private void driveForwardAbsolute() {
+        if (Math.abs(distance - odometry.getRelativePose().getY()) > 2) {
+            driver.setVelocity(odometry.getRelativeVelocity(new Vector3D(-10, 0, 0)));
         } else {
             driver.setVelocity(new Vector3D(0, 0, 0));
         }
