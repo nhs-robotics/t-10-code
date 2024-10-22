@@ -91,17 +91,7 @@ public class KevinRobotConfiguration extends AbstractRobotConfiguration {
 
     public NovelOdometry createOdometry() {
         return new NovelOdometry(
-                new OdometryCoefficientSet(1, 1, -1),
-                new NovelEncoder(this.odometryRight.motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
-                new NovelEncoder(this.odometryLeft.motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
-                new NovelEncoder(this.odometryPerpendicular.motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
-                Constants.Odometry.ODOMETRY_LATERAL_WHEEL_DISTANCE,
-                Constants.Odometry.ODOMETRY_PERPENDICULAR_WHEEL_OFFSET
-        );
-    }
-    public NaiveOdometry createDumbOdometry() {
-        return new NaiveOdometry(
-                new OdometryCoefficientSet(1, 1, -1),
+                new OdometryCoefficientSet(1, 1, 1),
                 new NovelEncoder(this.odometryRight.motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
                 new NovelEncoder(this.odometryLeft.motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
                 new NovelEncoder(this.odometryPerpendicular.motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
