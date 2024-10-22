@@ -71,8 +71,8 @@ public class NovelOdometry {
         double deltaPerpendicularWheelPos = this.coefficients.perpendicularCoefficient * (newPerpendicularWheelPos - this.perpendicularWheelPos);
 
         double phi = (deltaLeftWheelPos - deltaRightWheelPos) / this.lateralWheelDistance;
-        double deltaX_relative = (deltaLeftWheelPos + deltaRightWheelPos) / 2d;
-        double deltaY_relative= deltaPerpendicularWheelPos - this.perpendicularWheelOffset * phi;
+        double deltaY_relative = (deltaLeftWheelPos + deltaRightWheelPos) / 2d;
+        double deltaX_relative = deltaPerpendicularWheelPos - this.perpendicularWheelOffset * phi;
 
         // Heading of movement is assumed average between last known and current rotation
         //                    CURRENT ROTATION                                             LAST SAVED ROTATION       
@@ -80,10 +80,10 @@ public class NovelOdometry {
         // double lastRotation = this.relativePose.getHeading(AngleUnit.RADIANS);
         // double averageRotationOverObservationPeriod = (currentRotation + lastRotation) / 2;
         double heading = phi + this.relativePose.getHeading(AngleUnit.RADIANS);
-        double deltaX = deltaX_relative * Math.sin(-heading) + deltaY_relative * Math.cos(-heading);
-        double deltaY = deltaX_relative * Math.cos(-heading) - deltaY_relative * Math.sin(-heading);
+        double deltaY = deltaY_relative * Math.sin(-heading) + deltaX_relative * Math.cos(-heading);
+        double deltaX = deltaY_relative * Math.cos(-heading) - deltaX_relative * Math.sin(-heading);
 
-        this.relativePose = this.relativePose.add(new Pose(deltaX, deltaY, phi, AngleUnit.RADIANS));
+        this.relativePose = this.relativePose.add(new Pose(deltaY, deltaX, phi, AngleUnit.RADIANS));
 
         // Update encoder wheel position
         this.leftWheelPos = newLeftWheelPos;
