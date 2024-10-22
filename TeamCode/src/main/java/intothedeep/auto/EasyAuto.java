@@ -46,6 +46,7 @@ public abstract class EasyAuto extends AutonomousOpMode {
 
     public void rotationalMovement(double degrees, double time) {
         //Convert degrees to inches along circumference.
+        //TODO: Figure out why this works. It should be off by a factor of 2.
         double headingInches = (degrees / 360L) * (2 * Math.PI * Constants.Robot.ROBOT_DIAMETER_IN);
 
         this.driver.setVelocity(new Vector3D(0, 0, headingInches/time));
@@ -55,6 +56,8 @@ public abstract class EasyAuto extends AutonomousOpMode {
         this.driver.halt();
     }
 
-    public void manipulatorMovement(String type) {
+    //TODO: Should this be one method controlling different manipulators
+    // or multiple methods for each different manipulator?
+    public void manipulatorMovement(String manipulatorName, String action) {
     }
 }
