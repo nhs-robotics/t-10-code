@@ -1,9 +1,9 @@
 package t10.novel.odometry;
 
-import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import t10.novel.NovelEncoder;
 import t10.reconstructor.Pose;
+import t10.utils.MovementVector;
 
 /**
  * Odometry localization interface.
@@ -79,7 +79,7 @@ public class NovelOdometry {
         double deltaX = forwardRelative * Math.sin(heading) + rightwardRelative * Math.cos(heading);
         double deltaY = forwardRelative * Math.cos(heading) - rightwardRelative * Math.sin(heading);
 
-        this.relativePose = this.relativePose.add(new Pose(deltaY, deltaX, phi, AngleUnit.RADIANS));
+        this.relativePose = this.relativePose.add(new Pose(-deltaY, deltaX, phi, AngleUnit.RADIANS));
 
         // Update encoder wheel position
         this.leftWheelPos = newLeftWheelPos;
@@ -106,20 +106,20 @@ public class NovelOdometry {
         this.perpendicularWheelPos = this.perpendicularEncoder.getCurrentInches();
     }
 
-    public Vector3D getRelativeVelocity(Vector3D absoluteVelocity)
+    public MovementVector getRelativeVelocity(MovementVector absoluteVelocity)
     {
-        double theta = -relativePose.getHeading(AngleUnit.RADIANS);
-        double forwardRelative = absoluteVelocity.getX() * Math.cos(theta) + absoluteVelocity.getY() * Math.sin(theta);
-        double rightwardRelative = absoluteVelocity.getX() * Math.sin(theta) + absoluteVelocity.getY() * Math.cos(theta);
-        return new Vector3D(forwardRelative,rightwardRelative, absoluteVelocity.getZ());
+        double theta = relativePose.getHeading(AngleUnit.RADIANS);
+        double forwardRelative = absoluteVelocity.getVertical() * Math.cos(theta) + absoluteVelocity.getHorizontal() * Math.sin(theta);
+        double rightwardRelative = absoluteVelocity.getVertical() * Math.sin(-theta) + absoluteVelocity.getHorizontal() * Math.cos(theta);
+        return new MovementVector(forwardRelative,rightwardRelative, absoluteVelocity.getRotation());
     }
 
     //IMPORTANT - this MUST be iterated, otherwise it'll keep going in the earlier direction while rotating - and not work
-    public Vector3D getRelativeVelocity(double forward, double horizontal, double rotation)
+    public MovementVector getRelativeVelocity(double forward, double horizontal, double rotation)
     {
         double theta = -relativePose.getHeading(AngleUnit.RADIANS);
         double forwardRelative = forward * Math.cos(theta) + horizontal * Math.sin(theta);
         double rightwardRelative = forward * Math.sin(theta) + horizontal * Math.cos(theta);
-        return new Vector3D(forwardRelative,rightwardRelative, rotation);
+        return new MovementVector(forwardRelative,rightwardRelative, rotation);
     }
 }

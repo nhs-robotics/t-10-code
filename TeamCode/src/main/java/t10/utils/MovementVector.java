@@ -12,7 +12,7 @@ public class MovementVector implements Serializable {
     private final Vector3D vector;
 
     public MovementVector(double vertical, double horizontal, double rotation) {
-        this.vector = new Vector3D(horizontal, vertical, rotation);
+        this.vector = new Vector3D(vertical, horizontal, rotation);
     }
 
     public MovementVector(double[] v) {

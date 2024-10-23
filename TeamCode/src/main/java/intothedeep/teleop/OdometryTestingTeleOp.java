@@ -2,7 +2,6 @@ package intothedeep.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
@@ -15,6 +14,7 @@ import t10.novel.odometry.NaiveOdometry;
 import t10.novel.odometry.NovelOdometry;
 import t10.novel.odometry.OdometryNavigation;
 import t10.reconstructor.Pose;
+import t10.utils.MovementVector;
 
 @TeleOp
 public class OdometryTestingTeleOp extends TeleOpOpMode {
@@ -26,9 +26,11 @@ public class OdometryTestingTeleOp extends TeleOpOpMode {
     private Telemetry.Item x;
     private Telemetry.Item y;
     private Telemetry.Item r;
-    private Telemetry.Item v_correct;
+    private Telemetry.Item v_correct, v_2, v_3;
+    private Telemetry.Item angle;
     private double distance;
     private Pose init_pose;
+    MovementVector vector;
 
     @Override
     public void initialize() {
@@ -48,7 +50,10 @@ public class OdometryTestingTeleOp extends TeleOpOpMode {
         this.x = this.telemetry.addData("x_novel: ", "0");
         this.y = this.telemetry.addData("y_novel: ", "0");
         this.r = this.telemetry.addData("r_novel: ", "0");
-        this.v_correct = this.telemetry.addData("vector", "0, 0, 0");
+        this.v_correct = this.telemetry.addData("vector: ", "0, 0, 0");
+        this.v_2 = this.telemetry.addData("vector2: ", "0, 0, 0");
+        this.v_3 = this.telemetry.addData("vector2: ", "0, 0, 0");
+        this.angle = this.telemetry.addData("angle: ", "0");
 
         distance = 20;
         init_pose = odometry.getRelativePose();
@@ -63,20 +68,24 @@ public class OdometryTestingTeleOp extends TeleOpOpMode {
     @Override
     public void loop() {
         this.gamepadController.update();
+        //vector = navigator.calcTrigVelocity(init_pose,odometry.getRelativePose());
+        //this.v_2.setValue(vector);
+        //vector = new MovementVector(-vector.getVertical(), vector.getHorizontal(), vector.getRotation());
         //this.driver.useGamepad(this.gamepad1, this.gamepadController.x.isToggled() ? 4 : 1);
         this.x.setValue(this.odometry.getRelativePose().getX());
         this.y.setValue(this.odometry.getRelativePose().getY());
         this.r.setValue(this.odometry.getRelativePose().getNegativeHeading(AngleUnit.DEGREES));
-        this.v_correct.setValue(this.navigator.calcAdjust(init_pose, odometry.getRelativePose()));
+        this.v_correct.setValue(this.odometry.getRelativeVelocity(new MovementVector(10,0,0)));
+        this.v_2.setValue(this.odometry.getRelativeVelocity(new MovementVector(0,10,0)));
+        //this.v_3.setValue(vector);
+
+        this.angle.setValue(this.navigator.newFindTurnSpeed(odometry.getRelativePose().getHeading(AngleUnit.RADIANS),init_pose.getHeading(AngleUnit.RADIANS)));
 
         if (gamepadController.x.isToggled()) {
             driveForward();
         }
-        if (gamepadController.a.isToggled()) {
+        else if (gamepadController.a.isToggled()) {
             driveRight();
-        }
-        if (gamepadController.b.isToggled()) {
-            navigator.driveSmart(init_pose);
         }
         else if (gamepadController.y.isToggled()) {
             turnRight();
@@ -87,6 +96,11 @@ public class OdometryTestingTeleOp extends TeleOpOpMode {
         else if (gamepadController.leftBumper.isToggled()) {
             driveRightAbsolute();
         }
+        else if (gamepadController.b.isToggled()) {
+            driveSmart(init_pose);
+        }
+
+
 
         this.telemetry.update();
         this.odometry.update();
@@ -95,39 +109,46 @@ public class OdometryTestingTeleOp extends TeleOpOpMode {
 
     private void driveRight() {
         if (Math.abs(distance - odometry.getRelativePose().getX()) > 2) {
-            driver.setVelocity(new Vector3D(0, 10, 0));
+            driver.setVelocity(new MovementVector(0, 10, 0));
         } else {
-            driver.setVelocity(new Vector3D(0, 0, 0));
+            driver.setVelocity(new MovementVector(0, 0, 0));
         }
     }
 
     private void driveForward() {
         if (Math.abs(distance - odometry.getRelativePose().getY()) > 2) {
-            driver.setVelocity(new Vector3D(-10, 0, 0));
+            driver.setVelocity(new MovementVector(-10, 0, 0));
         } else {
-            driver.setVelocity(new Vector3D(0, 0, 0));
+            driver.setVelocity(new MovementVector(0, 0, 0));
         }
     }
 
     private void turnRight() {
         if (Math.abs(90 - odometry.getRelativePose().getNegativeHeading(AngleUnit.DEGREES)) > 5) {
-            driver.setVelocity(new Vector3D(0, 0, 5));
+            driver.setVelocity(new MovementVector(0, 0, 5));
         } else {
-            driver.setVelocity(new Vector3D(0, 0, 0));
+            driver.setVelocity(new MovementVector(0, 0, 0));
         }
     }
     private void driveForwardAbsolute() {
         if (Math.abs(distance - odometry.getRelativePose().getY()) > 2) {
-            driver.setVelocity(odometry.getRelativeVelocity(new Vector3D(-10, 0, 0)));
+            driver.setVelocity(odometry.getRelativeVelocity(new MovementVector(-10, 0, 0)));
         } else {
-            driver.setVelocity(new Vector3D(0, 0, 0));
+            driver.setVelocity(new MovementVector(0, 0, 0));
         }
     }
     private void driveRightAbsolute() {
         if (Math.abs(distance - odometry.getRelativePose().getX()) > 2) {
-            driver.setVelocity(odometry.getRelativeVelocity(new Vector3D(0, 10, 0)));
+            driver.setVelocity(odometry.getRelativeVelocity(new MovementVector(0, 10, 0)));
         } else {
-            driver.setVelocity(new Vector3D(0, 0, 0));
+            driver.setVelocity(new MovementVector(0, 0, 0));
         }
+    }
+
+    private void driveSmart(Pose targetPose)
+    {
+        MovementVector vector = navigator.calcTrigVelocity(targetPose,odometry.getRelativePose());
+        vector = new MovementVector(-vector.getVertical(), vector.getHorizontal(), vector.getRotation());
+        driver.setVelocity(vector);
     }
 }
