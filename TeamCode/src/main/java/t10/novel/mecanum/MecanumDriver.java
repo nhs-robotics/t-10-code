@@ -2,8 +2,8 @@ package t10.novel.mecanum;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.IMU;
-import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import t10.novel.NovelMotor;
+import t10.utils.MovementVector;
 
 /**
  * Wrapper class for driving a mecanum robot.
@@ -32,11 +32,11 @@ public class MecanumDriver {
         this.omniDriveCoefficients = omniDriveCoefficients;
     }
 
-    public void setVelocity(Vector3D velocity) {
+    public void setVelocity(MovementVector velocity) {
         MecanumCoefficientSet coefficientSet = this.omniDriveCoefficients.calculateCoefficientsWithPower(
-                velocity.getX(),
-                velocity.getY(),
-                velocity.getZ()
+                velocity.getHorizontal(),
+                velocity.getVertical(),
+                velocity.getRotation()
         );
 
         this.setVelocity(
