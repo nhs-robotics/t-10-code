@@ -1,6 +1,8 @@
 package t10.gamepad;
 
+import intothedeep.Constants;
 import t10.gamepad.input.types.GButton;
+import t10.gamepad.input.types.GJoystick;
 import t10.gamepad.input.types.GTrigger;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
@@ -23,8 +25,11 @@ public class GController {
     public final GButton dpadLeft;
 
     // Gamepad joysticks
-    public final GButton leftJoystick;
-    public final GButton rightJoystick;
+    public final GButton leftJoystickButton;
+    public final GButton rightJoystickButton;
+
+    public final GJoystick leftJoystick;
+    public final GJoystick rightJoystick;
 
     // Gamepad triggers
     public final GTrigger rightTrigger;
@@ -48,8 +53,11 @@ public class GController {
         this.dpadLeft = new GButton(this, () -> gamepad.dpad_left);
         this.dpadRight = new GButton(this, () -> gamepad.dpad_right);
 
-        this.leftJoystick = new GButton(this, () -> gamepad.left_stick_button);
-        this.rightJoystick = new GButton(this, () -> gamepad.right_stick_button);
+        this.leftJoystickButton = new GButton(this, () -> gamepad.left_stick_button);
+        this.rightJoystickButton = new GButton(this, () -> gamepad.right_stick_button);
+
+        this.leftJoystick = new GJoystick(this, () -> gamepad.left_stick_x, () -> gamepad.left_stick_y * Constants.GAMEPAD_JOYSTICK_Y_COEFFICIENT);
+        this.rightJoystick = new GJoystick(this, () -> gamepad.right_stick_x, () -> gamepad.right_stick_y * Constants.GAMEPAD_JOYSTICK_Y_COEFFICIENT);
 
         this.leftTrigger = new GTrigger(this, () -> gamepad.left_trigger);
         this.rightTrigger = new GTrigger(this, () -> gamepad.right_trigger);
@@ -72,6 +80,9 @@ public class GController {
         this.dpadDown.update();
         this.dpadLeft.update();
         this.dpadRight.update();
+
+        this.leftJoystickButton.update();
+        this.rightJoystickButton.update();
 
         this.leftJoystick.update();
         this.rightJoystick.update();

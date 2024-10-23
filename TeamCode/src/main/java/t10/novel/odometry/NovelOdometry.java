@@ -8,11 +8,6 @@ import t10.reconstructor.Pose;
 /**
  * Odometry localization interface.
  */
-
-/**
- * NOTE: right is positive x, forward is positive y, clockwise rotation is positive phi
- * "(0,0,0)" is at the starting position, with the starting heading
- * */
 public class NovelOdometry {
     private final OdometryCoefficientSet coefficients;
     private final NovelEncoder rightEncoder;
@@ -81,10 +76,10 @@ public class NovelOdometry {
         // double lastRotation = this.relativePose.getHeading(AngleUnit.RADIANS);
         // double averageRotationOverObservationPeriod = (currentRotation + lastRotation) / 2;
         double heading = phi + this.relativePose.getHeading(AngleUnit.RADIANS);
-        double forwardAbsolute = forwardRelative * Math.sin(heading) + rightwardRelative * Math.cos(-heading);
-        double rightwardAbsolute = forwardRelative * Math.cos(-heading) - rightwardRelative * Math.sin(heading);
+        double deltaX = forwardRelative * Math.sin(heading) + rightwardRelative * Math.cos(heading);
+        double deltaY = forwardRelative * Math.cos(heading) - rightwardRelative * Math.sin(heading);
 
-        this.relativePose = this.relativePose.add(new Pose(forwardAbsolute, -rightwardAbsolute, phi, AngleUnit.RADIANS));
+        this.relativePose = this.relativePose.add(new Pose(deltaY, deltaX, phi, AngleUnit.RADIANS));
 
         // Update encoder wheel position
         this.leftWheelPos = newLeftWheelPos;
@@ -117,5 +112,14 @@ public class NovelOdometry {
         double forwardRelative = absoluteVelocity.getX() * Math.cos(theta) + absoluteVelocity.getY() * Math.sin(theta);
         double rightwardRelative = absoluteVelocity.getX() * Math.sin(theta) + absoluteVelocity.getY() * Math.cos(theta);
         return new Vector3D(forwardRelative,rightwardRelative, absoluteVelocity.getZ());
+    }
+
+    //IMPORTANT - this MUST be iterated, otherwise it'll keep going in the earlier direction while rotating - and not work
+    public Vector3D getRelativeVelocity(double forward, double horizontal, double rotation)
+    {
+        double theta = -relativePose.getHeading(AngleUnit.RADIANS);
+        double forwardRelative = forward * Math.cos(theta) + horizontal * Math.sin(theta);
+        double rightwardRelative = forward * Math.sin(theta) + horizontal * Math.cos(theta);
+        return new Vector3D(forwardRelative,rightwardRelative, rotation);
     }
 }

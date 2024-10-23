@@ -1,7 +1,8 @@
 package t10.reconstructor;
 
-import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+
+import t10.utils.MovementVector;
 
 /**
  * A 2D Point with a direction.
@@ -9,7 +10,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 public class Pose extends Point {
     protected double headingRadians;
 
-    public Pose(double x, double y, double heading, AngleUnit angleUnit) {
+    public Pose(double y, double x, double heading, AngleUnit angleUnit) {
         super(x, y);
         this.headingRadians = angleUnit.toRadians(heading);
     }
@@ -18,8 +19,8 @@ public class Pose extends Point {
      * IMPORTANT: Novel uses INCHES for x, y, and ROTATION. Therefore, this assumes the Z coordinate of the vector is in inches.
      * @param novelVector A vector that you would pass into a Novel setVelocity call.
      */
-    public Pose(Vector3D novelVector, double robotDiameter) {
-        super(novelVector.getX(), novelVector.getY());
+    public Pose(MovementVector novelVector, double robotDiameter) {
+        super(novelVector.getVertical(), novelVector.getHorizontal());
 
         /*
          * Proof of headingRadians calculation.
@@ -39,7 +40,7 @@ public class Pose extends Point {
          *
          * Simplification is what headingRadians is set to below..
          */
-        this.headingRadians = (2 * novelVector.getZ()) / (robotDiameter);
+        this.headingRadians = (2 * novelVector.getRotation()) / (robotDiameter);
     }
 
     public void setHeading(double heading, AngleUnit angleUnit) {
@@ -55,8 +56,8 @@ public class Pose extends Point {
 
     public Pose add(Pose pose) {
         return new Pose(
-                this.x + pose.x,
                 this.y + pose.y,
+                this.x + pose.x,
                 this.headingRadians + pose.headingRadians,
                 AngleUnit.RADIANS
         );
@@ -64,18 +65,18 @@ public class Pose extends Point {
 
     public Pose subtract(Pose pose) {
         return new Pose(
-                this.x - pose.x,
                 this.y - pose.y,
+                this.x - pose.x,
                 this.headingRadians - pose.headingRadians,
                 AngleUnit.RADIANS
         );
     }
 
-    public static Vector3D toVector3D(Pose pose) {
-        return new Vector3D(pose.getX(), pose.getY(), pose.getHeading(AngleUnit.DEGREES));
+    public static MovementVector toMovementVector(Pose pose) {
+        return new MovementVector(pose.getY(), pose.getX(), pose.getHeading(AngleUnit.DEGREES));
     }
 
-    public static Pose fromVector3D(Vector3D vector3D) {
-        return new Pose(vector3D.getX(), vector3D.getY(), vector3D.getZ(), AngleUnit.DEGREES);
+    public static Pose fromMovementVector(MovementVector vector3D) {
+        return new Pose(vector3D.getVertical(), vector3D.getHorizontal(), vector3D.getRotation(), AngleUnit.DEGREES);
     }
 }

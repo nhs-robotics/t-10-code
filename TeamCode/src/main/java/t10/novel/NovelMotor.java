@@ -43,6 +43,10 @@ public class NovelMotor {
         this.motor.setVelocity(encoderTicksPerSecond);
     }
 
+    public void setPower(double power) {
+        this.motor.setPower(power);
+    }
+
     /**
      * @return The velocity of the motor, in in/s.
      */

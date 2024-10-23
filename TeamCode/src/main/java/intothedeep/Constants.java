@@ -52,7 +52,8 @@ public class Constants {
         });
 
     }
-
     public static final double APRIL_TAG_SIZE_METERS = 0.0508;
+
+    public static final int GAMEPAD_JOYSTICK_Y_COEFFICIENT = -1;
 
 }
