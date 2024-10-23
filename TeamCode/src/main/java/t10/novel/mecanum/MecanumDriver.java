@@ -34,8 +34,8 @@ public class MecanumDriver {
 
     public void setVelocity(MovementVector velocity) {
         MecanumCoefficientSet coefficientSet = this.omniDriveCoefficients.calculateCoefficientsWithPower(
-                velocity.getHorizontal(),
                 velocity.getVertical(),
+                velocity.getHorizontal(),
                 velocity.getRotation()
         );
 

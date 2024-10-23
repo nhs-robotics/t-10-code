@@ -43,8 +43,8 @@ public class UnstableLocalizationEngine {
         Pose odometryEstimate = this.odometry.getRelativePose();
 
         return new Pose(
-                odometryEstimate.x + this.mostRecentAprilTagEstimate.getX(),
                 odometryEstimate.y + this.mostRecentAprilTagEstimate.getY(),
+                odometryEstimate.x + this.mostRecentAprilTagEstimate.getX(),
                 heading,
                 angleUnit
         );
@@ -73,8 +73,8 @@ public class UnstableLocalizationEngine {
             double y = metadata.fieldPosition.get(0) - Math.copySign(detection.ftcPose.y, metadata.fieldPosition.get(0));
 
             estimates.add(new Pose(
-                    x,
                     y,
+                    x,
                     orientation.thirdAngle,
                     AngleUnit.RADIANS
             ));
@@ -85,8 +85,8 @@ public class UnstableLocalizationEngine {
         List<Double> normalizedWeights = MathUtils.normalize(weights);
 
         return new Pose(
-                MathUtils.weightedAverage(estimates.stream().map(pose -> pose.x).collect(Collectors.toList()), normalizedWeights),
                 MathUtils.weightedAverage(estimates.stream().map(pose -> pose.y).collect(Collectors.toList()), normalizedWeights),
+                MathUtils.weightedAverage(estimates.stream().map(pose -> pose.x).collect(Collectors.toList()), normalizedWeights),
                 MathUtils.weightedAverage(estimates.stream().map(pose -> pose.headingRadians).collect(Collectors.toList()), normalizedWeights),
                 AngleUnit.RADIANS
         );
