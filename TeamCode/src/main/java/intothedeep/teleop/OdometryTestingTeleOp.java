@@ -84,6 +84,9 @@ public class OdometryTestingTeleOp extends TeleOpOpMode {
         else if (gamepadController.rightBumper.isToggled()) {
             driveForwardAbsolute();
         }
+        else if (gamepadController.leftBumper.isToggled()) {
+            driveRightAbsolute();
+        }
 
         this.telemetry.update();
         this.odometry.update();
@@ -116,6 +119,13 @@ public class OdometryTestingTeleOp extends TeleOpOpMode {
     private void driveForwardAbsolute() {
         if (Math.abs(distance - odometry.getRelativePose().getY()) > 2) {
             driver.setVelocity(odometry.getRelativeVelocity(new Vector3D(-10, 0, 0)));
+        } else {
+            driver.setVelocity(new Vector3D(0, 0, 0));
+        }
+    }
+    private void driveRightAbsolute() {
+        if (Math.abs(distance - odometry.getRelativePose().getX()) > 2) {
+            driver.setVelocity(odometry.getRelativeVelocity(new Vector3D(0, 10, 0)));
         } else {
             driver.setVelocity(new Vector3D(0, 0, 0));
         }
