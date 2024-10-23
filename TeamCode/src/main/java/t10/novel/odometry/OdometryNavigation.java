@@ -3,6 +3,7 @@ package t10.novel.odometry;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
+import intothedeep.Constants;
 import t10.novel.mecanum.MecanumDriver;
 import t10.reconstructor.Pose;
 
@@ -20,7 +21,7 @@ public class OdometryNavigation {
         this.minError = 0.5;
         this.minAngleError = Math.PI / 60; //in radians here
         maxLatVelocity = 10;
-        maxAngVelocity = 5;
+        maxAngVelocity = 15;
 
     }
 
@@ -41,33 +42,43 @@ public class OdometryNavigation {
         while(dist_to_position < minError)
     }
 */
+    public void driveSmart(Pose targetPose)
+    {
+        driver.setVelocity(calcAdjust(targetPose,odometry.getRelativePose()));
+    }
 
     public Vector3D calcAdjust(Pose targetPose, Pose currentPose)
     {
         double scaleFactor;
-        double deltaX = targetPose.getX() - currentPose.getX();
-        double deltaY = targetPose.getY() - currentPose.getY();
+        double deltaY = targetPose.getX() - currentPose.getX();
+        double deltaX = targetPose.getY() - currentPose.getY();
         double currentAngle = currentPose.getHeading(AngleUnit.RADIANS);
         double targetAngle = targetPose.getHeading(AngleUnit.RADIANS);
-        double velocityVertical = 1;
-        double velocityHorizontal;
+        double velocityHorizontal = 1;
+        double velocityVertical;
         if(Math.sqrt(deltaX * deltaX + deltaY * deltaY) < minError)
         {
-            return new Vector3D(0,0, findTurnSpeed(currentAngle,targetAngle) * maxAngVelocity);
+            return new Vector3D(0,0, newFindTurnSpeed(currentAngle,targetAngle));
         }
         else if (deltaX != 0) {
-            velocityHorizontal = ((deltaY / deltaX) * Math.sin(currentAngle) - Math.cos(currentAngle)) / (Math.sin(currentAngle) - (deltaY / deltaX) * Math.cos(currentAngle));
+            velocityVertical = ((deltaY / deltaX) * Math.sin(currentAngle) - Math.cos(currentAngle)) / (Math.sin(currentAngle) - (deltaY / deltaX) * Math.cos(currentAngle));
         }
         else {
-            velocityHorizontal = (((deltaX / deltaY) * Math.cos(currentAngle) - Math.sin(currentAngle)) / (Math.cos(currentAngle) - (deltaX / deltaY) * Math.sin(currentAngle)));
+            velocityVertical = (((deltaX / deltaY) * Math.cos(currentAngle) - Math.sin(currentAngle)) / (Math.cos(currentAngle) - (deltaX / deltaY) * Math.sin(currentAngle)));
         }
 
-        if(velocityHorizontal > velocityVertical) {
-            scaleFactor = 10 / velocityHorizontal;
-        }
-        else { scaleFactor = 10;}
 
-        return new Vector3D(scaleFactor * velocityVertical,scaleFactor * velocityHorizontal, findTurnSpeed(currentAngle,targetAngle) * maxAngVelocity);
+        if(Math.abs(velocityVertical) > Math.abs(velocityHorizontal)) {
+            if(Math.abs(deltaY) > 2) {scaleFactor = maxLatVelocity / Math.abs(velocityVertical);}
+            else {scaleFactor = 5 * Math.abs(velocityVertical);}
+
+        }
+        else {
+            if(Math.abs(deltaX) > 2) {scaleFactor = maxLatVelocity;}
+            else {scaleFactor = 5 * Math.abs(velocityHorizontal);}
+        }
+
+        return new Vector3D(-scaleFactor * velocityVertical,scaleFactor * velocityHorizontal, -findTurnSpeed(currentAngle,targetAngle) * maxAngVelocity);
     }
     private boolean needAngleCorrection(double currentAngle, double targetAngle)
     {
@@ -110,6 +121,24 @@ public class OdometryNavigation {
         else {turnPower = 0;}
         return turnPower;
     }
-
+    public double newFindTurnSpeed(double currentAngle,double targetAngle)
+    {
+        if(targetAngle < currentAngle - Math.PI)
+        {
+            targetAngle += Math.PI;
+        }
+        else if (targetAngle > currentAngle + Math.PI)
+        {
+            targetAngle -= Math.PI;
+        }
+        double rotationalVelocity = (targetAngle - currentAngle) * Constants.Robot.ROBOT_DIAMETER_IN / 2;
+        if (Math.abs(rotationalVelocity) < maxAngVelocity)
+        {
+            return rotationalVelocity;
+        }
+        else {
+            return maxAngVelocity * Math.signum(rotationalVelocity);
+        }
+    }
 
 }
