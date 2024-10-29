@@ -19,7 +19,7 @@ public class MovementVector implements Serializable {
         this.vector = new Vector3D(v);
     }
 
-    private MovementVector(Vector3D v) {
+    public MovementVector(Vector3D v) {
         this.vector = v;
     }
 
@@ -38,11 +38,11 @@ public class MovementVector implements Serializable {
 
     // Wrapper for the methods of Vector3D
     public MovementVector add(final MovementVector mv) {
-        return new MovementVector(vector.add(mv.getVector()));
+        return new MovementVector(vector.add(mv.vector));
     }
 
     public MovementVector subtract(final MovementVector mv) {
-        return new MovementVector(vector.subtract(mv.getVector()));
+        return new MovementVector(vector.subtract(mv.vector));
     }
 
     public MovementVector scalarMultiply(double a) {
@@ -53,7 +53,7 @@ public class MovementVector implements Serializable {
         return new MovementVector(vector.normalize());
     }
 
-    public double getNorm() {
+    public double getMagnitude() {
         return vector.getNorm();
     }
 
@@ -63,7 +63,7 @@ public class MovementVector implements Serializable {
         }
         if (other instanceof MovementVector) {
             MovementVector mv = (MovementVector) other;
-            return vector.equals(mv.getVector());
+            return vector.equals(mv.vector);
         }
         return false;
     }
@@ -72,10 +72,5 @@ public class MovementVector implements Serializable {
     @Override
     public String toString() {
         return vector.toString();
-    }
-
-    // Helper method to access the internal Vector3D instance
-    private Vector3D getVector() {
-        return this.vector;
     }
 }
