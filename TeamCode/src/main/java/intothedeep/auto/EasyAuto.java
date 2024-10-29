@@ -3,10 +3,9 @@ package intothedeep.auto;
 import t10.bootstrap.AutonomousOpMode;
 import t10.novel.mecanum.MecanumDriver;
 
-import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
-
 import intothedeep.Constants;
 import intothedeep.IntoTheDeepRobotConfiguration;
+import t10.utils.MovementVector;
 
 public abstract class EasyAuto extends AutonomousOpMode {
     private IntoTheDeepRobotConfiguration config;
@@ -37,7 +36,7 @@ public abstract class EasyAuto extends AutonomousOpMode {
     }
 
     public void diagonalMovement(double distX, double distY, double time) {
-        this.driver.setVelocity(new Vector3D(-distY / time, distX / time, 0));
+        this.driver.setVelocity(new MovementVector(-distY / time, distX / time, 0));
 
         sleep(time);
 
@@ -49,7 +48,7 @@ public abstract class EasyAuto extends AutonomousOpMode {
         //TODO: Figure out why this works. It should be off by a factor of 2.
         double headingInches = (degrees / 360L) * (2 * Math.PI * Constants.Robot.ROBOT_DIAMETER_IN);
 
-        this.driver.setVelocity(new Vector3D(0, 0, headingInches/time));
+        this.driver.setVelocity(new MovementVector(0, 0, headingInches/time));
 
         sleep(time);
 

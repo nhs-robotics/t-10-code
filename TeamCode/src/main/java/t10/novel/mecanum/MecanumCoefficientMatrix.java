@@ -1,6 +1,6 @@
 package t10.novel.mecanum;
 
-import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
+import t10.utils.MovementVector;
 
 /**
  * Coefficient matrix for the total coefficients, vertical driving coefficients, horizontal driving coefficients, and the rotational coefficients.
@@ -66,7 +66,7 @@ public class MecanumCoefficientMatrix {
         );
     }
 
-    public Vector3D calculatePowerWithCoefficients(MecanumCoefficientSet coefficientSet) {
+    public MovementVector calculatePowerWithCoefficients(MecanumCoefficientSet coefficientSet) {
         double horizontalPower = 0;
         double verticalPower = 0;
         double rotationalPower = 0;
@@ -90,6 +90,6 @@ public class MecanumCoefficientMatrix {
         rotationalPower += coefficientSet.backRight / totals.backRight / rotational.backRight;
         rotationalPower /= 4d;
 
-        return new Vector3D(horizontalPower, verticalPower, rotationalPower);
+        return new MovementVector(horizontalPower, verticalPower, rotationalPower);
     }
 }
