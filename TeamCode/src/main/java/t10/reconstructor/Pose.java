@@ -50,9 +50,6 @@ public class Pose extends Point {
     public double getHeading(AngleUnit angleUnit) {
         return angleUnit.fromRadians(this.headingRadians);
     }
-    public double getNegativeHeading(AngleUnit angleUnit) {
-        return -1 * angleUnit.fromRadians(this.headingRadians);
-    }
 
     public Pose add(Pose pose) {
         return new Pose(

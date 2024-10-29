@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import t10.bootstrap.Hardware;
-import t10.novel.odometry.NaiveOdometry;
 import t10.novel.odometry.OdometryCoefficientSet;
 import t10.novel.NovelEncoder;
 import t10.novel.NovelMotor;

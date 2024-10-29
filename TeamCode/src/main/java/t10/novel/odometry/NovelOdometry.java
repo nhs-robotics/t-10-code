@@ -75,11 +75,11 @@ public class NovelOdometry {
         // double currentRotation = phi + this.relativePose.getHeading(AngleUnit.RADIANS);
         // double lastRotation = this.relativePose.getHeading(AngleUnit.RADIANS);
         // double averageRotationOverObservationPeriod = (currentRotation + lastRotation) / 2;
-        double heading = phi + this.relativePose.getHeading(AngleUnit.RADIANS);
+        double heading = this.relativePose.getHeading(AngleUnit.RADIANS) - phi;
         double deltaX = forwardRelative * Math.sin(heading) + rightwardRelative * Math.cos(heading);
         double deltaY = forwardRelative * Math.cos(heading) - rightwardRelative * Math.sin(heading);
 
-        this.relativePose = this.relativePose.add(new Pose(-deltaY, deltaX, phi, AngleUnit.RADIANS));
+        this.relativePose = this.relativePose.add(new Pose(-deltaY, deltaX, -phi, AngleUnit.RADIANS));
 
         // Update encoder wheel position
         this.leftWheelPos = newLeftWheelPos;
@@ -111,15 +111,12 @@ public class NovelOdometry {
         double theta = relativePose.getHeading(AngleUnit.RADIANS);
         double forwardRelative = absoluteVelocity.getVertical() * Math.cos(theta) + absoluteVelocity.getHorizontal() * Math.sin(theta);
         double rightwardRelative = absoluteVelocity.getVertical() * Math.sin(-theta) + absoluteVelocity.getHorizontal() * Math.cos(theta);
-        return new MovementVector(forwardRelative,rightwardRelative, absoluteVelocity.getRotation());
+        return new MovementVector(forwardRelative,rightwardRelative, 0);
     }
 
     //IMPORTANT - this MUST be iterated, otherwise it'll keep going in the earlier direction while rotating - and not work
-    public MovementVector getRelativeVelocity(double forward, double horizontal, double rotation)
+    public MovementVector getRelativeVelocity(double lateral, double horizontal)
     {
-        double theta = -relativePose.getHeading(AngleUnit.RADIANS);
-        double forwardRelative = forward * Math.cos(theta) + horizontal * Math.sin(theta);
-        double rightwardRelative = forward * Math.sin(theta) + horizontal * Math.cos(theta);
-        return new MovementVector(forwardRelative,rightwardRelative, rotation);
+        return getRelativeVelocity(new MovementVector(lateral,horizontal, 0));
     }
 }

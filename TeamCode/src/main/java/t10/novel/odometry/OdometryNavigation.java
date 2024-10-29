@@ -1,90 +1,106 @@
 package t10.novel.odometry;
 
-import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-import intothedeep.Constants;
 import t10.novel.mecanum.MecanumDriver;
-import t10.reconstructor.Pose;
+import t10.utils.MovementVector;
 
 public class OdometryNavigation {
     private NovelOdometry odometry;
     private MecanumDriver driver;
-    private double minError;
-    private double minAngleError;
-    private double maxLatVelocity;
-    private double maxAngVelocity;
+    public final double minError;
+    public final double minAngleError;
+    public final double maxLatVelocity;
+    public final double maxAngVelocity;
 
     public OdometryNavigation(NovelOdometry odometry, MecanumDriver driver) {
         this.odometry = odometry;
         this.driver = driver;
         this.minError = 0.5;
-        this.minAngleError = Math.PI / 60; //in radians here
+        this.minAngleError = 5; //in degrees here
         maxLatVelocity = 10;
         maxAngVelocity = 15;
 
     }
 
-    public OdometryNavigation(NovelOdometry odometry, MecanumDriver driver, double minError) {
-        this.odometry = odometry;
-        this.driver = driver;
-        this.minError = minError;
-    }
 
-   /* public double dist_to_position()
+
+
+    public void driveLateral(double distance)
     {
-        return Math.sqrt((odometry.getRelativePose().getX())^2)
-
+        double initialX = odometry.getRelativePose().getX();
+        double finalY = odometry.getRelativePose().getY();
+        while(Math.abs(finalY - odometry.getRelativePose().getY()) > minError) {
+            driver.setVelocity(odometry.getRelativeVelocity(new MovementVector(-10 * Math.signum(distance), initialX - odometry.getRelativePose().getX(),0)));
+            this.odometry.update();
+        }
+        driver.setVelocity(new MovementVector(0,0,0));
     }
 
-    public void driveDeadWheel(Vector3D displacement)
+    public void driveHorizontal(double distance)
     {
-        while(dist_to_position < minError)
+        double initialY = odometry.getRelativePose().getY();
+        double initialX = odometry.getRelativePose().getX();
+        double finalX = initialX + distance;
+        while(Math.abs(finalX - odometry.getRelativePose().getX()) > minError) {
+            driver.setVelocity(odometry.getRelativeVelocity(new MovementVector(initialY - odometry.getRelativePose().getY(), 10 * Math.signum(distance),0)));
+            this.odometry.update();
+        }
+        driver.setVelocity(new MovementVector(0,0,0));
     }
-*/
+
+    public void turnAbsolute(double angle)
+    {
+        while(needAngleCorrectionDegrees(odometry.getRelativePose().getHeading(AngleUnit.DEGREES), angle))
+        {
+            driver.setVelocity(new MovementVector(0,0,findTurnSpeed(odometry.getRelativePose().getHeading(AngleUnit.DEGREES), angle)));
+            this.odometry.update();
+        }
+        driver.setVelocity(new MovementVector(0,0,0));
+    }
+/** attempted perfect arbitrary to-point driving
     public void driveSmart(Pose targetPose)
     {
-        driver.setVelocity(calcAdjust(targetPose,odometry.getRelativePose()));
+        MovementVector vector = calcTrigVelocity(targetPose,odometry.getRelativePose());
+        vector = new MovementVector(-vector.getVertical(), vector.getHorizontal(), vector.getRotation());
+        driver.setVelocity(vector);
     }
-
-    public Vector3D calcAdjust(Pose targetPose, Pose currentPose)
+    public MovementVector calcTrigVelocity(Pose targetPose, Pose currentPose)
     {
-        double scaleFactor;
         double deltaY = targetPose.getX() - currentPose.getX();
+        double deltaY_abs = Math.abs(deltaY);
         double deltaX = targetPose.getY() - currentPose.getY();
+        double deltaX_abs = Math.abs(deltaX);
         double currentAngle = currentPose.getHeading(AngleUnit.RADIANS);
         double targetAngle = targetPose.getHeading(AngleUnit.RADIANS);
-        double velocityHorizontal = 1;
-        double velocityVertical;
-        if(Math.sqrt(deltaX * deltaX + deltaY * deltaY) < minError)
+        if (deltaY_abs < minError && deltaX_abs < minError)
         {
-            return new Vector3D(0,0, newFindTurnSpeed(currentAngle,targetAngle));
+            return new MovementVector(0,0, findTurnSpeed(currentAngle,targetAngle));
         }
-        else if (deltaX != 0) {
-            velocityVertical = ((deltaY / deltaX) * Math.sin(currentAngle) - Math.cos(currentAngle)) / (Math.sin(currentAngle) - (deltaY / deltaX) * Math.cos(currentAngle));
+        else if (deltaY_abs < 5*minError && deltaX_abs > 5*minError)
+        {
+            return odometry.getRelativeVelocity(10*Math.signum(deltaY),deltaX);
+
+        }
+        else if (deltaY_abs > 5*minError && deltaX_abs < 5*minError)
+        {
+            return odometry.getRelativeVelocity(deltaY,10 * Math.signum(deltaX));
+        }
+        else if (deltaX_abs > 5*minError && deltaY_abs > 5*minError)
+        {
+            return odometry.getRelativeVelocity(10 * Math.signum(deltaY),10 * Math.signum(deltaX));
         }
         else {
-            velocityVertical = (((deltaX / deltaY) * Math.cos(currentAngle) - Math.sin(currentAngle)) / (Math.cos(currentAngle) - (deltaX / deltaY) * Math.sin(currentAngle)));
+            return new MovementVector(deltaY,deltaX,0);
         }
-
-
-        if(Math.abs(velocityVertical) > Math.abs(velocityHorizontal)) {
-            if(Math.abs(deltaY) > 2) {scaleFactor = maxLatVelocity / Math.abs(velocityVertical);}
-            else {scaleFactor = 5 * Math.abs(velocityVertical);}
-
-        }
-        else {
-            if(Math.abs(deltaX) > 2) {scaleFactor = maxLatVelocity;}
-            else {scaleFactor = 5 * Math.abs(velocityHorizontal);}
-        }
-
-        return new Vector3D(-scaleFactor * velocityVertical,scaleFactor * velocityHorizontal, -findTurnSpeed(currentAngle,targetAngle) * maxAngVelocity);
     }
-    private boolean needAngleCorrection(double currentAngle, double targetAngle)
+*/
+
+    public boolean needAngleCorrectionDegrees(double currentAngle, double targetAngle)
     {
-        double startAngle = currentAngle + Math.PI;
-        double endAngle = targetAngle + Math.PI;
-        if( (startAngle < minAngleError && endAngle > 2*Math.PI - startAngle) || (endAngle < minAngleError && startAngle > 2*Math.PI - endAngle))
+        double startAngle = currentAngle + 180;
+        double endAngle = targetAngle + 180;
+        if( (startAngle < minAngleError && endAngle > 360 - startAngle) || (endAngle < minAngleError && startAngle > 360 - endAngle))
         {
             return false;
         }
@@ -98,46 +114,39 @@ public class OdometryNavigation {
         }
     }
 
-    private double findTurnSpeed(double currentAngle,double targetAngle)
+
+    public double findTurnSpeed(double currentAngle, double targetAngle)
     {
-        double turnPower;
-        if( needAngleCorrection(currentAngle, targetAngle))
-        {
-            if (currentAngle > 0) {
-                if ((targetAngle > currentAngle) || (targetAngle < currentAngle - Math.PI)) {
-                    turnPower = 1;
-                } else {
-                    turnPower = -1;
-                }
+        double direction = 0;
+        if(needAngleCorrectionDegrees(currentAngle, targetAngle)) {
+            if (Math.abs(targetAngle)==180)
+            {
+                targetAngle = 180 * Math.signum(currentAngle);
             }
-            else {
-                if ((targetAngle < currentAngle) || (targetAngle > currentAngle + Math.PI)) {
-                    turnPower = -1;
-                } else {
-                    turnPower = 1;
-                }
+            if (targetAngle < currentAngle - Math.PI) {
+                direction = -1;
+                return maxAngVelocity * direction;
+            } else if (targetAngle > currentAngle + Math.PI) {
+                direction = 1;
+                return maxAngVelocity * direction;
+            }
+
+            else if (targetAngle < currentAngle) {
+                direction = 1;
+            } else if (targetAngle > currentAngle) {
+                direction = -1;
             }
         }
-        else {turnPower = 0;}
-        return turnPower;
-    }
-    public double newFindTurnSpeed(double currentAngle,double targetAngle)
-    {
-        if(targetAngle < currentAngle - Math.PI)
+        if(Math.abs(targetAngle - currentAngle) < 5*minAngleError)
         {
-            targetAngle += Math.PI;
+            return direction * Math.abs(targetAngle - currentAngle);
         }
-        else if (targetAngle > currentAngle + Math.PI)
+        else if ((targetAngle > 180-5*minAngleError || targetAngle < -180+5*minAngleError) && Math.abs(currentAngle) > 160)
         {
-            targetAngle -= Math.PI;
-        }
-        double rotationalVelocity = (targetAngle - currentAngle) * Constants.Robot.ROBOT_DIAMETER_IN / 2;
-        if (Math.abs(rotationalVelocity) < maxAngVelocity)
-        {
-            return rotationalVelocity;
+            return direction * (180 - Math.abs(currentAngle));
         }
         else {
-            return maxAngVelocity * Math.signum(rotationalVelocity);
+            return maxAngVelocity * direction;
         }
     }
 
