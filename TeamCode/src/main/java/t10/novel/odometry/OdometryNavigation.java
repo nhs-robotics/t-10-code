@@ -1,5 +1,6 @@
 package t10.novel.odometry;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import t10.novel.mecanum.MecanumDriver;
@@ -8,19 +9,20 @@ import t10.utils.MovementVector;
 public class OdometryNavigation {
     private NovelOdometry odometry;
     private MecanumDriver driver;
+    private Telemetry telemetry;
     public final double minError;
     public final double minAngleError;
     public final double maxLatVelocity;
     public final double maxAngVelocity;
 
-    public OdometryNavigation(NovelOdometry odometry, MecanumDriver driver) {
+    public OdometryNavigation(NovelOdometry odometry, MecanumDriver driver, Telemetry telemetry) {
         this.odometry = odometry;
         this.driver = driver;
         this.minError = 0.5;
         this.minAngleError = 5; //in degrees here
         maxLatVelocity = 10;
         maxAngVelocity = 15;
-
+        this.telemetry = telemetry;
     }
 
 
@@ -29,9 +31,9 @@ public class OdometryNavigation {
     public void driveLateral(double distance)
     {
         double initialX = odometry.getRelativePose().getX();
-        double finalY = odometry.getRelativePose().getY();
+        double finalY = odometry.getRelativePose().getY() + distance;
         while(Math.abs(finalY - odometry.getRelativePose().getY()) > minError) {
-            driver.setVelocity(odometry.getRelativeVelocity(new MovementVector(-10 * Math.signum(distance), initialX - odometry.getRelativePose().getX(),0)));
+            driver.setVelocity(odometry.getRelativeVelocity(new MovementVector(-10 * Math.signum(distance), 0,0)));
             this.odometry.update();
         }
         driver.setVelocity(new MovementVector(0,0,0));
@@ -43,7 +45,35 @@ public class OdometryNavigation {
         double initialX = odometry.getRelativePose().getX();
         double finalX = initialX + distance;
         while(Math.abs(finalX - odometry.getRelativePose().getX()) > minError) {
-            driver.setVelocity(odometry.getRelativeVelocity(new MovementVector(initialY - odometry.getRelativePose().getY(), 10 * Math.signum(distance),0)));
+            driver.setVelocity(odometry.getRelativeVelocity(new MovementVector(0, 10 * Math.signum(distance),0)));
+            this.odometry.update();
+        }
+        driver.setVelocity(new MovementVector(0,0,0));
+    }
+
+    public void driveDiagonal(double distanceX, double distanceY)
+    {
+        double initialY = odometry.getRelativePose().getY();
+        double initialX = odometry.getRelativePose().getX();
+        double finalX = initialX + distanceX;
+        double finalY = initialY + distanceY;
+        while((Math.abs(finalX - odometry.getRelativePose().getX()) > minError) || (Math.abs(finalY - odometry.getRelativePose().getY()) > minError)) {
+            double speedX, speedY;
+            if((Math.abs(finalX - odometry.getRelativePose().getX()) > minError))
+            {
+                speedX = 10 * Math.signum(distanceX);
+            }
+            else {
+                speedX = finalX - odometry.getRelativePose().getX();
+            }
+            if((Math.abs(finalY - odometry.getRelativePose().getY()) > minError))
+            {
+                speedY = 10 * Math.signum(distanceY);
+            }
+            else {
+                speedY = finalY - odometry.getRelativePose().getY();
+            }
+            driver.setVelocity(odometry.getRelativeVelocity(new MovementVector(speedY, speedX,0)));
             this.odometry.update();
         }
         driver.setVelocity(new MovementVector(0,0,0));
@@ -54,6 +84,40 @@ public class OdometryNavigation {
         while(needAngleCorrectionDegrees(odometry.getRelativePose().getHeading(AngleUnit.DEGREES), angle))
         {
             driver.setVelocity(new MovementVector(0,0,findTurnSpeed(odometry.getRelativePose().getHeading(AngleUnit.DEGREES), angle)));
+            this.odometry.update();
+        }
+        driver.setVelocity(new MovementVector(0,0,0));
+    }
+
+    public void turnRelative(double angle)
+    {
+        double targetAngle = angle + odometry.getRelativePose().getHeading(AngleUnit.DEGREES);
+        if(targetAngle > 180) {targetAngle -= 180;}
+        if(targetAngle < -180) {targetAngle += 180;}
+        turnAbsolute(targetAngle);
+    }
+
+    public void driveAbsolute(double targetX, double targetY)
+    {
+        double distanceX = targetX - odometry.getRelativePose().getX();
+        double distanceY = targetY - odometry.getRelativePose().getY();
+        while((Math.abs(targetX - odometry.getRelativePose().getX()) > minError) || (Math.abs(targetY - odometry.getRelativePose().getY()) > minError)) {
+            double speedX, speedY;
+            if((Math.abs(targetX - odometry.getRelativePose().getX()) > minError))
+            {
+                speedX = 10 * Math.signum(distanceX);
+            }
+            else {
+                speedX = targetX - odometry.getRelativePose().getX();
+            }
+            if((Math.abs(targetY - odometry.getRelativePose().getY()) > minError))
+            {
+                speedY = 10 * Math.signum(distanceY);
+            }
+            else {
+                speedY = targetY - odometry.getRelativePose().getY();
+            }
+            driver.setVelocity(odometry.getRelativeVelocity(new MovementVector(speedY, speedX,0)));
             this.odometry.update();
         }
         driver.setVelocity(new MovementVector(0,0,0));
