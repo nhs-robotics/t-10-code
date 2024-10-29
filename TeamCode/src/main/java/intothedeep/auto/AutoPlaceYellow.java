@@ -1,7 +1,10 @@
 package intothedeep.auto;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+
 import intothedeep.Constants;
 
+@Autonomous(name = "Place Yellow Autonomous")
 public class AutoPlaceYellow extends EasyAuto {
 
     @Override
@@ -11,7 +14,7 @@ public class AutoPlaceYellow extends EasyAuto {
         verticalMovement(5, 1);
         // place specimen
         verticalMovement(-5, 1);
-        horizontalMovement(-33.5 + Constants.Robot.ROBOT_WIDTH_IN / 2, 8);
+        horizontalMovement(-33.5 + Constants.Robot.ROBOT_WIDTH_IN / 2, 8); // MIGHT BE + INSTEAD ??
 
         rotationalMovement(-90, 2);
         verticalMovement(-5, 1);
