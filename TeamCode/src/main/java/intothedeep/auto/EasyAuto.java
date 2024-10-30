@@ -18,7 +18,7 @@ import t10.utils.MovementVector;
 public abstract class EasyAuto extends AutonomousOpMode {
     private IntoTheDeepRobotConfiguration config;
     private MecanumDriver driver;
-    private NovelOdometry odometry;
+    public NovelOdometry odometry;
     private OdometryNavigation navigator;
     private Telemetry.Item x, y, r;
 

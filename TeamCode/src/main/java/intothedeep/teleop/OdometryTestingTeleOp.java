@@ -25,7 +25,7 @@ public class OdometryTestingTeleOp extends TeleOpOpMode {
     private Telemetry.Item y;
     private Telemetry.Item r;
     private Telemetry.Item direct90, direct180, direct270, direct0, direct45, direct225;
-    private Telemetry.Item angle;
+    private Telemetry.Item vert, hor;
     private double distance;
     private Pose init_pose;
     MovementVector vector;
@@ -54,6 +54,8 @@ public class OdometryTestingTeleOp extends TeleOpOpMode {
         this.direct270 = this.telemetry.addData("direction_-90: ",0);
         this.direct45 = this.telemetry.addData("direction_45: ",0);
         this.direct225 = this.telemetry.addData("direction_-45: ",0);
+        this.vert = this.telemetry.addData("vert: ", "0");
+        this.hor = this.telemetry.addData("hor: ", "0");
 
         distance = 20;
         init_pose = odometry.getRelativePose();
@@ -69,7 +71,8 @@ public class OdometryTestingTeleOp extends TeleOpOpMode {
     public void loop() {
         this.gamepadController.update();
         //vector = navigator.calcTrigVelocity(init_pose,odometry.getRelativePose());
-        //this.v_2.setValue(vector);
+        this.vert.setValue(odometry.getRelativeVelocity(-1,0));
+        this.hor.setValue(odometry.getRelativeVelocity(0,1));
         //vector = new MovementVector(-vector.getVertical(), vector.getHorizontal(), vector.getRotation());
         //this.driver.useGamepad(this.gamepad1, this.gamepadController.x.isToggled() ? 4 : 1);
         this.x.setValue(this.odometry.getRelativePose().getX());
@@ -86,8 +89,10 @@ public class OdometryTestingTeleOp extends TeleOpOpMode {
             driveHorizontal(-20);
         } else if (gamepadController.a.isToggled()) {
             driveLateral(-20);
+            System.out.println("A");
         } else if (gamepadController.y.isToggled()) {
             driveLateral(20);
+            System.out.println("Y");
         } else if (gamepadController.b.isToggled()) {
             driveHorizontal(20);
         }
@@ -117,7 +122,7 @@ public class OdometryTestingTeleOp extends TeleOpOpMode {
     public void driveLateral(double distance)
     {
         double initialX = odometry.getRelativePose().getX();
-        double finalY = odometry.getRelativePose().getY();
+        double finalY = odometry.getRelativePose().getY() + distance;
         while(Math.abs(finalY - odometry.getRelativePose().getY()) > navigator.minError) {
             driver.setVelocity(odometry.getRelativeVelocity(new MovementVector(-10 * Math.signum(distance), initialX - odometry.getRelativePose().getX(),0)));
             this.x.setValue(this.odometry.getRelativePose().getX());

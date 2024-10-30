@@ -30,7 +30,6 @@ public class OdometryNavigation {
 
     public void driveLateral(double distance)
     {
-        double initialX = odometry.getRelativePose().getX();
         double finalY = odometry.getRelativePose().getY() + distance;
         while(Math.abs(finalY - odometry.getRelativePose().getY()) > minError) {
             driver.setVelocity(odometry.getRelativeVelocity(new MovementVector(-10 * Math.signum(distance), 0,0)));
@@ -41,9 +40,7 @@ public class OdometryNavigation {
 
     public void driveHorizontal(double distance)
     {
-        double initialY = odometry.getRelativePose().getY();
-        double initialX = odometry.getRelativePose().getX();
-        double finalX = initialX + distance;
+        double finalX = odometry.getRelativePose().getX() + distance;
         while(Math.abs(finalX - odometry.getRelativePose().getX()) > minError) {
             driver.setVelocity(odometry.getRelativeVelocity(new MovementVector(0, 10 * Math.signum(distance),0)));
             this.odometry.update();

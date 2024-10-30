@@ -11,6 +11,7 @@ public class AutoPlaceYellow extends EasyAuto {
     public void run() {
 
         verticalMovement(5);
+        System.out.println(this.odometry.getRelativeVelocity(0,1));
         horizontalMovement(33.5 + Constants.Robot.ROBOT_WIDTH_IN / 2);
         verticalMovement(5);
         // place specimen
