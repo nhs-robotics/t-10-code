@@ -17,10 +17,11 @@ import t10.utils.MovementVector;
 
 public abstract class EasyAuto extends AutonomousOpMode {
     private IntoTheDeepRobotConfiguration config;
-    private MecanumDriver driver;
-    private NovelOdometry odometry;
-    private OdometryNavigation navigator;
-    private Telemetry.Item x, y, r;
+    public MecanumDriver driver;
+    public NovelOdometry odometry;
+    public OdometryNavigation navigator;
+    public Telemetry.Item x, y, r;
+    public double idealAngle = 0;
 
 
     public EasyAuto() {}
@@ -30,7 +31,7 @@ public abstract class EasyAuto extends AutonomousOpMode {
         this.config = new IntoTheDeepRobotConfiguration(this.hardwareMap);
         this.driver = config.createMecanumDriver();
         this.odometry = config.createOdometry();
-        this.navigator = new OdometryNavigation(odometry, driver, telemetry, x, y, r);
+        this.navigator = new OdometryNavigation(odometry, driver);
         this.x = this.telemetry.addData("x_novel: ", "0");
         this.y = this.telemetry.addData("y_novel: ", "0");
         this.r = this.telemetry.addData("r_novel: ", "0");
@@ -43,24 +44,29 @@ public abstract class EasyAuto extends AutonomousOpMode {
 
     public void horizontalMovement(double distX) {
         this.navigator.driveHorizontal(distX);
-        sleep(1);
     }
 
     public void verticalMovement(double distY) {
         this.navigator.driveLateral(distY);
-        sleep(1);
     }
 
     public void diagonalMovement(double distX, double distY) {
         this.navigator.driveDiagonal(distX,distY);
-        sleep(1);
     }
 
     public void turnTo(double angle) {
         this.navigator.turnAbsolute(angle);
+        idealAngle = angle;
     }
 
     public void turnRelative(double angle) {
         this.navigator.turnRelative(angle);
+        idealAngle += angle;
+        if(idealAngle > 180) {idealAngle -= 180;}
+        if(idealAngle < -180) {idealAngle += 180;}
+    }
+    public void angleCorrect()
+    {
+        turnTo(idealAngle);
     }
 }

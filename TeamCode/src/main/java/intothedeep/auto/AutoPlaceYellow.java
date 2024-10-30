@@ -1,18 +1,24 @@
 package intothedeep.auto;
 
+import android.os.SystemClock;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+
 import intothedeep.Constants;
+import t10.utils.MovementVector;
 
 @Autonomous
 public class AutoPlaceYellow extends EasyAuto {
 
     @Override
     public void run() {
-
         verticalMovement(5);
         horizontalMovement(33.5 + Constants.Robot.ROBOT_WIDTH_IN / 2);
+        angleCorrect();
         verticalMovement(5);
+        SystemClock.sleep(1000);
         // place specimen
         verticalMovement(-5);
         horizontalMovement(-33.5 + Constants.Robot.ROBOT_WIDTH_IN / 2);
@@ -20,11 +26,14 @@ public class AutoPlaceYellow extends EasyAuto {
         turnTo(-90);
         horizontalMovement(5);
         for (int i = 0; i < 3; i++) {
+            angleCorrect();
             verticalMovement(40 - Constants.Robot.ROBOT_WIDTH_IN / 2);
             // grab samples
             // Note: first sample is around 5" in front of roboto, with each being 10" farther than the next
+            SystemClock.sleep(1000);
             verticalMovement(-(40 - Constants.Robot.ROBOT_WIDTH_IN / 2));
             horizontalMovement(-(11.31 + 5));
+            angleCorrect();
             verticalMovement(11.31 - 5);
             turnTo(-45);
             // place in top basket
@@ -32,7 +41,7 @@ public class AutoPlaceYellow extends EasyAuto {
             verticalMovement(11.31 - 5);
             horizontalMovement(11.31 + 5);
         }
-
+        angleCorrect();
         verticalMovement(50 - 5);
         horizontalMovement(-20);
     }

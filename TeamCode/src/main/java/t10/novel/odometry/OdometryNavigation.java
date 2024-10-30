@@ -9,24 +9,18 @@ import t10.utils.MovementVector;
 public class OdometryNavigation {
     private NovelOdometry odometry;
     private MecanumDriver driver;
-    private Telemetry telemetry;
     public final double minError;
     public final double minAngleError;
     public final double maxLatVelocity;
     public final double maxAngVelocity;
-    private final Telemetry.Item x, y, r;
 
-    public OdometryNavigation(NovelOdometry odometry, MecanumDriver driver, Telemetry telemetry, Telemetry.Item x, Telemetry.Item y, Telemetry.Item r) {
+    public OdometryNavigation(NovelOdometry odometry, MecanumDriver driver) {
         this.odometry = odometry;
         this.driver = driver;
         this.minError = 0.5;
         this.minAngleError = 5; //in degrees here
         maxLatVelocity = 10;
         maxAngVelocity = 15;
-        this.telemetry = telemetry;
-        this.x = x;
-        this.y = y;
-        this.r = r;
     }
 
 
@@ -37,7 +31,7 @@ public class OdometryNavigation {
         double initialX = odometry.getRelativePose().getX();
         double finalY = odometry.getRelativePose().getY() + distance;
         while(Math.abs(finalY - odometry.getRelativePose().getY()) > minError) {
-            driver.setVelocity(odometry.getRelativeVelocity(new MovementVector(-10 * Math.signum(distance), initialX - odometry.getRelativePose().getX(),0)));
+            driver.setVelocity(odometry.getRelativeVelocity(new MovementVector(-10 * Math.signum(distance), 0,0)));
             this.odometry.update();
             this.telemetryUpdate();
         }
@@ -50,7 +44,7 @@ public class OdometryNavigation {
         double initialX = odometry.getRelativePose().getX();
         double finalX = initialX + distance;
         while(Math.abs(finalX - odometry.getRelativePose().getX()) > minError) {
-            driver.setVelocity(odometry.getRelativeVelocity(new MovementVector(-(initialY - odometry.getRelativePose().getY()), 10 * Math.signum(distance),0)));
+            driver.setVelocity(odometry.getRelativeVelocity(new MovementVector(0, 10 * Math.signum(distance),0)));
             this.odometry.update();
             this.telemetryUpdate();
         }
@@ -225,10 +219,6 @@ public class OdometryNavigation {
 
     private void telemetryUpdate()
     {
-        this.x.setValue(this.odometry.getRelativePose().getX());
-        this.y.setValue(this.odometry.getRelativePose().getY());
-        this.r.setValue(this.odometry.getRelativePose().getHeading(AngleUnit.DEGREES));
-        telemetry.update();
     }
 
 }
