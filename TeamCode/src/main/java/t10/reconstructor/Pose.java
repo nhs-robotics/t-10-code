@@ -10,7 +10,7 @@ import t10.utils.MovementVector;
 public class Pose extends Point {
     protected double headingRadians;
 
-    public Pose(double x, double y, double heading, AngleUnit angleUnit) {
+    public Pose(double y, double x, double heading, AngleUnit angleUnit) {
         super(x, y);
         this.headingRadians = angleUnit.toRadians(heading);
     }
@@ -20,7 +20,7 @@ public class Pose extends Point {
      * @param novelVector A vector that you would pass into a Novel setVelocity call.
      */
     public Pose(MovementVector novelVector, double robotDiameter) {
-        super(novelVector.getHorizontal(), novelVector.getVertical());
+        super(novelVector.getVertical(), novelVector.getHorizontal());
 
         /*
          * Proof of headingRadians calculation.
@@ -53,8 +53,8 @@ public class Pose extends Point {
 
     public Pose add(Pose pose) {
         return new Pose(
-                this.x + pose.x,
                 this.y + pose.y,
+                this.x + pose.x,
                 this.headingRadians + pose.headingRadians,
                 AngleUnit.RADIANS
         );
@@ -62,18 +62,18 @@ public class Pose extends Point {
 
     public Pose subtract(Pose pose) {
         return new Pose(
-                this.x - pose.x,
                 this.y - pose.y,
+                this.x - pose.x,
                 this.headingRadians - pose.headingRadians,
                 AngleUnit.RADIANS
         );
     }
 
-    public static MovementVector toMovementVector(Pose pose) {
-        return new MovementVector(pose.getX(), pose.getY(), pose.getHeading(AngleUnit.DEGREES));
+    public MovementVector toMovementVector() {
+        return new MovementVector(getY(), getX(), getHeading(AngleUnit.DEGREES));
     }
 
     public static Pose fromMovementVector(MovementVector vector3D) {
-        return new Pose(vector3D.getHorizontal(), vector3D.getVertical(), vector3D.getRotation(), AngleUnit.DEGREES);
+        return new Pose(vector3D.getVertical(), vector3D.getHorizontal(), vector3D.getRotation(), AngleUnit.DEGREES);
     }
 }

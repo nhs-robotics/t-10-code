@@ -1,7 +1,7 @@
 package t10.gamepad.input;
 
 /**
- * An input that has an analog value. For example, a joystick ({@link t10.gamepad.input.types.GJoystick}).
+ * An input that can be moved. For example, a joystick ({@link t10.gamepad.input.types.GJoystick}).
  * @param <T> This type.
  */
 public interface GAnalog<T> {
