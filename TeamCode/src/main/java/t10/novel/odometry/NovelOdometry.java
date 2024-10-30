@@ -110,7 +110,7 @@ public class NovelOdometry {
     {
         double theta = relativePose.getHeading(AngleUnit.RADIANS);
         double forwardRelative = absoluteVelocity.getVertical() * Math.cos(theta) + absoluteVelocity.getHorizontal() * Math.sin(theta);
-        double rightwardRelative = absoluteVelocity.getVertical() * Math.sin(-theta) + absoluteVelocity.getHorizontal() * Math.cos(theta);
+        double rightwardRelative = absoluteVelocity.getVertical() * Math.sin(theta) + absoluteVelocity.getHorizontal() * Math.cos(theta);
         return new MovementVector(forwardRelative,rightwardRelative, 0);
     }
 
