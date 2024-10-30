@@ -30,7 +30,7 @@ public abstract class EasyAuto extends AutonomousOpMode {
         this.config = new IntoTheDeepRobotConfiguration(this.hardwareMap);
         this.driver = config.createMecanumDriver();
         this.odometry = config.createOdometry();
-        this.navigator = new OdometryNavigation(odometry, driver, telemetry);
+        this.navigator = new OdometryNavigation(odometry, driver, telemetry, x, y, r);
         this.x = this.telemetry.addData("x_novel: ", "0");
         this.y = this.telemetry.addData("y_novel: ", "0");
         this.r = this.telemetry.addData("r_novel: ", "0");

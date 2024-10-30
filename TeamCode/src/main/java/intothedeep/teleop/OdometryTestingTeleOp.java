@@ -42,7 +42,7 @@ public class OdometryTestingTeleOp extends TeleOpOpMode {
                 .b.initialToggleState(false).ok();
 
         this.odometry = c.createOdometry();
-        this.navigator = new OdometryNavigation(odometry, driver, telemetry);
+        this.navigator = new OdometryNavigation(odometry, driver, telemetry, x, y, r);
 
         //this.telemetry.setNumDecimalPlaces(0, 4);
         this.x = this.telemetry.addData("x_novel: ", "0");

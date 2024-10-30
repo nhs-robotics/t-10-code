@@ -14,8 +14,9 @@ public class OdometryNavigation {
     public final double minAngleError;
     public final double maxLatVelocity;
     public final double maxAngVelocity;
+    private final Telemetry.Item x, y, r;
 
-    public OdometryNavigation(NovelOdometry odometry, MecanumDriver driver, Telemetry telemetry) {
+    public OdometryNavigation(NovelOdometry odometry, MecanumDriver driver, Telemetry telemetry, Telemetry.Item x, Telemetry.Item y, Telemetry.Item r) {
         this.odometry = odometry;
         this.driver = driver;
         this.minError = 0.5;
@@ -23,6 +24,9 @@ public class OdometryNavigation {
         maxLatVelocity = 10;
         maxAngVelocity = 15;
         this.telemetry = telemetry;
+        this.x = x;
+        this.y = y;
+        this.r = r;
     }
 
 
@@ -33,8 +37,9 @@ public class OdometryNavigation {
         double initialX = odometry.getRelativePose().getX();
         double finalY = odometry.getRelativePose().getY() + distance;
         while(Math.abs(finalY - odometry.getRelativePose().getY()) > minError) {
-            driver.setVelocity(odometry.getRelativeVelocity(new MovementVector(-10 * Math.signum(distance), 0,0)));
+            driver.setVelocity(odometry.getRelativeVelocity(new MovementVector(-10 * Math.signum(distance), initialX - odometry.getRelativePose().getX(),0)));
             this.odometry.update();
+            this.telemetryUpdate();
         }
         driver.setVelocity(new MovementVector(0,0,0));
     }
@@ -45,8 +50,9 @@ public class OdometryNavigation {
         double initialX = odometry.getRelativePose().getX();
         double finalX = initialX + distance;
         while(Math.abs(finalX - odometry.getRelativePose().getX()) > minError) {
-            driver.setVelocity(odometry.getRelativeVelocity(new MovementVector(0, 10 * Math.signum(distance),0)));
+            driver.setVelocity(odometry.getRelativeVelocity(new MovementVector(-(initialY - odometry.getRelativePose().getY()), 10 * Math.signum(distance),0)));
             this.odometry.update();
+            this.telemetryUpdate();
         }
         driver.setVelocity(new MovementVector(0,0,0));
     }
@@ -75,6 +81,7 @@ public class OdometryNavigation {
             }
             driver.setVelocity(odometry.getRelativeVelocity(new MovementVector(speedY, speedX,0)));
             this.odometry.update();
+            this.telemetryUpdate();
         }
         driver.setVelocity(new MovementVector(0,0,0));
     }
@@ -85,6 +92,7 @@ public class OdometryNavigation {
         {
             driver.setVelocity(new MovementVector(0,0,findTurnSpeed(odometry.getRelativePose().getHeading(AngleUnit.DEGREES), angle)));
             this.odometry.update();
+            this.telemetryUpdate();
         }
         driver.setVelocity(new MovementVector(0,0,0));
     }
@@ -119,46 +127,47 @@ public class OdometryNavigation {
             }
             driver.setVelocity(odometry.getRelativeVelocity(new MovementVector(speedY, speedX,0)));
             this.odometry.update();
+            this.telemetryUpdate();
         }
         driver.setVelocity(new MovementVector(0,0,0));
     }
-/** attempted perfect arbitrary to-point driving
-    public void driveSmart(Pose targetPose)
-    {
-        MovementVector vector = calcTrigVelocity(targetPose,odometry.getRelativePose());
-        vector = new MovementVector(-vector.getVertical(), vector.getHorizontal(), vector.getRotation());
-        driver.setVelocity(vector);
-    }
-    public MovementVector calcTrigVelocity(Pose targetPose, Pose currentPose)
-    {
-        double deltaY = targetPose.getX() - currentPose.getX();
-        double deltaY_abs = Math.abs(deltaY);
-        double deltaX = targetPose.getY() - currentPose.getY();
-        double deltaX_abs = Math.abs(deltaX);
-        double currentAngle = currentPose.getHeading(AngleUnit.RADIANS);
-        double targetAngle = targetPose.getHeading(AngleUnit.RADIANS);
-        if (deltaY_abs < minError && deltaX_abs < minError)
-        {
-            return new MovementVector(0,0, findTurnSpeed(currentAngle,targetAngle));
-        }
-        else if (deltaY_abs < 5*minError && deltaX_abs > 5*minError)
-        {
-            return odometry.getRelativeVelocity(10*Math.signum(deltaY),deltaX);
+    /** attempted perfect arbitrary to-point driving
+     public void driveSmart(Pose targetPose)
+     {
+     MovementVector vector = calcTrigVelocity(targetPose,odometry.getRelativePose());
+     vector = new MovementVector(-vector.getVertical(), vector.getHorizontal(), vector.getRotation());
+     driver.setVelocity(vector);
+     }
+     public MovementVector calcTrigVelocity(Pose targetPose, Pose currentPose)
+     {
+     double deltaY = targetPose.getX() - currentPose.getX();
+     double deltaY_abs = Math.abs(deltaY);
+     double deltaX = targetPose.getY() - currentPose.getY();
+     double deltaX_abs = Math.abs(deltaX);
+     double currentAngle = currentPose.getHeading(AngleUnit.RADIANS);
+     double targetAngle = targetPose.getHeading(AngleUnit.RADIANS);
+     if (deltaY_abs < minError && deltaX_abs < minError)
+     {
+     return new MovementVector(0,0, findTurnSpeed(currentAngle,targetAngle));
+     }
+     else if (deltaY_abs < 5*minError && deltaX_abs > 5*minError)
+     {
+     return odometry.getRelativeVelocity(10*Math.signum(deltaY),deltaX);
 
-        }
-        else if (deltaY_abs > 5*minError && deltaX_abs < 5*minError)
-        {
-            return odometry.getRelativeVelocity(deltaY,10 * Math.signum(deltaX));
-        }
-        else if (deltaX_abs > 5*minError && deltaY_abs > 5*minError)
-        {
-            return odometry.getRelativeVelocity(10 * Math.signum(deltaY),10 * Math.signum(deltaX));
-        }
-        else {
-            return new MovementVector(deltaY,deltaX,0);
-        }
-    }
-*/
+     }
+     else if (deltaY_abs > 5*minError && deltaX_abs < 5*minError)
+     {
+     return odometry.getRelativeVelocity(deltaY,10 * Math.signum(deltaX));
+     }
+     else if (deltaX_abs > 5*minError && deltaY_abs > 5*minError)
+     {
+     return odometry.getRelativeVelocity(10 * Math.signum(deltaY),10 * Math.signum(deltaX));
+     }
+     else {
+     return new MovementVector(deltaY,deltaX,0);
+     }
+     }
+     */
 
     public boolean needAngleCorrectionDegrees(double currentAngle, double targetAngle)
     {
@@ -212,6 +221,14 @@ public class OdometryNavigation {
         else {
             return maxAngVelocity * direction;
         }
+    }
+
+    private void telemetryUpdate()
+    {
+        this.x.setValue(this.odometry.getRelativePose().getX());
+        this.y.setValue(this.odometry.getRelativePose().getY());
+        this.r.setValue(this.odometry.getRelativePose().getHeading(AngleUnit.DEGREES));
+        telemetry.update();
     }
 
 }
