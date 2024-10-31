@@ -3,6 +3,7 @@ package t10.novel.odometry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import t10.novel.NovelEncoder;
 import t10.reconstructor.Pose;
+import t10.utils.MovementVector;
 
 /**
  * Odometry localization interface.
@@ -66,19 +67,19 @@ public class NovelOdometry {
         double deltaPerpendicularWheelPos = this.coefficients.perpendicularCoefficient * (newPerpendicularWheelPos - this.perpendicularWheelPos);
 
         double phi = (deltaLeftWheelPos - deltaRightWheelPos) / this.lateralWheelDistance;
-        double deltaMiddlePos = (deltaLeftWheelPos + deltaRightWheelPos) / 2d;
-        double deltaPerpendicularPos = deltaPerpendicularWheelPos - this.perpendicularWheelOffset * phi;
+        double forwardRelative = (deltaLeftWheelPos + deltaRightWheelPos) / 2d;
+        double rightwardRelative = deltaPerpendicularWheelPos - this.perpendicularWheelOffset * phi;
 
         // Heading of movement is assumed average between last known and current rotation
         //                    CURRENT ROTATION                                             LAST SAVED ROTATION       
         // double currentRotation = phi + this.relativePose.getHeading(AngleUnit.RADIANS);
         // double lastRotation = this.relativePose.getHeading(AngleUnit.RADIANS);
         // double averageRotationOverObservationPeriod = (currentRotation + lastRotation) / 2;
-        double heading = phi + this.relativePose.getHeading(AngleUnit.RADIANS);
-        double deltaX = deltaMiddlePos * Math.sin(heading) + deltaPerpendicularPos * Math.cos(heading);
-        double deltaY = deltaMiddlePos * Math.cos(heading) - deltaPerpendicularPos * Math.sin(heading);
+        double heading = this.relativePose.getHeading(AngleUnit.RADIANS) - phi;
+        double deltaX = forwardRelative * Math.sin(heading) + rightwardRelative * Math.cos(heading);
+        double deltaY = forwardRelative * Math.cos(heading) - rightwardRelative * Math.sin(heading);
 
-        this.relativePose = this.relativePose.add(new Pose(deltaX, deltaY, phi, AngleUnit.RADIANS));
+        this.relativePose = this.relativePose.add(new Pose(-deltaY, deltaX, -phi, AngleUnit.RADIANS));
 
         // Update encoder wheel position
         this.leftWheelPos = newLeftWheelPos;
@@ -103,5 +104,19 @@ public class NovelOdometry {
         this.leftWheelPos = this.leftEncoder.getCurrentInches();
         this.rightWheelPos = this.rightEncoder.getCurrentInches();
         this.perpendicularWheelPos = this.perpendicularEncoder.getCurrentInches();
+    }
+
+    public MovementVector getRelativeVelocity(MovementVector absoluteVelocity)
+    {
+        double theta = relativePose.getHeading(AngleUnit.RADIANS);
+        double forwardRelative = absoluteVelocity.getVertical() * Math.cos(theta) + absoluteVelocity.getHorizontal() * Math.sin(theta);
+        double rightwardRelative = absoluteVelocity.getVertical() * Math.sin(theta) + absoluteVelocity.getHorizontal() * Math.cos(theta);
+        return new MovementVector(forwardRelative,rightwardRelative, 0);
+    }
+
+    //IMPORTANT - this MUST be iterated, otherwise it'll keep going in the earlier direction while rotating - and not work
+    public MovementVector getRelativeVelocity(double lateral, double horizontal)
+    {
+        return getRelativeVelocity(new MovementVector(lateral,horizontal, 0));
     }
 }

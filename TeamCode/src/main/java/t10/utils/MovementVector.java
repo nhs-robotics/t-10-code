@@ -11,8 +11,8 @@ public class MovementVector implements Serializable {
 
     private final Vector3D vector;
 
-    public MovementVector(double horizontal, double vertical, double rotation) {
-        this.vector = new Vector3D(horizontal, vertical, rotation);
+    public MovementVector(double vertical, double horizontal, double rotation) {
+        this.vector = new Vector3D(vertical, horizontal, rotation);
     }
 
     public MovementVector(double[] v) {
@@ -46,11 +46,11 @@ public class MovementVector implements Serializable {
     }
 
     // Getters for the renamed components
-    public double getHorizontal() {
+    public double getVertical() {
         return vector.getX();
     }
 
-    public double getVertical() {
+    public double getHorizontal() {
         return vector.getY();
     }
 

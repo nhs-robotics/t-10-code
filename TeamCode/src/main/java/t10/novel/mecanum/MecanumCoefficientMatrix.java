@@ -66,30 +66,4 @@ public class MecanumCoefficientMatrix {
         );
     }
 
-    public MovementVector calculatePowerWithCoefficients(MecanumCoefficientSet coefficientSet) {
-        double horizontalPower = 0;
-        double verticalPower = 0;
-        double rotationalPower = 0;
-
-        // Assuming inverse relationships for coefficient calculation:
-        horizontalPower += coefficientSet.frontLeft / totals.frontLeft / horizontal.frontLeft;
-        horizontalPower += coefficientSet.frontRight / totals.frontRight / horizontal.frontRight;
-        horizontalPower += coefficientSet.backLeft / totals.backLeft / horizontal.backLeft;
-        horizontalPower += coefficientSet.backRight / totals.backRight / horizontal.backRight;
-        horizontalPower /= 4d;
-
-        verticalPower += coefficientSet.frontLeft / totals.frontLeft / vertical.frontLeft;
-        verticalPower += coefficientSet.frontRight / totals.frontRight / vertical.frontRight;
-        verticalPower += coefficientSet.backLeft / totals.backLeft / vertical.backLeft;
-        verticalPower += coefficientSet.backRight / totals.backRight / vertical.backRight;
-        verticalPower /= 4d;
-
-        rotationalPower += coefficientSet.frontLeft / totals.frontLeft / rotational.frontLeft;
-        rotationalPower += coefficientSet.frontRight / totals.frontRight / rotational.frontRight;
-        rotationalPower += coefficientSet.backLeft / totals.backLeft / rotational.backLeft;
-        rotationalPower += coefficientSet.backRight / totals.backRight / rotational.backRight;
-        rotationalPower /= 4d;
-
-        return new MovementVector(horizontalPower, verticalPower, rotationalPower);
-    }
 }
