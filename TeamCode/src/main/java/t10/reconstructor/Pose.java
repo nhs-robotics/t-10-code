@@ -69,8 +69,8 @@ public class Pose extends Point {
         );
     }
 
-    public static MovementVector toMovementVector(Pose pose) {
-        return new MovementVector(pose.getY(), pose.getX(), pose.getHeading(AngleUnit.DEGREES));
+    public MovementVector toMovementVector() {
+        return new MovementVector(getY(), getX(), getHeading(AngleUnit.DEGREES));
     }
 
     public static Pose fromMovementVector(MovementVector vector3D) {
