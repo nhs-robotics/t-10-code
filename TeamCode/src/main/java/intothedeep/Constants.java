@@ -32,12 +32,6 @@ public class Constants {
     }
 
     public static class Odometry {
-        public static final double ODOMETRY_LATERAL_WHEEL_DISTANCE = 12;
-
-        /**
-         * Distance (in) from the perpendicular odometry wheel to the center of rotation of the robot.
-         */
-        public static final double ODOMETRY_PERPENDICULAR_WHEEL_OFFSET = 7;
 
         public static final double ODOMETRY_WHEEL_DIAMETER_IN = 2.0;
         public static final double TICKS_PER_ODOMETRY_REVOLUTION = 8192;
