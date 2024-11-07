@@ -74,24 +74,12 @@ public class IntoTheDeepRobotConfiguration extends AbstractRobotConfiguration {
         );
     }
 
-    // NOTE: LinearSlideLeft has the right odometer encoder
-    @Hardware(name = "LinearSlideLeft")
-    public NovelMotor odometryRight;
-
-    // NOTE: SpinningIntake has the left odometer encoder
-    @Hardware(name = "SpinningIntake")
-    public NovelMotor odometryLeft;
-
-    // NOTE: Roller has the perpendicular odometer encoder
-    @Hardware(name = "Roller")
-    public NovelMotor odometryPerpendicular;
-
     public NovelOdometry createOdometry() {
         return new NovelOdometry(
                 new OdometryCoefficientSet(1, 1, 1),
-                new NovelEncoder(this.odometryRight.motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
-                new NovelEncoder(this.odometryLeft.motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
-                new NovelEncoder(this.odometryPerpendicular.motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
+                new NovelEncoder(this.bl.motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
+                new NovelEncoder(this.fl.motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
+                new NovelEncoder(this.fr.motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
                 9.5,
                 11
         );
