@@ -118,19 +118,15 @@ public class AutoBuilder extends TeleOpOpMode {
                 commandType = CommandType.ROTATIONAL;
                 commandTypeSet = true;
             } else if (gamepad1.left_bumper) {
+                try {
+                    autoFileWriter.append("\t}\n");
+                    autoFileWriter.append("}\n");
+                    autoFileWriter.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
                 stop();
             }
-        }
-    }
-
-    @Override
-    public void stop() {
-        try {
-            autoFileWriter.append("\t}\n");
-            autoFileWriter.append("}\n");
-            autoFileWriter.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
 
