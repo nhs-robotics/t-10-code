@@ -89,6 +89,6 @@ public class AzazelRobotConfiguration extends AbstractRobotConfiguration {
 
     @Override
     public NovelOdometry createOdometry() {
-        return new NovelOdometry(OdometryCoefficientSet.DEFAULT, spinningIntake.encoder, roller.encoder, linearSlideLeft.encoder, Constants.Odometry.ODOMETRY_LATERAL_WHEEL_DISTANCE, Constants.Odometry.ODOMETRY_PERPENDICULAR_WHEEL_OFFSET);
+        return new NovelOdometry(OdometryCoefficientSet.DEFAULT, spinningIntake.encoder, roller.encoder, linearSlideLeft.encoder, 12, 7;
     }
 }
