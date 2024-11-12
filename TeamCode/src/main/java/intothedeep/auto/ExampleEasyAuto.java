@@ -6,6 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 public class ExampleEasyAuto extends EasyAuto {
     @Override
     public void run() {
-        horizontalMovement(20, 3);
+        horizontalMovement(20);
     }
 }
