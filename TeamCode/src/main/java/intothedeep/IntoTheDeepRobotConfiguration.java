@@ -62,6 +62,15 @@ public class IntoTheDeepRobotConfiguration extends AbstractRobotConfiguration {
         );
     }
 
+    @Hardware(name = "OL")
+    public NovelMotor odometryLeft;
+
+    @Hardware(name = "OR")
+    public NovelMotor odometryRight;
+
+    @Hardware(name = "OP")
+    public NovelMotor odometryPerpendicular;
+
     @Override
     public MecanumDriver createMecanumDriver() {
         return new MecanumDriver(
@@ -70,16 +79,16 @@ public class IntoTheDeepRobotConfiguration extends AbstractRobotConfiguration {
                 this.bl,
                 this.br,
                 this.imu,
-                Constants.Coefficients.PRODUCTION_COEFFICIENTS
+                Constants.Coefficients.SNOWBALL_COEFFICIENTS
         );
     }
 
     public NovelOdometry createOdometry() {
         return new NovelOdometry(
                 new OdometryCoefficientSet(1, 1, 1),
-                new NovelEncoder(this.bl.motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
-                new NovelEncoder(this.fl.motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
-                new NovelEncoder(this.fr.motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
+                new NovelEncoder(this.odometryRight.motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
+                new NovelEncoder(this.odometryLeft.motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
+                new NovelEncoder(this.odometryPerpendicular.motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
                 9.5,
                 11
         );

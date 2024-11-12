@@ -1,8 +1,6 @@
 package intothedeep.teleop;
 
-import intothedeep.IntoTheDeepRobotConfiguration;
 import intothedeep.Constants;
-import intothedeep.teleop.AzazelRobotCapabilities;
 import t10.bootstrap.TeleOpOpMode;
 import t10.gamepad.GController;
 import t10.novel.mecanum.MecanumDriver;
@@ -10,8 +8,6 @@ import t10.novel.mecanum.MecanumDriver;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 @TeleOp(name = "Azazel Tele-Op")
@@ -28,7 +24,7 @@ public class AzazelTeleOp extends TeleOpOpMode {
     public void initialize() {
         this.c = new AzazelRobotConfiguration(this.hardwareMap);
         this.capabilities = new AzazelRobotCapabilities(c);
-        this.driver = new MecanumDriver(c.fl, c.fr, c.bl, c.br, c.imu, Constants.Coefficients.PRODUCTION_COEFFICIENTS);
+        this.driver = new MecanumDriver(c.fl, c.fr, c.bl, c.br, c.imu, Constants.Coefficients.KEVIN_COEFFICIENTS);
 
         this.gamepadController = new GController(this.gamepad1)
                 .x.ok()

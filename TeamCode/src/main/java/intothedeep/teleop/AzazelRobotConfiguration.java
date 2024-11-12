@@ -10,7 +10,6 @@ import t10.vision.Webcam;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.*;
 import intothedeep.Constants;
-import t10.novel.odometry.NovelOdometry;
 
 public class AzazelRobotConfiguration extends AbstractRobotConfiguration {
     @Hardware(name = "Webcam")
@@ -84,11 +83,11 @@ public class AzazelRobotConfiguration extends AbstractRobotConfiguration {
 
     @Override
     public MecanumDriver createMecanumDriver() {
-        return new MecanumDriver(fl, fr, bl, br, imu, Constants.Coefficients.PRODUCTION_COEFFICIENTS);
+        return new MecanumDriver(fl, fr, bl, br, imu, Constants.Coefficients.KEVIN_COEFFICIENTS);
     }
 
     @Override
     public NovelOdometry createOdometry() {
-        return new NovelOdometry(OdometryCoefficientSet.DEFAULT, spinningIntake.encoder, roller.encoder, linearSlideLeft.encoder, 12, 7;
+        return new NovelOdometry(OdometryCoefficientSet.DEFAULT, spinningIntake.encoder, roller.encoder, linearSlideLeft.encoder, 12, 7);
     }
 }

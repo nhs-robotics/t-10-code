@@ -84,7 +84,7 @@ public class KevinRobotConfiguration extends AbstractRobotConfiguration {
                 this.bl,
                 this.br,
                 this.imu,
-                Constants.Coefficients.PRODUCTION_COEFFICIENTS
+                Constants.Coefficients.KEVIN_COEFFICIENTS
         );
     }
 

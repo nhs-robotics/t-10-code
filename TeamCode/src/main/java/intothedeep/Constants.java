@@ -39,7 +39,11 @@ public class Constants {
     }
 
     public static class Coefficients {
-        public static final MecanumCoefficientMatrix PRODUCTION_COEFFICIENTS = new MecanumCoefficientMatrix(new double[]{
+        public static final MecanumCoefficientMatrix SNOWBALL_COEFFICIENTS = new MecanumCoefficientMatrix(new double[] {
+                1, -1, -1, 1
+        });
+
+        public static final MecanumCoefficientMatrix KEVIN_COEFFICIENTS = new MecanumCoefficientMatrix(new double[]{
                 1, -1, 1, -1
         });
 
