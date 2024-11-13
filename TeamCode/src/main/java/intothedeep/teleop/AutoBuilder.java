@@ -80,6 +80,7 @@ public class AutoBuilder extends TeleOpOpMode {
                 this.driver.halt();
                 try {
                     autoFileWriter.append(generateAutoCode(commandType, this.odometry.getRelativePose()));
+                    this.odometry.setRelativePose(new Pose(0, 0, this.odometry.getRelativePose().getHeading(AngleUnit.DEGREES), AngleUnit.DEGREES));
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }

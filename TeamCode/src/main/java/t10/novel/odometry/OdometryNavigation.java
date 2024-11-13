@@ -59,7 +59,7 @@ public class OdometryNavigation {
         double finalY = initialY + distanceY;
         while((Math.abs(finalX - odometry.getRelativePose().getX()) > minError) || (Math.abs(finalY - odometry.getRelativePose().getY()) > minError)) {
             double speedX, speedY;
-            if((Math.abs(finalX - odometry.getRelativePose().getX()) > minError))
+            /*if((Math.abs(finalX - odometry.getRelativePose().getX()) > minError))
             {
                 speedX = 10 * Math.signum(distanceX);
             }
@@ -68,11 +68,13 @@ public class OdometryNavigation {
             }
             if((Math.abs(finalY - odometry.getRelativePose().getY()) > minError))
             {
-                speedY = 10 * Math.signum(distanceY);
+                speedY = -10 * Math.signum(distanceY);
             }
             else {
-                speedY = finalY - odometry.getRelativePose().getY();
-            }
+                speedY = -(finalY - odometry.getRelativePose().getY());
+            }*/
+            speedX = 10 * Math.signum(distanceX);
+            speedY = -10 * Math.signum(distanceY);
             driver.setVelocity(odometry.getRelativeVelocity(new MovementVector(speedY, speedX,0)));
             this.odometry.update();
             this.telemetryUpdate();

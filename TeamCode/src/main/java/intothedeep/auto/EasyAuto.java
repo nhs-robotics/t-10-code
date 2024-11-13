@@ -44,19 +44,39 @@ public abstract class EasyAuto extends AutonomousOpMode {
 
     public void horizontalMovement(double distX) {
         this.navigator.driveHorizontal(distX);
+        odometry.update();
+        this.x = this.telemetry.addData("x_novel: ", odometry.getRelativePose().getX());
+        this.y = this.telemetry.addData("y_novel: ", odometry.getRelativePose().getY());
+        this.r = this.telemetry.addData("r_novel: ", odometry.getRelativePose().getHeading(AngleUnit.DEGREES));
+        telemetry.update();
     }
 
     public void verticalMovement(double distY) {
         this.navigator.driveLateral(distY);
+        odometry.update();
+        this.x = this.telemetry.addData("x_novel: ", odometry.getRelativePose().getX());
+        this.y = this.telemetry.addData("y_novel: ", odometry.getRelativePose().getY());
+        this.r = this.telemetry.addData("r_novel: ", odometry.getRelativePose().getHeading(AngleUnit.DEGREES));
+        telemetry.update();
     }
 
     public void diagonalMovement(double distX, double distY) {
         this.navigator.driveDiagonal(distX,distY);
+        odometry.update();
+        this.x = this.telemetry.addData("x_novel: ", odometry.getRelativePose().getX());
+        this.y = this.telemetry.addData("y_novel: ", odometry.getRelativePose().getY());
+        this.r = this.telemetry.addData("r_novel: ", odometry.getRelativePose().getHeading(AngleUnit.DEGREES));
+        telemetry.update();
     }
 
     public void turnTo(double angle) {
         this.navigator.turnAbsolute(angle);
         idealAngle = angle;
+        odometry.update();
+        this.x = this.telemetry.addData("x_novel: ", odometry.getRelativePose().getX());
+        this.y = this.telemetry.addData("y_novel: ", odometry.getRelativePose().getY());
+        this.r = this.telemetry.addData("r_novel: ", odometry.getRelativePose().getHeading(AngleUnit.DEGREES));
+        telemetry.update();
     }
 
     public void turnRelative(double angle) {
