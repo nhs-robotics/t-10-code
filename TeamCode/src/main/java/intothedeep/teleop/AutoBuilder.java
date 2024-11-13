@@ -13,6 +13,7 @@ import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import intothedeep.IntoTheDeepRobotConfiguration;
 import intothedeep.KevinRobotConfiguration;
 import t10.bootstrap.TeleOpOpMode;
 import t10.novel.mecanum.MecanumDriver;
@@ -24,9 +25,10 @@ import t10.utils.MovementVector;
 public class AutoBuilder extends TeleOpOpMode {
     private Writer autoFileWriter;
     private static final String BASE_DIRECTORY_PATH = "GeneratedAutos";
+    private static final double motorSpeed = 10;
 
     private MecanumDriver driver;
-    private KevinRobotConfiguration c;
+    private IntoTheDeepRobotConfiguration c;
     private NovelOdometry odometry;
     private CommandType commandType;
     private boolean commandTypeSet;
@@ -34,7 +36,7 @@ public class AutoBuilder extends TeleOpOpMode {
     @Override
     public void initialize() {
         print("Initializing...");
-        this.c = new KevinRobotConfiguration(this.hardwareMap);
+        this.c = new IntoTheDeepRobotConfiguration(this.hardwareMap);
         this.odometry = c.createOdometry();
         this.driver = c.createMecanumDriver();
 
@@ -43,7 +45,8 @@ public class AutoBuilder extends TeleOpOpMode {
         String directoryPath = Environment.getExternalStorageDirectory().getPath()+"/"+BASE_DIRECTORY_PATH;
         File directory = new File(directoryPath);
         directory.mkdir();
-        String filename = "auto_" + (SimpleDateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime())) ;
+        String filename = "auto_" + (SimpleDateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime()))
+                .replaceAll(", |:| ", "_");
 
         try {
             autoFileWriter = new FileWriter(directoryPath+"/"+filename+".java");
@@ -71,7 +74,8 @@ public class AutoBuilder extends TeleOpOpMode {
 
          if (commandTypeSet) {
             print(new String[] {"Use Joysticks to move",
-            "Press [RB] to save movement"});
+            "Press [RB] to save movement",
+            "ODOMETRY: " + odometry.getRelativePose().getY()});
             if (gamepad1.right_bumper) {
                 this.driver.halt();
                 try {
@@ -84,16 +88,16 @@ public class AutoBuilder extends TeleOpOpMode {
                 MovementVector movementVector = new MovementVector(0, 0, 0);
                 switch (commandType) {
                     case VERTICAL:
-                        movementVector = new MovementVector(this.gamepad1.left_stick_y*10, 0, 0);
+                        movementVector = new MovementVector(this.gamepad1.left_stick_y * motorSpeed, 0, 0);
                         break;
                     case HORIZONTAL:
-                        movementVector = new MovementVector(0, this.gamepad1.left_stick_x*10, 0);
+                        movementVector = new MovementVector(0, this.gamepad1.left_stick_x * motorSpeed, 0);
                         break;
                     case DIAGONAL:
-                        movementVector = new MovementVector(this.gamepad1.left_stick_y*10, this.gamepad1.left_stick_x*10, 0);
+                        movementVector = new MovementVector(this.gamepad1.left_stick_y * motorSpeed, this.gamepad1.left_stick_x * motorSpeed, 0);
                         break;
                     case ROTATIONAL:
-                        movementVector = new MovementVector(0, 0, this.gamepad1.right_stick_x*10);
+                        movementVector = new MovementVector(0, 0, this.gamepad1.right_stick_x * motorSpeed);
                         break;
                 }
                 this.driver.setVelocity(movementVector);
@@ -118,15 +122,19 @@ public class AutoBuilder extends TeleOpOpMode {
                 commandType = CommandType.ROTATIONAL;
                 commandTypeSet = true;
             } else if (gamepad1.left_bumper) {
-                try {
-                    autoFileWriter.append("\t}\n");
-                    autoFileWriter.append("}\n");
-                    autoFileWriter.close();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
                 stop();
             }
+        }
+    }
+
+    @Override
+    public void stop() {
+        try {
+            autoFileWriter.append("\t}\n");
+            autoFileWriter.append("}\n");
+            autoFileWriter.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
