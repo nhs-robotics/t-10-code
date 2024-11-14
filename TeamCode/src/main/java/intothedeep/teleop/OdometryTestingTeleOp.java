@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
+import intothedeep.IntoTheDeepRobotConfiguration;
 import intothedeep.KevinRobotConfiguration;
 import t10.bootstrap.TeleOpOpMode;
 import t10.gamepad.GController;
@@ -18,7 +19,7 @@ import t10.utils.MovementVector;
 public class OdometryTestingTeleOp extends TeleOpOpMode {
     private MecanumDriver driver;
     private GController gamepadController;
-    private KevinRobotConfiguration c;
+    private IntoTheDeepRobotConfiguration c;
     private NovelOdometry odometry;
     private OdometryNavigation navigator;
     private Telemetry.Item x;
@@ -32,7 +33,7 @@ public class OdometryTestingTeleOp extends TeleOpOpMode {
 
     @Override
     public void initialize() {
-        this.c = new KevinRobotConfiguration(this.hardwareMap);
+        this.c = new IntoTheDeepRobotConfiguration(this.hardwareMap);
         this.driver = this.c.createMecanumDriver();
         this.gamepadController = new GController(this.gamepad1)
                 .x.initialToggleState(false).ok();  // micro-movement
@@ -63,10 +64,10 @@ public class OdometryTestingTeleOp extends TeleOpOpMode {
         this.vert.setValue(this.odometry.getRelativeVelocity(-1,0));
         this.hor.setValue(this.odometry.getRelativeVelocity(0,1));
 
-        gamepadController.x.onPress(() -> navigator.driveHorizontal(-20));
-        gamepadController.a.onPress(() -> navigator.driveLateral(-20));
-        gamepadController.y.onPress(() -> navigator.driveLateral(20));
-        gamepadController.b.onPress(() -> navigator.driveHorizontal(20));
+        gamepadController.x.onPress(() -> navigator.driveDiagonal(-20,20));
+        gamepadController.a.onPress(() -> navigator.driveDiagonal(-20,-20));
+        gamepadController.y.onPress(() -> navigator.driveDiagonal(20,20));
+        gamepadController.b.onPress(() -> navigator.driveDiagonal(20,-20));
 
 
         gamepadController.dpadLeft.onPress(() -> navigator.turnAbsolute(-90));
