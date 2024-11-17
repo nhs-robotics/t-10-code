@@ -5,10 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
-import intothedeep.Constants;
 import t10.bootstrap.AbstractRobotConfiguration;
 import t10.bootstrap.Hardware;
 import t10.bootstrap.TeleOpOpMode;
@@ -17,8 +14,8 @@ import t10.novel.NovelMotor;
 import t10.novel.mecanum.MecanumDriver;
 import t10.novel.odometry.NovelOdometry;
 
-@TeleOp(name = "SlideTestCrude")
-public class LinearSlideTest extends TeleOpOpMode {
+@TeleOp(name = "DoubleSlideTest")
+public class DoubleSlideTest extends TeleOpOpMode {
     private GController gamepadController;
     private Telemetry.Item Speed, Direction, Encoder;
 
