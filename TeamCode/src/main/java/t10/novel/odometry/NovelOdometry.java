@@ -61,24 +61,24 @@ public class NovelOdometry {
         double newRightWheelPos = this.rightEncoder.getCurrentInches();
         double newPerpendicularWheelPos = this.perpendicularEncoder.getCurrentInches();
 
-        // Get changes in odometer wheel positions since last update
+        // Get changes in odometry wheel positions since last update - results from the robot's perspective
         double deltaLeftWheelPos = this.coefficients.leftCoefficient * (newLeftWheelPos - this.leftWheelPos);
         double deltaRightWheelPos = this.coefficients.rightCoefficient * (newRightWheelPos - this.rightWheelPos); // Manual adjustment for inverted odometry wheel
         double deltaPerpendicularWheelPos = this.coefficients.perpendicularCoefficient * (newPerpendicularWheelPos - this.perpendicularWheelPos);
 
+        // Convert changes in robot-perspective wheel positions into changes in x/y/angle from the robot's perspective
         double phi = (deltaLeftWheelPos - deltaRightWheelPos) / this.lateralWheelDistance;
         double forwardRelative = (deltaLeftWheelPos + deltaRightWheelPos) / 2d;
         double rightwardRelative = deltaPerpendicularWheelPos - this.perpendicularWheelOffset * phi;
 
-        // Heading of movement is assumed average between last known and current rotation
-        //                    CURRENT ROTATION                                             LAST SAVED ROTATION       
-        // double currentRotation = phi + this.relativePose.getHeading(AngleUnit.RADIANS);
-        // double lastRotation = this.relativePose.getHeading(AngleUnit.RADIANS);
-        // double averageRotationOverObservationPeriod = (currentRotation + lastRotation) / 2;
+        // Computes the robot's new  heading for purposes of trig
         double heading = this.relativePose.getHeading(AngleUnit.RADIANS) - phi;
+
+        //converts x and y positions from robot-relative to field-relative
         double deltaX = forwardRelative * -Math.sin(heading) + rightwardRelative * Math.cos(heading);
         double deltaY = forwardRelative * Math.cos(heading) +  rightwardRelative * Math.sin(heading);
 
+        // Updates the Pose (position + heading)
         this.relativePose = this.relativePose.add(new Pose(-deltaY, deltaX, -phi, AngleUnit.RADIANS));
 
         // Update encoder wheel position
