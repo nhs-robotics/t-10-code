@@ -62,13 +62,13 @@ public class DoubleSlideTest extends TeleOpOpMode {
 
     private void runSlide(NovelMotor slide, double powerLocal)
     {
-        slide.setPower(powerLocal * speed);
+        slide.setPower(powerLocal);
     }
 
-    private void runBoth(NovelMotor slide1, NovelMotor slide2)
+    private void runBoth(NovelMotor slide1, NovelMotor slide2, double speedLocal)
     {
-        runSlide(slide1,power * speed);
-        runSlide(slide2,power * -speed);
+        runSlide(slide1, power * speedLocal);
+        runSlide(slide2, power * -speedLocal);
     }
 
     private void stopSlide(NovelMotor slide) { slide.setPower(zero); }
