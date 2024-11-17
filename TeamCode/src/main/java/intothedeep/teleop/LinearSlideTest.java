@@ -1,32 +1,35 @@
 package intothedeep.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 import intothedeep.Constants;
+import t10.bootstrap.AbstractRobotConfiguration;
 import t10.bootstrap.Hardware;
 import t10.bootstrap.TeleOpOpMode;
 import t10.gamepad.GController;
 import t10.novel.NovelMotor;
 import t10.novel.mecanum.MecanumDriver;
+import t10.novel.odometry.NovelOdometry;
 
 @TeleOp(name = "SlideTestCrude")
 public class LinearSlideTest extends TeleOpOpMode {
     private GController gamepadController;
     private Telemetry.Item Speed, Direction, Encoder;
-    @Hardware(name = "LinearSlideLeft")
-    public NovelMotor linearSlideLeft;
 
-    @Hardware(name = "LinearSlideRight")
-    public NovelMotor linearSlideRight;
-    private int power = 0;
+    private double power = 0;
     private double speed = 0.1;
+    private double zero = 0.14;
+    private TestConfig c;
 
     @Override
     public void initialize() {
+        this.c = new TestConfig(hardwareMap);
         Speed = this.telemetry.addData("Speed: ", speed);
         Direction = this.telemetry.addData("Direction: ", power);
         Encoder = this.telemetry.addData("Encoder Value: ", 0);
@@ -34,18 +37,21 @@ public class LinearSlideTest extends TeleOpOpMode {
                 .y.onPress(() -> togglePower()).ok()
                 .b.onPress(() -> reverseDirection()).ok()
                 //power is positive, so right is positive and left is negative
-                .rightBumper.whileDown(() -> runSlide(linearSlideRight,power)).onRelease(() -> stopSlide(linearSlideRight)).ok()
-                .leftBumper.whileDown(() -> runSlide(linearSlideLeft,-power)).onRelease(() -> stopSlide(linearSlideLeft)).ok()
+                .rightBumper.onPress(() -> runSlide(c.linearSlideRight,power)).onRelease(() -> stopSlide(c.linearSlideRight)).ok()
+                .leftBumper.onPress(() -> runSlide(c.linearSlideLeft,-power)).onRelease(() -> stopSlide(c.linearSlideLeft)).ok()
                 .dpadUp.onPress(() -> speed += 0.05).ok()
-                .dpadDown.onPress(() -> speed -= 0.05).ok();
+                .dpadDown.onPress(() -> speed -= 0.05).ok()
+                .a.onPress(() -> runBoth(c.linearSlideRight, c.linearSlideLeft, speed)).onRelease(() -> runBoth(c.linearSlideRight,c.linearSlideLeft,zero)).ok();
+        c.linearSlideLeft.motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        c.linearSlideRight.motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     @Override
     public void loop() {
-        runBoth(linearSlideRight,linearSlideLeft,gamepadController.leftJoystick.getX());
-        this.Speed.setValue(speed);
+
+        this.Speed.setValue(speed * power);
         this.Direction.setValue(power);
-        this.Encoder.setValue(linearSlideRight.motor.getCurrentPosition());
+        //this.Encoder.setValue(c.linearSlideRight.motor.getCurrentPosition());
         //encoderMax = _____?
         telemetry.update();
         this.gamepadController.update();
@@ -57,9 +63,9 @@ public class LinearSlideTest extends TeleOpOpMode {
         power = Math.abs(power);
     }
 
-    private void runSlide(NovelMotor slide, double power)
+    private void runSlide(NovelMotor slide, double powerLocal)
     {
-        slide.setPower(power * speed);
+        slide.setPower(powerLocal * speed * power);
     }
 
     private void runBoth(NovelMotor slide1, NovelMotor slide2, double amount)
@@ -68,7 +74,31 @@ public class LinearSlideTest extends TeleOpOpMode {
         runSlide(slide2,amount * power * -speed);
     }
 
-    private void stopSlide(NovelMotor slide) { slide.setPower(0); }
+    private void stopSlide(NovelMotor slide) { slide.setPower(zero); }
 
     private void reverseDirection() { power = -power; }
+
+    public static class TestConfig extends AbstractRobotConfiguration {
+        @Hardware(name = "LinearSlideLeft")
+        public NovelMotor linearSlideLeft;
+
+        @Hardware(name = "LinearSlideRight")
+        public NovelMotor linearSlideRight;
+
+        public TestConfig(HardwareMap hardwareMap) {
+            super(hardwareMap);
+            linearSlideLeft.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            linearSlideRight.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
+
+        @Override
+        public MecanumDriver createMecanumDriver() {
+            return null;
+        }
+
+        @Override
+        public NovelOdometry createOdometry() {
+            return null;
+        }
+    }
 }
