@@ -76,8 +76,8 @@ public class NovelOdometry {
         // double lastRotation = this.relativePose.getHeading(AngleUnit.RADIANS);
         // double averageRotationOverObservationPeriod = (currentRotation + lastRotation) / 2;
         double heading = this.relativePose.getHeading(AngleUnit.RADIANS) - phi;
-        double deltaX = forwardRelative * Math.sin(heading) + rightwardRelative * Math.cos(heading);
-        double deltaY = forwardRelative * Math.cos(heading) - rightwardRelative * Math.sin(heading);
+        double deltaX = forwardRelative * -Math.sin(heading) + rightwardRelative * Math.cos(heading);
+        double deltaY = forwardRelative * Math.cos(heading) +  rightwardRelative * Math.sin(heading);
 
         this.relativePose = this.relativePose.add(new Pose(-deltaY, deltaX, -phi, AngleUnit.RADIANS));
 
@@ -109,8 +109,8 @@ public class NovelOdometry {
     public MovementVector getRelativeVelocity(MovementVector absoluteVelocity)
     {
         double theta = relativePose.getHeading(AngleUnit.RADIANS);
-        double forwardRelative = absoluteVelocity.getVertical() * Math.cos(theta) + absoluteVelocity.getHorizontal() * Math.sin(theta);
-        double rightwardRelative = absoluteVelocity.getVertical() * Math.sin(theta) + absoluteVelocity.getHorizontal() * Math.cos(theta);
+        double forwardRelative = -absoluteVelocity.getVertical() * Math.cos(theta) - absoluteVelocity.getHorizontal() * Math.sin(theta);
+        double rightwardRelative = -absoluteVelocity.getVertical() * Math.sin(theta) + absoluteVelocity.getHorizontal() * Math.cos(theta);
         return new MovementVector(forwardRelative,rightwardRelative, 0);
     }
 

@@ -1,6 +1,7 @@
 package intothedeep.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -51,8 +52,12 @@ public class OdometryTestingTeleOp extends TeleOpOpMode {
         this.vert = this.telemetry.addData("vert: ", "0");
         this.hor = this.telemetry.addData("hor: ", "0");
 
-        distance = 20;
+        distance = 10;
         init_pose = odometry.getRelativePose();
+        c.fl.motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        c.fr.motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        c.bl.motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        c.br.motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
 
     @Override
@@ -61,19 +66,19 @@ public class OdometryTestingTeleOp extends TeleOpOpMode {
         this.x.setValue(this.odometry.getRelativePose().getX());
         this.y.setValue(this.odometry.getRelativePose().getY());
         this.r.setValue(this.odometry.getRelativePose().getHeading(AngleUnit.DEGREES));
-        this.vert.setValue(this.odometry.getRelativeVelocity(-1,0));
+        this.vert.setValue(this.odometry.getRelativeVelocity(1,0));
         this.hor.setValue(this.odometry.getRelativeVelocity(0,1));
 
-        gamepadController.x.onPress(() -> navigator.driveDiagonal(-20,20));
-        gamepadController.a.onPress(() -> navigator.driveDiagonal(-20,-20));
-        gamepadController.y.onPress(() -> navigator.driveDiagonal(20,20));
-        gamepadController.b.onPress(() -> navigator.driveDiagonal(20,-20));
+        gamepadController.x.onPress(() -> navigator.driveDiagonal(-distance,distance));
+        gamepadController.a.onPress(() -> navigator.driveDiagonal(-distance,-distance));
+        gamepadController.y.onPress(() -> navigator.driveDiagonal(distance,distance));
+        gamepadController.b.onPress(() -> navigator.driveDiagonal(distance,-distance));
 
 
-        gamepadController.dpadLeft.onPress(() -> navigator.turnAbsolute(-90));
-        gamepadController.dpadUp.onPress(() -> navigator.turnAbsolute(0));
-        gamepadController.dpadRight.onPress(() -> navigator.turnAbsolute(90));
-        gamepadController.dpadDown.onPress(() -> navigator.turnAbsolute(180));
+        gamepadController.dpadLeft.onPress(() -> navigator.driveHorizontal(-distance));
+        gamepadController.dpadUp.onPress(() -> navigator.driveLateral(distance));
+        gamepadController.dpadRight.onPress(() -> navigator.driveHorizontal(distance));
+        gamepadController.dpadDown.onPress(() -> navigator.driveLateral(-distance));
 
         gamepadController.rightBumper.onPress(() -> navigator.turnRelative(45));
         gamepadController.leftBumper.onPress(() -> navigator.turnRelative(-45));
