@@ -34,7 +34,7 @@ public class SingleSlideTest extends TeleOpOpMode {
                 .y.onPress(() -> togglePower()).ok()
                 .b.onPress(() -> reverseDirection()).ok()
                 //power is positive, so right is positive and left is negative
-                .a.onPress(() -> runSlide(c.linearSlide,power)).onRelease(() -> stopSlide(c.linearSlide)).ok()
+                .a.onPress(() -> runSlide(c.linearSlide)).onRelease(() -> stopSlide(c.linearSlide)).ok()
                 .dpadUp.onPress(() -> speed += 0.1).ok()
                 .dpadDown.onPress(() -> speed -= 0.1).ok();
         c.linearSlide.motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -66,9 +66,9 @@ public class SingleSlideTest extends TeleOpOpMode {
         power = Math.abs(power);
     }
 
-    private void runSlide(NovelMotor slide, double powerLocal)
+    private void runSlide(NovelMotor slide)
     {
-        slide.setPower(powerLocal * speed * power);
+        slide.setPower(speed * power);
     }
 
     private void stopSlide(NovelMotor slide) { slide.setPower(zero); }
