@@ -1,7 +1,7 @@
 package t10.bootstrap;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import t10.novel.NovelMotor;
+import t10.motion.NovelMotor;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

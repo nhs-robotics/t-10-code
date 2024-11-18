@@ -1,24 +1,20 @@
 package intothedeep.auto;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import t10.bootstrap.AutonomousOpMode;
-import t10.novel.mecanum.MecanumDriver;
+import t10.localizer.odometry.OdometryLocalizer;
+import t10.motion.mecanum.MecanumDriver;
 
-import intothedeep.Constants;
 import intothedeep.IntoTheDeepRobotConfiguration;
-import t10.novel.odometry.NovelOdometry;
-import t10.novel.odometry.OdometryNavigation;
-import t10.reconstructor.Pose;
-import t10.utils.MovementVector;
+import t10.localizer.odometry.OdometryNavigation;
+import t10.geometry.Pose;
 
 public abstract class EasyAuto extends AutonomousOpMode {
     private IntoTheDeepRobotConfiguration config;
     public MecanumDriver driver;
-    public NovelOdometry odometry;
+    public OdometryLocalizer odometry;
     public OdometryNavigation navigator;
     public Telemetry.Item x, y, r;
     public double idealAngle = 0;
@@ -39,7 +35,7 @@ public abstract class EasyAuto extends AutonomousOpMode {
 
     public void setInitialPose(double y,double x,double theta)
     {
-        odometry.setRelativePose(new Pose(y,x,theta, AngleUnit.DEGREES));
+        odometry.setFieldCentricPose(new Pose(y,x,theta, AngleUnit.DEGREES));
     }
 
     public void horizontalMovement(double distX) {
