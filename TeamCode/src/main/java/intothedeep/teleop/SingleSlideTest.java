@@ -19,24 +19,25 @@ public class SingleSlideTest extends TeleOpOpMode {
     private GController gamepadController;
     private Telemetry.Item Speed, Direction, PowerStatus;
 
-    private double power = 0;
+    private double direction = 0;
     private double speed = 0.1;
     private double zero = 0;
+    private double speedStep = 0.1;
     private TestConfig c;
 
     @Override
     public void initialize() {
         this.c = new TestConfig(hardwareMap);
         Speed = this.telemetry.addData("Speed: ", speed);
-        Direction = this.telemetry.addData("Direction: ", power);
+        Direction = this.telemetry.addData("Direction: ", direction);
         PowerStatus = this.telemetry.addData("Power: ", "off");
         this.gamepadController = new GController(this.gamepad1)
                 .y.onPress(() -> togglePower()).ok()
                 .b.onPress(() -> reverseDirection()).ok()
-                //power is positive, so right is positive and left is negative
+                //direction is positive, so right is positive and left is negative
                 .a.onPress(() -> runSlide(c.linearSlide)).onRelease(() -> stopSlide(c.linearSlide)).ok()
-                .dpadUp.onPress(() -> speed += 0.1).ok()
-                .dpadDown.onPress(() -> speed -= 0.1).ok();
+                .dpadUp.onPress(() -> speed += speedStep).ok()
+                .dpadDown.onPress(() -> speed -= speedStep).ok();
         c.linearSlide.motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
     }
@@ -44,8 +45,8 @@ public class SingleSlideTest extends TeleOpOpMode {
     @Override
     public void loop() {
 
-        this.Speed.setValue(speed * power);
-        this.Direction.setValue(power);
+        this.Speed.setValue(speed * direction);
+        this.Direction.setValue(direction);
         //this.PowerStatus.setValue(c.linearSlideRight.motor.getCurrentPosition());
         //encoderMax = _____?
         telemetry.update();
@@ -53,7 +54,7 @@ public class SingleSlideTest extends TeleOpOpMode {
     }
     private void togglePower()
     {
-        if(power != 0)
+        if(direction != 0)
         {
             PowerStatus.setValue("Off");
         }
@@ -61,28 +62,28 @@ public class SingleSlideTest extends TeleOpOpMode {
         {
             PowerStatus.setValue("Up");
         }
-        power = Math.abs(power);
-        power -= 1;
-        power = Math.abs(power);
+        direction = Math.abs(direction);
+        direction -= 1;
+        direction = Math.abs(direction);
     }
 
     private void runSlide(NovelMotor slide)
     {
-        slide.setPower(speed * power);
+        slide.setPower(speed * direction);
     }
 
-    private void stopSlide(NovelMotor slide) { slide.setPower(zero); }
+    private void stopSlide(NovelMotor slide) { slide.setPower(zero * direction); }
 
     private void reverseDirection() {
-        if(power == 1)
+        if(direction == 1)
         {
             PowerStatus.setValue("Down");
         }
-        else if (power == -1)
+        else if (direction == -1)
         {
             PowerStatus.setValue("Up");
         }
-        power = -power;
+        direction = -direction;
     }
 
     public static class TestConfig extends AbstractRobotConfiguration {

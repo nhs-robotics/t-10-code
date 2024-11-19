@@ -22,6 +22,7 @@ public class DoubleSlideTest extends TeleOpOpMode {
     private double power = 0;
     private double speed = 0.1;
     private double zero = 0.14;
+    private double speedStep = 0.1;
     private TestConfig c;
 
     @Override
@@ -36,8 +37,8 @@ public class DoubleSlideTest extends TeleOpOpMode {
                 //power is positive, so right is positive and left is negative
                 .rightBumper.onPress(() -> runSlide(c.linearSlideRight,power)).onRelease(() -> stopSlide(c.linearSlideRight)).ok()
                 .leftBumper.onPress(() -> runSlide(c.linearSlideLeft,-power)).onRelease(() -> stopSlide(c.linearSlideLeft)).ok()
-                .dpadUp.onPress(() -> speed += 0.05).ok()
-                .dpadDown.onPress(() -> speed -= 0.05).ok()
+                .dpadUp.onPress(() -> speed += speedStep).ok()
+                .dpadDown.onPress(() -> speed -= speedStep).ok()
                 .a.onPress(() -> runBoth(c.linearSlideRight, c.linearSlideLeft, speed)).onRelease(() -> runBoth(c.linearSlideRight,c.linearSlideLeft,zero)).ok();
         c.linearSlideLeft.motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         c.linearSlideRight.motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
