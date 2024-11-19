@@ -18,7 +18,7 @@ public class OdometryNavigation {
         this.odometry = odometry;
         this.driver = driver;
         this.minError = 1;
-        this.minAngleError = 5; //in degrees here
+        this.minAngleError = 2; //in degrees here
         maxLatVelocity = 10;
         maxAngVelocity = 15;
     }

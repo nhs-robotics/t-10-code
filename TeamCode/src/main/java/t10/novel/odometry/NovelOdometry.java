@@ -63,7 +63,7 @@ public class NovelOdometry {
 
         // Get changes in odometry wheel positions since last update - results from the robot's perspective
         double deltaLeftWheelPos = this.coefficients.leftCoefficient * (newLeftWheelPos - this.leftWheelPos);
-        double deltaRightWheelPos = this.coefficients.rightCoefficient * (newRightWheelPos - this.rightWheelPos); // Manual adjustment for inverted odometry wheel
+        double deltaRightWheelPos = this.coefficients.rightCoefficient * (newRightWheelPos - this.rightWheelPos);
         double deltaPerpendicularWheelPos = this.coefficients.perpendicularCoefficient * (newPerpendicularWheelPos - this.perpendicularWheelPos);
 
         // Convert changes in robot-perspective wheel positions into changes in x/y/angle from the robot's perspective
