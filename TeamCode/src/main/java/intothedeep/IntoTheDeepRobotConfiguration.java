@@ -62,6 +62,15 @@ public class IntoTheDeepRobotConfiguration extends AbstractRobotConfiguration {
         );
     }
 
+    @Hardware(name = "OL")
+    public NovelMotor odometryLeft;
+
+    @Hardware(name = "OR")
+    public NovelMotor odometryRight;
+
+    @Hardware(name = "OP")
+    public NovelMotor odometryPerpendicular;
+
     @Override
     public MecanumDriver createMecanumDriver() {
         return new MecanumDriver(
@@ -70,21 +79,9 @@ public class IntoTheDeepRobotConfiguration extends AbstractRobotConfiguration {
                 this.bl,
                 this.br,
                 this.imu,
-                Constants.Coefficients.PRODUCTION_COEFFICIENTS
+                Constants.Coefficients.SNOWBALL_COEFFICIENTS
         );
     }
-
-    // NOTE: LinearSlideLeft has the right odometer encoder
-    @Hardware(name = "LinearSlideLeft")
-    public NovelMotor odometryRight;
-
-    // NOTE: SpinningIntake has the left odometer encoder
-    @Hardware(name = "SpinningIntake")
-    public NovelMotor odometryLeft;
-
-    // NOTE: Roller has the perpendicular odometer encoder
-    @Hardware(name = "Roller")
-    public NovelMotor odometryPerpendicular;
 
     public NovelOdometry createOdometry() {
         return new NovelOdometry(
@@ -92,8 +89,8 @@ public class IntoTheDeepRobotConfiguration extends AbstractRobotConfiguration {
                 new NovelEncoder(this.odometryRight.motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
                 new NovelEncoder(this.odometryLeft.motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
                 new NovelEncoder(this.odometryPerpendicular.motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
-                Constants.Odometry.ODOMETRY_LATERAL_WHEEL_DISTANCE,
-                Constants.Odometry.ODOMETRY_PERPENDICULAR_WHEEL_OFFSET
+                9.5,
+                11
         );
     }
 }

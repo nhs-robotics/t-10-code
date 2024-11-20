@@ -12,7 +12,6 @@ import t10.novel.NovelMotor;
 import t10.novel.mecanum.MecanumDriver;
 import t10.novel.odometry.NovelOdometry;
 import t10.novel.odometry.OdometryCoefficientSet;
-import t10.vision.Webcam;
 
 public class TestRobotConfiguration extends AbstractRobotConfiguration {
 
@@ -82,7 +81,7 @@ public class TestRobotConfiguration extends AbstractRobotConfiguration {
                 this.bl,
                 this.br,
                 this.imu,
-                Constants.Coefficients.PRODUCTION_COEFFICIENTS
+                Constants.Coefficients.KEVIN_COEFFICIENTS
         );
     }
 
@@ -92,8 +91,8 @@ public class TestRobotConfiguration extends AbstractRobotConfiguration {
                 new NovelEncoder(this.odometryRight.motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
                 new NovelEncoder(this.odometryLeft.motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
                 new NovelEncoder(this.odometryPerpendicular.motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
-                Constants.Odometry.ODOMETRY_LATERAL_WHEEL_DISTANCE,
-                Constants.Odometry.ODOMETRY_PERPENDICULAR_WHEEL_OFFSET
+                12,
+                7
         );
     }
 }
