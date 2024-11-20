@@ -83,12 +83,12 @@ public abstract class EasyAuto extends AutonomousOpMode {
 
     public void horizontalCorrect()
     {
-        navigator.driveHorizontal(idealX - odometry.getRelativePose().getX());
+        navigator.driveHorizontal(idealX - odometry.getFieldCentricPose().getX());
     }
 
     public void verticalCorrect()
     {
-        navigator.driveLateral(idealY - odometry.getRelativePose().getY());
+        navigator.driveLateral(idealY - odometry.getFieldCentricPose().getY());
     }
 
     public void correctAll()

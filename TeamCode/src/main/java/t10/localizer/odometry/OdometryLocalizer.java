@@ -72,7 +72,7 @@ public class OdometryLocalizer {
         double rightwardRelative = deltaPerpendicularWheelPos - this.perpendicularWheelOffset * phi;
 
         // Computes the robot's new  heading for purposes of trig
-        double heading = this.relativePose.getHeading(AngleUnit.RADIANS) - phi;
+        double heading = this.fieldCentricPose.getHeading(AngleUnit.RADIANS) - phi;
 
         //converts x and y positions from robot-relative to field-relative
         double deltaX = forwardRelative * -Math.sin(heading) + rightwardRelative * Math.cos(heading);
