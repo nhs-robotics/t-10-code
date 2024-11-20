@@ -75,10 +75,10 @@ public class OdometryTestingTeleOp extends TeleOpOpMode {
         gamepadController.b.onPress(() -> navigator.driveDiagonal(distance,-distance));
 
 
-        gamepadController.dpadLeft.onPress(() -> navigator.driveHorizontal(-distance));
-        gamepadController.dpadUp.onPress(() -> navigator.driveLateral(distance));
-        gamepadController.dpadRight.onPress(() -> navigator.driveHorizontal(distance));
-        gamepadController.dpadDown.onPress(() -> navigator.driveLateral(-distance));
+        gamepadController.dpadLeft.onPress(() -> navigator.turnAbsolute(-90));
+        gamepadController.dpadUp.onPress(() -> navigator.turnAbsolute(0));
+        gamepadController.dpadRight.onPress(() -> navigator.turnAbsolute(90));
+        gamepadController.dpadDown.onPress(() -> navigator.turnAbsolute(180));
 
         gamepadController.rightBumper.onPress(() -> navigator.turnRelative(45));
         gamepadController.leftBumper.onPress(() -> navigator.turnRelative(-45));

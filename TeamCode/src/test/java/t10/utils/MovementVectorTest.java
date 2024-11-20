@@ -8,6 +8,7 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import t10.geometry.MovementVector;
 
 public class MovementVectorTest {
 
@@ -98,6 +99,6 @@ public class MovementVectorTest {
     @Test
     @DisplayName("toString()")
     void toStringTest() {
-        assertEquals("{3; -5; 93}", vector.toString());
+        assertEquals("{3.000000; -5.000000; 93.000000}", vector.toString());
     }
 }

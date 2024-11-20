@@ -4,10 +4,7 @@ import android.os.SystemClock;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-
 import intothedeep.Constants;
-import t10.utils.MovementVector;
 
 @Autonomous
 public class AutoPlaceYellow extends EasyAuto {

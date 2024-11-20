@@ -1,9 +1,7 @@
 package t10.bootstrap;
 
-import t10.novel.NovelEncoder;
-import t10.novel.NovelMotor;
-import t10.novel.odometry.NovelOdometry;
-import t10.novel.mecanum.MecanumDriver;
+import t10.motion.NovelEncoder;
+import t10.motion.NovelMotor;
 import t10.vision.Webcam;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -69,18 +67,4 @@ public abstract class AbstractRobotConfiguration {
             throw new RuntimeException("could not create AbstractRobotConfiguration");
         }
     }
-
-    /**
-     * Creates a Mecanum driver using this configuration. This method specifies what coefficients to use.
-     * This method may throw an exception if it is not implemented/available for this configuration.
-     * @return A Mecanum driver using this configuration
-     */
-    public abstract MecanumDriver createMecanumDriver();
-
-    /**
-     * Creates an odometry instance. This method specifies what coefficients to use.
-     * This method may throw an exception if it is not implemented/available for this configuration.
-     * @return An odometry instance using this configuration
-     */
-    public abstract NovelOdometry createOdometry();
 }
