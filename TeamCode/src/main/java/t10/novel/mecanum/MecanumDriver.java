@@ -9,7 +9,6 @@ import t10.utils.MovementVector;
  * Wrapper class for driving a mecanum robot.
  */
 public class MecanumDriver {
-    private final IMU imu;
     private final NovelMotor frontLeft;
     private final NovelMotor frontRight;
     private final NovelMotor backLeft;
@@ -21,10 +20,23 @@ public class MecanumDriver {
             NovelMotor frontRight,
             NovelMotor backLeft,
             NovelMotor backRight,
+            MecanumCoefficientMatrix omniDriveCoefficients
+    ) {
+        this.frontLeft = frontLeft;
+        this.frontRight = frontRight;
+        this.backLeft = backLeft;
+        this.backRight = backRight;
+        this.omniDriveCoefficients = omniDriveCoefficients;
+    }
+
+    public MecanumDriver(
+            NovelMotor frontLeft,
+            NovelMotor frontRight,
+            NovelMotor backLeft,
+            NovelMotor backRight,
             IMU imu,
             MecanumCoefficientMatrix omniDriveCoefficients
     ) {
-        this.imu = imu;
         this.frontLeft = frontLeft;
         this.frontRight = frontRight;
         this.backLeft = backLeft;

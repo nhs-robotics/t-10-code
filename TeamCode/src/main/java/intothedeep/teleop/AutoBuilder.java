@@ -13,8 +13,7 @@ import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-import intothedeep.IntoTheDeepRobotConfiguration;
-import intothedeep.KevinRobotConfiguration;
+import intothedeep.SnowballConfiguration;
 import t10.bootstrap.TeleOpOpMode;
 import t10.novel.mecanum.MecanumDriver;
 import t10.novel.odometry.NovelOdometry;
@@ -28,7 +27,7 @@ public class AutoBuilder extends TeleOpOpMode {
     private static final double motorSpeed = 10;
 
     private MecanumDriver driver;
-    private IntoTheDeepRobotConfiguration c;
+    private SnowballConfiguration c;
     private NovelOdometry odometry;
     private CommandType commandType;
     private boolean commandTypeSet;
@@ -36,7 +35,7 @@ public class AutoBuilder extends TeleOpOpMode {
     @Override
     public void initialize() {
         print("Initializing...");
-        this.c = new IntoTheDeepRobotConfiguration(this.hardwareMap);
+        this.c = new SnowballConfiguration(this.hardwareMap);
         this.odometry = c.createOdometry();
         this.driver = c.createMecanumDriver();
 

@@ -1,22 +1,18 @@
 package intothedeep.auto;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import t10.bootstrap.AutonomousOpMode;
 import t10.novel.mecanum.MecanumDriver;
 
-import intothedeep.Constants;
-import intothedeep.IntoTheDeepRobotConfiguration;
+import intothedeep.SnowballConfiguration;
 import t10.novel.odometry.NovelOdometry;
 import t10.novel.odometry.OdometryNavigation;
 import t10.reconstructor.Pose;
-import t10.utils.MovementVector;
 
 public abstract class EasyAuto extends AutonomousOpMode {
-    private IntoTheDeepRobotConfiguration config;
+    private SnowballConfiguration config;
     public MecanumDriver driver;
     public NovelOdometry odometry;
     public OdometryNavigation navigator;
@@ -30,7 +26,7 @@ public abstract class EasyAuto extends AutonomousOpMode {
 
     @Override
     public void initialize() {
-        this.config = new IntoTheDeepRobotConfiguration(this.hardwareMap);
+        this.config = new SnowballConfiguration(this.hardwareMap);
         this.driver = config.createMecanumDriver();
         this.odometry = config.createOdometry();
         this.navigator = new OdometryNavigation(odometry, driver);

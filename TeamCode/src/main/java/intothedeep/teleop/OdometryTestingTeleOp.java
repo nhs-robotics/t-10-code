@@ -6,8 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-import intothedeep.IntoTheDeepRobotConfiguration;
-import intothedeep.KevinRobotConfiguration;
+import intothedeep.SnowballConfiguration;
 import t10.bootstrap.TeleOpOpMode;
 import t10.gamepad.GController;
 import t10.novel.mecanum.MecanumDriver;
@@ -20,7 +19,7 @@ import t10.utils.MovementVector;
 public class OdometryTestingTeleOp extends TeleOpOpMode {
     private MecanumDriver driver;
     private GController gamepadController;
-    private IntoTheDeepRobotConfiguration c;
+    private SnowballConfiguration c;
     private NovelOdometry odometry;
     private OdometryNavigation navigator;
     private Telemetry.Item x;
@@ -34,7 +33,7 @@ public class OdometryTestingTeleOp extends TeleOpOpMode {
 
     @Override
     public void initialize() {
-        this.c = new IntoTheDeepRobotConfiguration(this.hardwareMap);
+        this.c = new SnowballConfiguration(this.hardwareMap);
         this.driver = this.c.createMecanumDriver();
         this.gamepadController = new GController(this.gamepad1)
                 .x.initialToggleState(false).ok();  // micro-movement

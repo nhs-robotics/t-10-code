@@ -13,7 +13,7 @@ import t10.novel.mecanum.MecanumDriver;
 import t10.novel.odometry.NovelOdometry;
 import t10.novel.odometry.OdometryCoefficientSet;
 
-public class IntoTheDeepRobotConfiguration extends AbstractRobotConfiguration {
+public class SnowballConfiguration extends AbstractRobotConfiguration {
 
     // Wheels
     @Hardware(
@@ -48,18 +48,46 @@ public class IntoTheDeepRobotConfiguration extends AbstractRobotConfiguration {
     )
     public NovelMotor br;
 
-    @Hardware(name = "imu")
-    public IMU imu;
 
-    public IntoTheDeepRobotConfiguration(HardwareMap hardwareMap) {
+
+    @Hardware(
+            name = "upSlideRight",
+            diameterIn = Constants.Robot.ACTUAL_DIAMETER_IN,
+            ticksPerRevolution = Constants.TickCounts.MOVEMENT_MOTOR_TICK_COUNT,
+            zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+    )
+
+    public NovelMotor upSlideRight;
+
+    @Hardware(
+            name = "upSlideLeft",
+            diameterIn = Constants.Robot.ACTUAL_DIAMETER_IN,
+            ticksPerRevolution = Constants.TickCounts.MOVEMENT_MOTOR_TICK_COUNT,
+            zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+    )
+
+    public NovelMotor upSlideLeft;
+
+    @Hardware(
+            name = "pivot",
+            diameterIn = Constants.Robot.ACTUAL_DIAMETER_IN,
+            ticksPerRevolution = Constants.TickCounts.MOVEMENT_MOTOR_TICK_COUNT,
+            zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+    )
+
+    public NovelMotor pivot;
+
+    @Hardware(
+            name = "inSlide",
+            diameterIn = Constants.Robot.ACTUAL_DIAMETER_IN,
+            ticksPerRevolution = Constants.TickCounts.MOVEMENT_MOTOR_TICK_COUNT,
+            zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+    )
+
+    public NovelMotor horizontalSlide;
+
+    public SnowballConfiguration(HardwareMap hardwareMap) {
         super(hardwareMap);
-
-        this.imu.initialize(
-                new IMU.Parameters(new RevHubOrientationOnRobot(
-                        RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
-                        RevHubOrientationOnRobot.UsbFacingDirection.UP
-                ))
-        );
     }
 
     @Hardware(name = "OL")
@@ -78,7 +106,6 @@ public class IntoTheDeepRobotConfiguration extends AbstractRobotConfiguration {
                 this.fr,
                 this.bl,
                 this.br,
-                this.imu,
                 Constants.Coefficients.SNOWBALL_COEFFICIENTS
         );
     }
