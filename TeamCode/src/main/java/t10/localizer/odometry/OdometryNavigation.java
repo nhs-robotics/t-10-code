@@ -60,17 +60,17 @@ public class OdometryNavigation {
             double speedX, speedY;
             speedX = 10 * Math.signum(distanceX);
             speedY = 10 * Math.signum(distanceY);
-            driver.setVelocity(odometry.getRelativeVelocity(new MovementVector(speedY, speedX,0)));
+            driver.setVelocity(odometry.getRobotCentricVelocity(new MovementVector(speedY, speedX,0)));
             this.odometry.update();
         }
         System.out.println("step 1 done");
-        while((Math.abs(finalX - odometry.getRelativePose().getX()) > minError))
+        while((Math.abs(finalX - odometry.getFieldCentricPose().getX()) > minError))
         {
-            driveHorizontal(finalX - odometry.getRelativePose().getX()); this.odometry.update();
+            driveHorizontal(finalX - odometry.getFieldCentricPose().getX()); this.odometry.update();
         }
-        while(Math.abs(finalY - odometry.getRelativePose().getY()) > minError)
+        while(Math.abs(finalY - odometry.getFieldCentricPose().getY()) > minError)
         {
-            driveLateral(finalY - odometry.getRelativePose().getY()); this.odometry.update();
+            driveLateral(finalY - odometry.getFieldCentricPose().getY()); this.odometry.update();
         }
         driver.setVelocity(new MovementVector(0,0,0));
     }

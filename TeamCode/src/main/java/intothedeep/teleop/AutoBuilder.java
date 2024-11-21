@@ -16,10 +16,11 @@ import java.util.Calendar;
 import intothedeep.IntoTheDeepRobotConfiguration;
 import intothedeep.KevinRobotConfiguration;
 import t10.bootstrap.TeleOpOpMode;
-import t10.novel.mecanum.MecanumDriver;
-import t10.novel.odometry.NovelOdometry;
-import t10.reconstructor.Pose;
-import t10.utils.MovementVector;
+import t10.geometry.MovementVector;
+import t10.geometry.Pose;
+import t10.localizer.odometry.OdometryLocalizer;
+import t10.motion.NovelEncoder;
+import t10.motion.mecanum.MecanumDriver;
 
 @TeleOp(name = "Auto Builder")
 public class AutoBuilder extends TeleOpOpMode {
@@ -29,7 +30,7 @@ public class AutoBuilder extends TeleOpOpMode {
 
     private MecanumDriver driver;
     private IntoTheDeepRobotConfiguration c;
-    private NovelOdometry odometry;
+    private OdometryLocalizer odometry;
     private CommandType commandType;
     private boolean commandTypeSet;
 
@@ -75,12 +76,12 @@ public class AutoBuilder extends TeleOpOpMode {
          if (commandTypeSet) {
             print(new String[] {"Use Joysticks to move",
             "Press [RB] to save movement",
-            "ODOMETRY: " + odometry.getRelativePose().getY()});
+            "ODOMETRY: " + odometry.getFieldCentricPose().getY()});
             if (gamepad1.right_bumper) {
                 this.driver.halt();
                 try {
-                    autoFileWriter.append(generateAutoCode(commandType, this.odometry.getRelativePose()));
-                    this.odometry.setRelativePose(new Pose(0, 0, this.odometry.getRelativePose().getHeading(AngleUnit.DEGREES), AngleUnit.DEGREES));
+                    autoFileWriter.append(generateAutoCode(commandType, this.odometry.getFieldCentricPose()));
+                    this.odometry.setFieldCentricPose(new Pose(0, 0, this.odometry.getFieldCentricPose().getHeading(AngleUnit.DEGREES), AngleUnit.DEGREES));
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }

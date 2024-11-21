@@ -24,7 +24,7 @@ public class AzazelTeleOp extends TeleOpOpMode {
     public void initialize() {
         this.c = new AzazelRobotConfiguration(this.hardwareMap);
         this.capabilities = new AzazelRobotCapabilities(c);
-        this.driver = new MecanumDriver(c.fl, c.fr, c.bl, c.br, c.imu, Constants.Coefficients.KEVIN_COEFFICIENTS);
+        this.driver = new MecanumDriver(c.fl, c.fr, c.bl, c.br, Constants.Coefficients.KEVIN_COEFFICIENTS);
 
         this.gamepadController = new GController(this.gamepad1)
                 .x.ok()

@@ -3,6 +3,8 @@ package intothedeep.teleop;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import intothedeep.Constants;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import intothedeep.IntoTheDeepRobotConfiguration;
@@ -53,8 +55,6 @@ public class DefaultTeleOpMode extends TeleOpOpMode {
                 this.odometry,
                 new Pose(0, 0, 0, AngleUnit.RADIANS)
         );
-        this.c.webcam.start(atl.aprilTagProcessor);
-        this.metrics.streamWebcam(this.c.webcam);
     }
 
     @Override
@@ -62,11 +62,11 @@ public class DefaultTeleOpMode extends TeleOpOpMode {
         this.pose = this.localizer.getFieldCentricPose();
         this.microMovement = this.gamepadController.x.isToggled() ? 1 : 0;
 
-        this.x.setValue(this.odometry.getRelativePose().getX());
-        this.y.setValue(this.odometry.getRelativePose().getY());
-        this.r.setValue(this.odometry.getRelativePose().getHeading(AngleUnit.DEGREES));
-        this.vert.setValue(this.odometry.getRelativeVelocity(-1,0));
-        this.hor.setValue(this.odometry.getRelativeVelocity(0,1));
+        this.x.setValue(this.odometry.getFieldCentricPose().getX());
+        this.y.setValue(this.odometry.getFieldCentricPose().getY());
+        this.r.setValue(this.odometry.getFieldCentricPose().getHeading(AngleUnit.DEGREES));
+        this.vert.setValue(this.odometry.getRobotCentricVelocity(-1,0));
+        this.hor.setValue(this.odometry.getRobotCentricVelocity(0,1));
         this.gamepadController.update();
         this.driver.useGamepad(this.gamepad1, this.gamepadController.x.isToggled() ? 4 : 1);
         this.telemetry.update();

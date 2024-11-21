@@ -79,7 +79,6 @@ public class TestRobotConfiguration extends AbstractRobotConfiguration {
                 this.fr,
                 this.bl,
                 this.br,
-                this.imu,
                 Constants.Coefficients.KEVIN_COEFFICIENTS
         );
     }

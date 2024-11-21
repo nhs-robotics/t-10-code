@@ -10,18 +10,18 @@ import intothedeep.IntoTheDeepRobotConfiguration;
 import intothedeep.KevinRobotConfiguration;
 import t10.bootstrap.TeleOpOpMode;
 import t10.gamepad.GController;
-import t10.novel.mecanum.MecanumDriver;
-import t10.novel.odometry.NovelOdometry;
-import t10.novel.odometry.OdometryNavigation;
-import t10.reconstructor.Pose;
-import t10.utils.MovementVector;
+import t10.geometry.MovementVector;
+import t10.geometry.Pose;
+import t10.localizer.odometry.OdometryLocalizer;
+import t10.localizer.odometry.OdometryNavigation;
+import t10.motion.mecanum.MecanumDriver;
 
 @TeleOp
 public class OdometryTestingTeleOp extends TeleOpOpMode {
     private MecanumDriver driver;
     private GController gamepadController;
     private IntoTheDeepRobotConfiguration c;
-    private NovelOdometry odometry;
+    private OdometryLocalizer odometry;
     private OdometryNavigation navigator;
     private Telemetry.Item x;
     private Telemetry.Item y;
@@ -53,7 +53,7 @@ public class OdometryTestingTeleOp extends TeleOpOpMode {
         this.hor = this.telemetry.addData("hor: ", "0");
 
         distance = 10;
-        init_pose = odometry.getRelativePose();
+        init_pose = odometry.getFieldCentricPose();
         c.fl.motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         c.fr.motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         c.bl.motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -63,11 +63,11 @@ public class OdometryTestingTeleOp extends TeleOpOpMode {
     @Override
     public void loop() {
         this.gamepadController.update();
-        this.x.setValue(this.odometry.getRelativePose().getX());
-        this.y.setValue(this.odometry.getRelativePose().getY());
-        this.r.setValue(this.odometry.getRelativePose().getHeading(AngleUnit.DEGREES));
-        this.vert.setValue(this.odometry.getRelativeVelocity(1,0));
-        this.hor.setValue(this.odometry.getRelativeVelocity(0,1));
+        this.x.setValue(this.odometry.getFieldCentricPose().getX());
+        this.y.setValue(this.odometry.getFieldCentricPose().getY());
+        this.r.setValue(this.odometry.getFieldCentricPose().getHeading(AngleUnit.DEGREES));
+        this.vert.setValue(this.odometry.getRobotCentricVelocity(1,0));
+        this.hor.setValue(this.odometry.getRobotCentricVelocity(0,1));
 
         gamepadController.x.onPress(() -> navigator.driveDiagonal(-distance,distance));
         gamepadController.a.onPress(() -> navigator.driveDiagonal(-distance,-distance));
