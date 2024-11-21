@@ -71,14 +71,12 @@ public class IntoTheDeepRobotConfiguration extends AbstractRobotConfiguration {
     @Hardware(name = "OP")
     public NovelMotor odometryPerpendicular;
 
-    @Override
     public MecanumDriver createMecanumDriver() {
         return new MecanumDriver(
                 this.fl,
                 this.fr,
                 this.bl,
                 this.br,
-                this.imu,
                 Constants.Coefficients.SNOWBALL_COEFFICIENTS
         );
     }

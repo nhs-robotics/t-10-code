@@ -79,7 +79,7 @@ public class OdometryLocalizer {
         double deltaY = forwardRelative * Math.cos(heading) +  rightwardRelative * Math.sin(heading);
 
         // Updates the Pose (position + heading)
-        this.fieldCentricPose = this.fieldCentricPose.add(new Pose(-deltaX, deltaY, phi, AngleUnit.RADIANS));
+        this.fieldCentricPose = this.fieldCentricPose.add(new Pose(deltaY, deltaX, phi, AngleUnit.RADIANS));
 
         // Update encoder wheel position
         this.leftWheelPos = newLeftWheelPos;

@@ -64,8 +64,8 @@ public class AprilTagLocalizer {
             Position position = detection.robotPose.getPosition();
 
             // Transform AprilTag coordinate to our local coordinate system.
-            double localCoordinateSysX = position.y;  // +X in our coordinate system = -y in AprilTag coordinate system
-            double localCoordinateSysY = position.x;   // +Y in our coordinate system = +x in AprilTag coordinate system
+            double localCoordinateSysX = -position.y;  // +X in our coordinate system = -y in AprilTag coordinate system
+            double localCoordinateSysY = -position.x;   // +Y in our coordinate system = +x in AprilTag coordinate system
 
             x.add(localCoordinateSysX);
             y.add(localCoordinateSysY);
