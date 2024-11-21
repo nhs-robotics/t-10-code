@@ -1,4 +1,4 @@
-package intothedeep.teleop;
+package intothedeep;
 
 import t10.bootstrap.AbstractRobotConfiguration;
 import t10.bootstrap.Hardware;
@@ -10,6 +10,7 @@ import t10.vision.Webcam;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.*;
 import intothedeep.Constants;
+import t10.novel.odometry.NovelOdometry;
 
 public class AzazelRobotConfiguration extends AbstractRobotConfiguration {
     @Hardware(name = "Webcam")

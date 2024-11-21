@@ -2,7 +2,8 @@ package intothedeep.teleop;
 
 import android.os.SystemClock;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import intothedeep.Constants;
+
+import intothedeep.AzazelRobotConfiguration;
 
 public class AzazelRobotCapabilities {
     public static final int LIFT_FULLY_EXTENDED_ENCODER_POS = 1500;
