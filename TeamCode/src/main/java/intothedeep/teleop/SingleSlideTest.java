@@ -64,7 +64,6 @@ public class SingleSlideTest extends TeleOpOpMode {
         }
         direction = Math.abs(direction);
         direction -= 1;
-        direction = Math.abs(direction);
     }
 
     private void runSlide(NovelMotor slide)
@@ -77,11 +76,11 @@ public class SingleSlideTest extends TeleOpOpMode {
     private void reverseDirection() {
         if(direction == 1)
         {
-            PowerStatus.setValue("Down");
+            PowerStatus.setValue("Up");
         }
         else if (direction == -1)
         {
-            PowerStatus.setValue("Up");
+            PowerStatus.setValue("Down");
         }
         direction = -direction;
     }
