@@ -2,13 +2,14 @@ package t10.gamepad.input.types;
 
 import t10.gamepad.GController;
 import t10.gamepad.input.GInput;
+import t10.gamepad.input.GIsPressed;
 import t10.gamepad.input.GOnPress;
 import t10.gamepad.input.GOnRelease;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class GTrigger implements GInput, GOnPress<GTrigger>, GOnRelease<GTrigger> {
+public class GTrigger implements GInput, GOnPress<GTrigger>, GOnRelease<GTrigger>, GIsPressed {
     private final Supplier<Float> valueGetter;
     private final GController controller;
     private Runnable onPress, onRelease;
@@ -59,5 +60,10 @@ public class GTrigger implements GInput, GOnPress<GTrigger>, GOnRelease<GTrigger
     @Override
     public GController ok() {
         return this.controller;
+    }
+
+    @Override
+    public boolean isPressed() {
+        return this.valueGetter.get() != 0;
     }
 }
