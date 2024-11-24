@@ -71,6 +71,7 @@ public class IntoTheDeepRobotConfiguration extends AbstractRobotConfiguration {
     @Hardware(name = "OP")
     public NovelMotor odometryPerpendicular;
 
+    @Override
     public MecanumDriver createMecanumDriver() {
         return new MecanumDriver(
                 this.fl,
@@ -81,14 +82,15 @@ public class IntoTheDeepRobotConfiguration extends AbstractRobotConfiguration {
         );
     }
 
+    @Override
     public OdometryLocalizer createOdometry() {
         return new OdometryLocalizer(
                 new OdometryCoefficientSet(1, 1, 1),
                 new NovelEncoder(this.odometryRight.motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
                 new NovelEncoder(this.odometryLeft.motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
                 new NovelEncoder(this.odometryPerpendicular.motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
-                9.5,
-                11
+                11.5,
+                -6.5
         );
     }
 }

@@ -73,6 +73,7 @@ public class TestRobotConfiguration extends AbstractRobotConfiguration {
         );
     }
 
+    @Override
     public MecanumDriver createMecanumDriver() {
         return new MecanumDriver(
                 this.fl,
@@ -83,6 +84,7 @@ public class TestRobotConfiguration extends AbstractRobotConfiguration {
         );
     }
 
+    @Override
     public OdometryLocalizer createOdometry() {
         return new OdometryLocalizer(
                 new OdometryCoefficientSet(1, 1, 1),
