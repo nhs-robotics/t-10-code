@@ -7,7 +7,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import intothedeep.SnowballConfiguration;
 
 public class SnowballCapabilities {
-    public static final int LIFT_FULLY_EXTENDED_ENCODER_POS = 1500;
+    public static final int UP_LIFT_MAX = 10000; //real value unknown
+    public static final int UP_LIFT_MIN = 0;
+    public static final int OUT_LIFT_MAX = 10000; //real value unknown
+    public static final int OUT_LIFT_MIN = 0;
+
     public final SnowballConfiguration c;
 
     public SnowballCapabilities(SnowballConfiguration c) {
@@ -21,14 +25,14 @@ public class SnowballCapabilities {
         this.c.horizontalSlide.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public void downLift(double power) {
+    public void upLiftRetract(double power) {
         this.c.upSlideRight.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         this.c.upSlideRight.setPower(-Math.abs(power));
         this.c.upSlideLeft.setPower(Math.abs(power));
     }
 
-    public void upLift(double power) {
+    public void upLiftExtend(double power) {
         this.c.upSlideRight.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         this.c.upSlideRight.setPower(Math.abs(power));
@@ -40,88 +44,41 @@ public class SnowballCapabilities {
         this.c.upSlideRight.setPower(0);
     }
 
-    public void moveLiftToPosition(int position, double power) {
-        this.c.linearSlideLeft.setPower(-Math.abs(power));
-        this.c.linearSlideRight.setPower(-Math.abs(power));
-        while(c.linearSlideRight.motor.getCurrentPosition() < 3500)
-        {
-            //do nothing
-        }
-        this.c.linearSlideLeft.setPower(0);
-        this.c.linearSlideRight.setPower(0);
+    public void horizontalLiftRetract(double power) {
+        this.c.horizontalSlide.setPower(Math.abs(power));
     }
 
-    public void extendLiftFully() {
-        this.moveLiftToPosition(LIFT_FULLY_EXTENDED_ENCODER_POS, 1);
+    public void horizontalLiftExtend(double power) {
+        this.c.horizontalSlide.setPower(-Math.abs(power));
     }
 
-    public void retractLiftFully() {
-        this.moveLiftToPosition(0, 1);
+    public void stopHorizontalLift() {
+        this.c.horizontalSlide.setPower(0);
     }
 
-    public void gripPixels() {
-        System.out.println("grip");
-        this.c.containerPixelHolder.setPosition(-1);
+    //public void moveLiftToPosition(int position, double power) {}
+
+    //public void extendLiftFully() {}
+
+    //public void retractLiftFully() {}
+
+    public void closeClaw() {
     }
 
-    public void releasePixelGrip() {
-        System.out.println("release");
-        this.c.containerPixelHolder.setPosition(1);
+    public void openClaw() {
     }
 
-    public void runIntake() {
-        this.c.roller.setPower(0.5);//Constants.ROLLER_INTAKE_SPEED);
-        this.c.spinningIntake.setPower(0.5);//Constants.SPINNER_INTAKE_SPEED);
-    }
-
-    public void runRoller() {
-        this.c.roller.setPower(-0.5);//Constants.ROLLER_SPEED * -1);
-    }
-
-    public void stopRoller() {
-        this.c.roller.setPower(0);
-    }
-
-    public void runOuttake() {
-        this.c.roller.setPower(-0.5);//-Constants.ROLLER_OUTTAKE_SPEED);
-        this.c.spinningIntake.setPower(-0.5);//-Constants.SPINNER_OUTTAKE_SPEED);
-    }
-
-    public void stopIntakeOuttake() {
-        this.c.roller.setPower(0);
-        this.c.spinningIntake.setPower(0);
-    }
-
-    public void launchAirplane() {
-        new Thread(() -> {
-            this.c.airplaneLauncher.setPosition(0.5);
-            SystemClock.sleep(1000);
-            this.c.airplaneLauncher.setPosition(-1);
-            SystemClock.sleep(1000);
-            this.c.airplaneLauncher.setPosition(0.5);
-        }).start();
-    }
-
-    /**
-     * 1 = fully up
-     * -1 = down
-     */
-    public void rotateContainer(double position) {
-        this.c.containerRotationLeft.setPosition(position);
-        this.c.containerRotationRight.setPosition(-position);
-    }
 
     public void update() {
-        double slideEncoderAvg = this.c.linearSlideRight.motor.getCurrentPosition();
+        double upSlideEncoderAvg = this.c.upSlideRight.motor.getCurrentPosition();
+        double horizontalSlideEncoderAvg = this.c.horizontalSlide.motor.getCurrentPosition();
 
-        if (slideEncoderAvg <= 0) {
-            this.stopLift();
+        if (upSlideEncoderAvg <= 0 || upSlideEncoderAvg >= UP_LIFT_MAX) {
+            this.stopUpLift();
         }
-    }
-    public void dropPixel()
-    {
-        this.c.spinningIntake.setPower(-0.2);
-        SystemClock.sleep(250);
-        this.c.spinningIntake.setPower(0);
+        else if (horizontalSlideEncoderAvg <= 0 || horizontalSlideEncoderAvg >= OUT_LIFT_MAX)
+        {
+            this.stopHorizontalLift();
+        }
     }
 }
