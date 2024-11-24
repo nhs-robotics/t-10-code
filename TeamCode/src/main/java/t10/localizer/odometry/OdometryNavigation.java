@@ -77,7 +77,8 @@ public class OdometryNavigation {
 
     public void turnAbsolute(double angle)
     {
-        while(needAngleCorrectionDegrees(odometry.getFieldCentricPose().getHeading(AngleUnit.DEGREES), angle))
+        double targetAngle = -angle;
+        while(needAngleCorrectionDegrees(odometry.getFieldCentricPose().getHeading(AngleUnit.DEGREES), targetAngle))
         {
             driver.setVelocity(new MovementVector(0,0,findTurnSpeed(odometry.getFieldCentricPose().getHeading(AngleUnit.DEGREES), angle)));
             this.odometry.update();
@@ -186,17 +187,17 @@ public class OdometryNavigation {
                 targetAngle = 180 * Math.signum(currentAngle);
             }
             if (targetAngle < currentAngle - Math.PI) {
-                direction = -1;
+                direction = 1;
                 return maxAngVelocity * direction;
             } else if (targetAngle > currentAngle + Math.PI) {
-                direction = 1;
+                direction = -1;
                 return maxAngVelocity * direction;
             }
 
             else if (targetAngle < currentAngle) {
-                direction = 1;
-            } else if (targetAngle > currentAngle) {
                 direction = -1;
+            } else if (targetAngle > currentAngle) {
+                direction = 1;
             }
         }
         if(Math.abs(targetAngle - currentAngle) < 5*minAngleError)
