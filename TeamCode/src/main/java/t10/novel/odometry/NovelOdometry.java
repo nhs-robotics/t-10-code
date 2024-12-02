@@ -1,6 +1,8 @@
 package t10.novel.odometry;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+
+import t10.novel.AbstractEncoder;
 import t10.novel.NovelEncoder;
 import t10.reconstructor.Pose;
 import t10.utils.MovementVector;
@@ -10,9 +12,9 @@ import t10.utils.MovementVector;
  */
 public class NovelOdometry {
     private final OdometryCoefficientSet coefficients;
-    private final NovelEncoder rightEncoder;
-    private final NovelEncoder leftEncoder;
-    private final NovelEncoder perpendicularEncoder;
+    private final AbstractEncoder rightEncoder;
+    private final AbstractEncoder leftEncoder;
+    private final AbstractEncoder perpendicularEncoder;
     private final double lateralWheelDistance;
     private final double perpendicularWheelOffset;
     private double leftWheelPos;
@@ -33,9 +35,9 @@ public class NovelOdometry {
      */
     public NovelOdometry(
             OdometryCoefficientSet coefficients,
-            NovelEncoder rightEncoder,
-            NovelEncoder leftEncoder,
-            NovelEncoder perpendicularEncoder,
+            AbstractEncoder rightEncoder,
+            AbstractEncoder leftEncoder,
+            AbstractEncoder perpendicularEncoder,
             double lateralWheelDistance,
             double perpendicularWheelOffset
     ) {

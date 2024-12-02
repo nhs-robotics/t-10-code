@@ -1,26 +1,26 @@
 package t10.novel;
 
 import com.qualcomm.hardware.digitalchickenlabs.OctoQuad;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
-/**
- * A wrapper for an encoder, typically an odometry wheel.
- */
-public class NovelEncoder extends AbstractEncoder{
-    private final DcMotor encoder;
+import t10.novel.AbstractEncoder;
+
+public class OdometryEncoder extends AbstractEncoder {
+    private final OctoQuad octoQuad;
+    private final int channel;
     private final double ticksPerRevolution;
     private final double encoderDiameterIn;
 
     /**
-     * Creates a NovelEncoder.
+     * Creates an OdometryEncoder.
      *
-     * @param encoder The instance of the encoder from the hardware map. Yes, this is supposed to be a {@link DcMotor}.
+     * @param octoQuad The octoQuad that the odometry wire is connected to.
+     * @param channel The index of the channel that the encoder is plugged into
      * @param encoderDiameterIn The diameter of the encoder wheel in inches.
      * @param ticksPerRevolution The number of ticks the encoder has per revolution of the wheel.
      */
-    public NovelEncoder(DcMotor encoder, double encoderDiameterIn, double ticksPerRevolution) {
-        this.encoder = encoder;
-        this.encoder.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    public OdometryEncoder(OctoQuad octoQuad, int channel, double encoderDiameterIn, double ticksPerRevolution) {
+        this.octoQuad = octoQuad;
+        this.channel = channel;
         this.ticksPerRevolution = ticksPerRevolution;
         this.encoderDiameterIn = encoderDiameterIn;
     }
@@ -28,16 +28,16 @@ public class NovelEncoder extends AbstractEncoder{
     /**
      * @return The current position in ticks of the encoder.
      */
-    @Override
     public int getCurrentTicks() {
-        return this.encoder.getCurrentPosition();
+        return this.octoQuad.readSinglePosition(channel);
     }
 
     /**
      * @return The current position in inches of the encoder.
      */
-    @Override
     public double getCurrentInches() {
         return this.getCurrentTicks() / this.ticksPerRevolution * this.encoderDiameterIn * Math.PI;
     }
 }
+
+
