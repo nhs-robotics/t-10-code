@@ -77,8 +77,8 @@ public class OdometryLocalizer {
         double heading = this.fieldCentricPose.getHeading(AngleUnit.RADIANS) + phi;
 
         //converts x and y positions from robot-relative to field-relative
-        double deltaX = forwardRelative * (-Math.sin(heading)) + rightwardRelative * Math.cos(heading);
-        double deltaY = forwardRelative * Math.cos(heading) + rightwardRelative * Math.sin(heading);
+        double deltaX = forwardRelative * (Math.sin(heading)) + rightwardRelative * Math.cos(heading);
+        double deltaY = forwardRelative * Math.cos(heading) + rightwardRelative * (-Math.sin(heading));
 
         // Updates the Pose (position + heading)
         this.fieldCentricPose = this.fieldCentricPose.add(new Pose(deltaY, deltaX, phi, AngleUnit.RADIANS));

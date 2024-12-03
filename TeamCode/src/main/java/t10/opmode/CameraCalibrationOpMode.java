@@ -26,7 +26,7 @@ public class CameraCalibrationOpMode extends AutonomousOpMode {
     private static final int CHECKERBOARD_WIDTH = 9;
     private static final int CHECKERBOARD_HEIGHT = 6;
     private static final Size CHECKERBOARD_PATTERN_SIZE = new Size(CHECKERBOARD_WIDTH, CHECKERBOARD_HEIGHT);
-    private static final double SQUARE_SIZE_METERS = 0.023;
+    private static final double SQUARE_SIZE_METERS = 0.02467;
     private static final Paint CORNER_POINT_PAINT = new Paint();
     private List<WebcamName> webcams;
     private int cameraIndex = 0;
