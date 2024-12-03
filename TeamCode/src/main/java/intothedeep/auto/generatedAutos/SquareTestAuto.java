@@ -4,9 +4,14 @@ package intothedeep.auto.generatedAutos;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import intothedeep.auto.EasyAuto;
+import t10.utils.Alliance;
 
 @Autonomous(name = "SquareTestAuto")
 public class SquareTestAuto extends EasyAuto {
+	public SquareTestAuto() {
+		super(Alliance.RED);
+	}
+
 	@Override
 	public void run() {
 		verticalMovement(10);

@@ -2,8 +2,14 @@ package intothedeep.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import t10.utils.Alliance;
+
 @Autonomous(name = "Odometry Test Auto")
 public class OdometryTestAuto extends EasyAuto {
+    public OdometryTestAuto() {
+        super(Alliance.RED);
+    }
+
     @Override
     public void run() {
         verticalMovement(20);

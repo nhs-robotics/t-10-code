@@ -4,6 +4,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import t10.bootstrap.AutonomousOpMode;
+import t10.localizer.Localizer;
+import t10.localizer.apriltag.AprilTagLocalizer;
 import t10.localizer.odometry.OdometryLocalizer;
 import t10.motion.mecanum.MecanumDriver;
 
@@ -11,6 +13,7 @@ import intothedeep.Constants;
 import intothedeep.IntoTheDeepRobotConfiguration;
 import t10.localizer.odometry.OdometryNavigation;
 import t10.geometry.Pose;
+import t10.utils.Alliance;
 
 public abstract class EasyAuto extends AutonomousOpMode {
     private IntoTheDeepRobotConfiguration config;
@@ -21,9 +24,17 @@ public abstract class EasyAuto extends AutonomousOpMode {
     public double idealAngle = 0;
     public double idealX = 0;
     public double idealY = 0;
+    private Alliance alliance;
+    private double startingTile = 0.0;
 
+    public EasyAuto(Alliance alliance) {
+        this.alliance = alliance;
+    }
 
-    public EasyAuto() {}
+    public EasyAuto(Alliance alliance, double startingTile) {
+        this.alliance = alliance;
+        this.startingTile = startingTile;
+    }
 
     @Override
     public void initialize() {
@@ -34,14 +45,22 @@ public abstract class EasyAuto extends AutonomousOpMode {
         this.x = this.telemetry.addData("x_novel: ", "0");
         this.y = this.telemetry.addData("y_novel: ", "0");
         this.r = this.telemetry.addData("r_novel: ", "0");
+        setInitialPose(alliance, startingTile);
     }
 
-    public void setInitialPose(double y,double x,double theta)
+    public void setInitialPose(double y, double x, double theta)
     {
         odometry.setFieldCentricPose(new Pose(y,x,theta, AngleUnit.DEGREES));
-        idealY = 0;
-        idealX = 0;
-        idealAngle = 0;
+        idealY = y;
+        idealX = x;
+        idealAngle = theta;
+    }
+
+    public void setInitialPose(Alliance alliance, double startingTile) {
+        double startingX = alliance == Alliance.RED ? 60: -60;
+        double startingY = (startingTile * 24 - 84) * (alliance == Alliance.RED ? 1 : -1);
+        double startingHeading = alliance == Alliance.RED ? 90 : -90;
+        setInitialPose(startingY, startingX, startingHeading);
     }
 
     public void horizontalMovement(double distX) {
