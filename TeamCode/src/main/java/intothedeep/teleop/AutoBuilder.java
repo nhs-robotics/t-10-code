@@ -14,12 +14,11 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import intothedeep.IntoTheDeepRobotConfiguration;
-import intothedeep.KevinRobotConfiguration;
+import t10.bootstrap.AbstractRobotConfiguration;
 import t10.bootstrap.TeleOpOpMode;
 import t10.geometry.MovementVector;
 import t10.geometry.Pose;
 import t10.localizer.odometry.OdometryLocalizer;
-import t10.motion.NovelEncoder;
 import t10.motion.mecanum.MecanumDriver;
 import t10.utils.Alliance;
 
@@ -32,7 +31,6 @@ public class AutoBuilder extends TeleOpOpMode {
     double startingTile = 0;
 
     private MecanumDriver driver;
-    private IntoTheDeepRobotConfiguration c;
     private OdometryLocalizer odometry;
     private CommandType commandType;
     private boolean startingTileSet;
@@ -40,8 +38,7 @@ public class AutoBuilder extends TeleOpOpMode {
 
     @Override
     public void initialize() {
-        print("Initializing...");
-        this.c = new IntoTheDeepRobotConfiguration(this.hardwareMap);
+        AbstractRobotConfiguration c = new IntoTheDeepRobotConfiguration(this.hardwareMap);
         this.odometry = c.createOdometry();
         this.driver = c.createMecanumDriver();
 
@@ -86,8 +83,7 @@ public class AutoBuilder extends TeleOpOpMode {
                 }
             } else if (commandTypeSet) {
                 print(new String[]{"Use Joysticks to move",
-                        "Press [RB] to save movement",
-                        "ODOMETRY: " + odometry.getFieldCentricPose().getY()});
+                        "Press [RB] to save movement"});
                 if (gamepad1.right_bumper) {
                     this.driver.halt();
                     String newAutoCode = generateAutoCode(commandType, this.odometry.getFieldCentricPose());
@@ -99,19 +95,19 @@ public class AutoBuilder extends TeleOpOpMode {
                     MovementVector movementVector = new MovementVector(0, 0, 0);
                     switch (commandType) {
                         case VERTICAL:
-                            movementVector = new MovementVector(this.gamepad1.left_stick_y * motorSpeed, 0, 0);
+                            movementVector = new MovementVector(this.gamepad1.left_stick_y, 0, 0);
                             break;
                         case HORIZONTAL:
-                            movementVector = new MovementVector(0, this.gamepad1.left_stick_x * motorSpeed, 0);
+                            movementVector = new MovementVector(0, this.gamepad1.left_stick_x, 0);
                             break;
                         case DIAGONAL:
-                            movementVector = new MovementVector(this.gamepad1.left_stick_y * motorSpeed, this.gamepad1.left_stick_x * motorSpeed, 0);
+                            movementVector = new MovementVector(this.gamepad1.left_stick_y, this.gamepad1.left_stick_x, 0);
                             break;
                         case ROTATIONAL:
-                            movementVector = new MovementVector(0, 0, this.gamepad1.right_stick_x * motorSpeed);
+                            movementVector = new MovementVector(0, 0, this.gamepad1.right_stick_x);
                             break;
                     }
-                    this.driver.setVelocity(movementVector);
+                    this.driver.setVelocity(movementVector.scalarMultiply(motorSpeed));
                 }
             } else {
                 print(new String[]{"Choose command type:",
@@ -158,7 +154,9 @@ public class AutoBuilder extends TeleOpOpMode {
     private Writer initializeFileWriter(Alliance alliance) {
         String directoryPath = Environment.getExternalStorageDirectory().getPath()+"/"+BASE_DIRECTORY_PATH;
         File directory = new File(directoryPath);
-        directory.mkdir();
+        if (!directory.mkdir()) {
+            print(new String[] {"Could not create directory"});
+        }
         String filename = "auto_" + (SimpleDateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime()))
                 .replaceAll(", |:| ", "_")
                 + "_" + (alliance == Alliance.RED ? "red" : "blue");
@@ -198,12 +196,6 @@ public class AutoBuilder extends TeleOpOpMode {
                 return "\t\tturnTo(" + pose.getHeading(AngleUnit.DEGREES) + ");\n";
         }
         return "";
-    }
-
-    private void print(String line) {
-        telemetry.clear();
-        telemetry.addLine(line);
-        telemetry.update();
     }
 
     private void print(String[] lines) {
