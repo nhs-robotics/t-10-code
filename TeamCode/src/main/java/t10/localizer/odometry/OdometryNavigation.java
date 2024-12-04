@@ -20,7 +20,7 @@ public class OdometryNavigation<MP> {
         this.odometry = odometry;
         this.driver = driver;
         this.minError = 0.5;
-        this.minAngleError = 2; //in degrees here
+        this.minAngleError = 5; //in degrees here
         maxLatVelocity = 10;
         maxAngVelocity = 15;
     }
@@ -79,8 +79,8 @@ public class OdometryNavigation<MP> {
     public void turnAbsolute(double angle) {
         double targetAngle = -angle;
         while (needAngleCorrectionDegrees(odometry.getFieldCentricPose().getHeading(AngleUnit.DEGREES), targetAngle))
-            while (needAngleCorrectionDegrees(odometry.getFieldCentricPose().getHeading(AngleUnit.DEGREES), angle)) {
-                driver.setVelocity(new MovementVector(0, 0, findTurnSpeed(odometry.getFieldCentricPose().getHeading(AngleUnit.DEGREES), angle)));
+            while (needAngleCorrectionDegrees(odometry.getFieldCentricPose().getHeading(AngleUnit.DEGREES), targetAngle)) {
+                driver.setVelocity(new MovementVector(0, 0, findTurnSpeed(odometry.getFieldCentricPose().getHeading(AngleUnit.DEGREES), targetAngle)));
                 this.odometry.update();
             }
         driver.setVelocity(new MovementVector(0, 0, 0));
