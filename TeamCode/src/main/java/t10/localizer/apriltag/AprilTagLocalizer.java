@@ -23,7 +23,7 @@ public class AprilTagLocalizer {
     private final double distanceRejectThresholdIn;
 
     public AprilTagLocalizer(double fx, double fy, double px, double py) {
-        this(AprilTagProcessor.TagFamily.TAG_36h11, true, fx, fy, px, py, 30);
+        this(AprilTagProcessor.TagFamily.TAG_36h11, true, fx, fy, px, py, 18);
     }
 
     public AprilTagLocalizer(AprilTagProcessor.TagFamily tagFamily, boolean draw, double focalLengthX, double focalLengthY, double principalPointX, double principalPointY, double distanceRejectThresholdIn) {
@@ -37,7 +37,7 @@ public class AprilTagLocalizer {
                 .setTagLibrary(AprilTagGameDatabase.getCurrentGameTagLibrary())
                 .setTagFamily(tagFamily)
                 .setCameraPose(
-                        new Position(DistanceUnit.INCH, 0, 0, 0, 0),
+                        new Position(DistanceUnit.INCH, 0, 0 , 0, 0),
                         new YawPitchRollAngles(AngleUnit.DEGREES, 0, -90, 0, 0)
                 )
                 .setLensIntrinsics(focalLengthX, focalLengthY, principalPointX, principalPointY)
@@ -64,8 +64,8 @@ public class AprilTagLocalizer {
             Position position = detection.robotPose.getPosition();
 
             // Transform AprilTag coordinate to our local coordinate system.
-            double localCoordinateSysX = position.y;  // +X in our coordinate system = -y in AprilTag coordinate system
-            double localCoordinateSysY = position.x;   // +Y in our coordinate system = +x in AprilTag coordinate system
+            double localCoordinateSysX = -position.y;  // +X in our coordinate system = -y in AprilTag coordinate system
+            double localCoordinateSysY = -position.x;   // +Y in our coordinate system = +x in AprilTag coordinate system
 
             x.add(localCoordinateSysX);
             y.add(localCoordinateSysY);

@@ -1,5 +1,6 @@
 package intothedeep.teleop;
 
+import android.annotation.SuppressLint;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import intothedeep.Constants;
@@ -27,16 +28,25 @@ public class DefaultTeleOpMode extends TeleOpOpMode {
 
     @Metric
     public int microMovement;
+
+    @Metric
+    public String recordedPoints = "";
+
     private Localizer localizer;
     private AprilTagLocalizer atl;
 
+    @SuppressLint("DefaultLocale")
     @Override
     public void initialize() {
         this.c = new KevinRobotConfiguration(this.hardwareMap);
         this.driver = this.c.createMecanumDriver();
         this.odometry = this.c.createOdometry();
         this.gamepadController = new GController(this.gamepad1)
-                .x.initialToggleState(true).ok();  // micro-movement
+                .x.initialToggleState(true).ok()  // micro-movement
+                .a.onPress(() -> {
+                    Pose fieldCentricPose = this.localizer.getFieldCentricPose();
+                    recordedPoints += String.format("%.4f %.4f %.4f --> ", fieldCentricPose.getX(), fieldCentricPose.getY(), fieldCentricPose.getHeading(AngleUnit.RADIANS));
+                }).ok();
         this.atl = new AprilTagLocalizer(Constants.Webcam.C270_FOCAL_LENGTH_X, Constants.Webcam.C270_FOCAL_LENGTH_Y, Constants.Webcam.C270_PRINCIPAL_POINT_X, Constants.Webcam.C270_PRINCIPAL_POINT_Y);
         this.localizer = new Localizer(
                 atl,
