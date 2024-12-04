@@ -4,9 +4,14 @@ package intothedeep.auto.generatedAutos;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import intothedeep.auto.EasyAuto;
+import t10.utils.Alliance;
 
 @Autonomous(name = "DiagonalTestAuto")
 public class DiagonalTestAuto extends EasyAuto {
+	public DiagonalTestAuto() {
+		super(Alliance.RED);
+	}
+
 	@Override
 	public void run() {
 		diagonalMovement(14.60885670162091, 16.971634592039475);

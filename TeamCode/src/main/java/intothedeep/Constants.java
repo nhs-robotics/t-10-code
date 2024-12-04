@@ -1,6 +1,6 @@
 package intothedeep;
 
-import t10.novel.mecanum.MecanumCoefficientMatrix;
+import t10.motion.mecanum.MecanumCoefficientMatrix;
 
 public class Constants {
     /**
@@ -9,10 +9,10 @@ public class Constants {
      * <a href="https://horus.readthedocs.io/en/release-0.2/source/scanner-components/camera.html">Source</a>
      */
     public static class Webcam {
-        public static final double C270_FOCAL_LENGTH_X = 1430;
-        public static final double C270_FOCAL_LENGTH_Y = 1430;
-        public static final double C270_OPTICAL_CENTER_X = 480;
-        public static final double C270_OPTICAL_CENTER_Y = 620;
+        public static final double C270_FOCAL_LENGTH_X = 628.345;
+        public static final double C270_FOCAL_LENGTH_Y = 634.9043;
+        public static final double C270_PRINCIPAL_POINT_X = 296.3442;
+        public static final double C270_PRINCIPAL_POINT_Y = 178.5478;
         public static final int CAMERA_RES_WIDTH = 640;
         public static final int CAMERA_RES_HEIGHT = 480;
     }

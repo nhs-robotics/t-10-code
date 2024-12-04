@@ -1,9 +1,17 @@
 package t10.bootstrap;
 
+import android.graphics.Bitmap;
 import android.os.SystemClock;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import org.firstinspires.ftc.robotcore.external.function.Consumer;
+import org.firstinspires.ftc.robotcore.external.function.Continuation;
+import t10.metrics.MetricsServer;
+import t10.vision.Webcam;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 /**
  * <p>"Bootstrapping" is the preparing another program to initialize.
@@ -19,6 +27,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
  * @see System#err
  */
 public abstract class BootstrappedOpMode extends OpMode {
+    protected MetricsServer metrics;
+
     /**
      * Sets {@link System#out} and {@link System#err} to an instance of {@link RobotDebugPrintStream}.
      * This allows {@link System#out} and {@link System#err} to be used for printing debug messages.
@@ -32,27 +42,9 @@ public abstract class BootstrappedOpMode extends OpMode {
         System.setErr(new RobotDebugPrintStream(this.telemetry));
     }
 
-    /**
-     * Debug method that detects all devices and the runtime environment in general.
-     *
-     * @author youngermax
-     */
-    public void dumpEnvironment() {
-        System.out.println("========== Environment: detected devices ==========");
-
-        for (HardwareMap.DeviceMapping<? extends HardwareDevice> deviceMapping : this.hardwareMap.allDeviceMappings) {
-            System.out.printf("+ %s devices%n", deviceMapping.getDeviceTypeClass().getName());
-
-            for (HardwareDevice hardwareDevice : deviceMapping) {
-                System.out.printf("  - %s%n", hardwareDevice.getDeviceName());
-                System.out.printf("     - Manufacturer: %s%n", hardwareDevice.getManufacturer());
-                System.out.printf("     - Version: %s%n", hardwareDevice.getVersion());
-                System.out.printf("     - Connection info: %s%n", hardwareDevice.getConnectionInfo());
-            }
-        }
-
-        System.out.println("========== Environment: detected gamepads ==========");
-        System.out.printf("Gamepad 1: %s%nGamepad 2: %s%n", this.gamepad1, this.gamepad2);
+    private void configureMetrics() {
+        this.metrics = new MetricsServer(this);
+        this.metrics.start();
     }
 
     /**
@@ -76,5 +68,17 @@ public abstract class BootstrappedOpMode extends OpMode {
     @Override
     public void init() {
         this.configureSystemOut();
+        this.configureMetrics();
+    }
+
+    @Override
+    public void stop() {
+        super.stop();
+
+        try {
+            this.metrics.stop();
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

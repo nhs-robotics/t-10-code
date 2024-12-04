@@ -1,12 +1,30 @@
 package t10.utils;
 
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Quaternion;
+import t10.geometry.Point;
 
 import java.util.LinkedList;
 import java.util.List;
 
 public class MathUtils {
+    public static boolean isPointOnLine(Point start, Point end, Point point) {
+        // Calculate the cross product to check if point is collinear with start and end
+        double crossProduct = (point.getY() - start.getY()) * (end.getX() - start.getX()) - (point.getX() - start.getX()) * (end.getY() - start.getY());
+
+        // If crossProduct is not 0, point is not on the line
+        if (Math.abs(crossProduct) < 10e-2) {
+            return true;
+        }
+
+        // Check if the point is within the bounds of start and end
+        boolean withinXBounds = Math.min(start.getX(), end.getX()) <= point.getX() && point.getX() <= Math.max(start.getX(), end.getX());
+        boolean withinYBounds = Math.min(start.getY(), end.getY()) <= point.getY() && point.getY() <= Math.max(start.getY(), end.getY());
+
+        return withinXBounds && withinYBounds;
+    }
+
     public static VectorF quaternionToEuler(Quaternion q) {
         // roll (x-axis rotation)
         double sinr_cosp = 2 * (q.w * q.x + q.y * q.z);
@@ -26,12 +44,32 @@ public class MathUtils {
         return new VectorF((float) roll, (float) pitch, (float) yaw);
     }
 
-    public static double weightedAverage(List<Double> x, List<Double> weights) {
+    public static double angleDifference(double fromAngle, double toAngle, AngleUnit angleUnit) {
+        fromAngle = angleUnit.toDegrees(fromAngle);
+        toAngle = angleUnit.toDegrees(toAngle);
+
+        // Calculate initial difference (toAngle - fromAngle)
+        double diff = toAngle - fromAngle;
+
+        // Normalize to [-360, 360]
+        diff = diff % 360;
+
+        // Convert to [-180, 180] range
+        if (diff > 180) {
+            diff -= 360;
+        } else if (diff <= -180) {
+            diff += 360;
+        }
+
+        return angleUnit.fromDegrees(diff);
+    }
+
+    public static double weightedAverage(List<Double> numbers, List<Double> weights) {
         double weightedSum = 0;
         double totalWeight = sum(weights);
 
-        for (int i = 0; x.size() > i; i++) {
-            weightedSum += x.get(i) * weights.get(i);
+        for (int i = 0; numbers.size() > i; i++) {
+            weightedSum += numbers.get(i) * weights.get(i);
         }
 
         return weightedSum / totalWeight;
@@ -59,15 +97,15 @@ public class MathUtils {
     }
 
     // The following are derived from basic kinematic equations.
-    private static double solveVelocity(double initialVelocity, double acceleration, double displacement) {
+    public static double solveVelocity(double initialVelocity, double acceleration, double displacement) {
         return Math.sqrt(Math.pow(initialVelocity, 2) + 2 * acceleration * displacement);
     }
 
-    private static double solveDisplacement(double finalVelocity, double initialVelocity, double acceleration) {
+    public static double solveDisplacement(double finalVelocity, double initialVelocity, double acceleration) {
         return (Math.pow(finalVelocity, 2) - Math.pow(initialVelocity, 2)) / (2 * acceleration);
     }
 
-    private static double solveTime(double displacement, double initialVelocity, double acceleration) {
+    public static double solveTime(double displacement, double initialVelocity, double acceleration) {
         return solveQuadraticFormula(
                 0.5 * acceleration,
                 initialVelocity,
@@ -75,11 +113,15 @@ public class MathUtils {
         );
     }
 
-    private static double solveQuadraticFormula(double a, double b, double c) {
+    public static double solveQuadraticFormula(double a, double b, double c) {
         double determinant = Math.pow(b, 2) - 4 * a * c;
         double numerator = -b + Math.sqrt(determinant);
         double denominator = 2 * a;
 
         return numerator / denominator;
+    }
+
+    public static boolean epsilonEquals(double a, double b) {
+        return Math.abs(a - b) < 1e-10;
     }
 }
