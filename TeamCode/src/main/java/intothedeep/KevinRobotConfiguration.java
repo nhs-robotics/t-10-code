@@ -76,24 +76,26 @@ public class KevinRobotConfiguration extends AbstractRobotConfiguration {
         );
     }
 
+    @Override
     public MecanumDriver createMecanumDriver() {
         return new MecanumDriver(
                 this.fl,
                 this.fr,
                 this.bl,
                 this.br,
-                Constants.Coefficients.PRODUCTION_COEFFICIENTS
+                Constants.Coefficients.KEVIN_COEFFICIENTS
         );
     }
 
+    @Override
     public OdometryLocalizer createOdometry() {
         return new OdometryLocalizer(
                 new OdometryCoefficientSet(1, 1, 1),
                 new NovelEncoder(this.odometryRight.motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
                 new NovelEncoder(this.odometryLeft.motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
                 new NovelEncoder(this.odometryPerpendicular.motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
-                Constants.Odometry.ODOMETRY_LATERAL_WHEEL_DISTANCE,
-                Constants.Odometry.ODOMETRY_PERPENDICULAR_WHEEL_OFFSET
+                12,
+                7
         );
     }
 }

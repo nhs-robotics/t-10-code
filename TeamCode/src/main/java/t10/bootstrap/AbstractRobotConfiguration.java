@@ -1,7 +1,9 @@
 package t10.bootstrap;
 
+import t10.localizer.odometry.OdometryLocalizer;
 import t10.motion.NovelEncoder;
 import t10.motion.NovelMotor;
+import t10.motion.mecanum.MecanumDriver;
 import t10.vision.Webcam;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -67,4 +69,8 @@ public abstract class AbstractRobotConfiguration {
             throw new RuntimeException("could not create AbstractRobotConfiguration");
         }
     }
+
+    public abstract MecanumDriver createMecanumDriver();
+
+    public abstract OdometryLocalizer createOdometry();
 }

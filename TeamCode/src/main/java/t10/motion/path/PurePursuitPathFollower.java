@@ -70,12 +70,14 @@ public class PurePursuitPathFollower {
      * @param mecanumDriver The driver controller.
      * @return True if the path has been fully followed, false if following is still in progress.
      */
-    public boolean follow(MecanumDriver mecanumDriver) {
+    public boolean follow(MecanumDriver mecanumDriver) throws IllegalStateException {
         Pose currentPose = this.localizer.getFieldCentricPose();
         Point lookaheadPoint = getLookaheadPoint(
                 currentPose,
                 this.lookaheadDistance
         );
+
+        if (lookaheadPoint == null) throw new IllegalStateException("No Lookahead Point Found");
 
         if (currentPose.distanceTo(lookaheadPoint) < FOLLOWER_STOP_DISTANCE) {
             mecanumDriver.halt();

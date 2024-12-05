@@ -81,11 +81,14 @@ public class AzazelRobotConfiguration extends AbstractRobotConfiguration {
         );
     }
 
+    @Override
     public MecanumDriver createMecanumDriver() {
-        return new MecanumDriver(fl, fr, bl, br, Constants.Coefficients.PRODUCTION_COEFFICIENTS);
+        return new MecanumDriver(fl, fr, bl, br, Constants.Coefficients.KEVIN_COEFFICIENTS);
     }
 
+    @Override
     public OdometryLocalizer createOdometry() {
-        return new OdometryLocalizer(OdometryCoefficientSet.DEFAULT, spinningIntake.encoder, roller.encoder, linearSlideLeft.encoder, Constants.Odometry.ODOMETRY_LATERAL_WHEEL_DISTANCE, Constants.Odometry.ODOMETRY_PERPENDICULAR_WHEEL_OFFSET);
+        return null;
+        //return new OdometryLocalizer(OdometryCoefficientSet.DEFAULT, spinningIntake.encoder, roller.encoder, linearSlideLeft.encoder, Constants.Odometry.ODOMETRY_LATERAL_WHEEL_DISTANCE, Constants.Odometry.ODOMETRY_PERPENDICULAR_WHEEL_OFFSET);
     }
 }

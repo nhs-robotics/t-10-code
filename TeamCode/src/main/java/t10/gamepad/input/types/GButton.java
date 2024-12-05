@@ -2,6 +2,7 @@ package t10.gamepad.input.types;
 
 import t10.gamepad.GController;
 import t10.gamepad.input.GInput;
+import t10.gamepad.input.GIsPressed;
 import t10.gamepad.input.GOnPress;
 import t10.gamepad.input.GOnRelease;
 import t10.gamepad.input.GOnToggle;
@@ -9,7 +10,7 @@ import t10.gamepad.input.GOnToggle;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class GButton implements GInput, GOnPress<GButton>, GOnRelease<GButton>, GOnToggle<GButton> {
+public class GButton implements GInput, GOnPress<GButton>, GOnRelease<GButton>, GOnToggle<GButton>, GIsPressed {
     private final Supplier<Boolean> isDown;
     private final GController controller;
     private Runnable onPress, onRelease, whileDown, onToggleOn, onToggleOff;
@@ -107,5 +108,10 @@ public class GButton implements GInput, GOnPress<GButton>, GOnRelease<GButton>, 
     @Override
     public boolean isToggled() {
         return this.toggleState;
+    }
+
+    @Override
+    public boolean isPressed() {
+        return this.isDown.get();
     }
 }

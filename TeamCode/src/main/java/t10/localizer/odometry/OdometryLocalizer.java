@@ -4,6 +4,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import t10.motion.NovelEncoder;
 import t10.geometry.Pose;
 import t10.geometry.MovementVector;
+import t10.motion.profile.MotionProfile;
+import t10.motion.profile.TrapezoidalMotionProfile;
 
 /**
  * Odometry localization interface.
@@ -61,25 +63,24 @@ public class OdometryLocalizer {
         double newRightWheelPos = this.rightEncoder.getCurrentInches();
         double newPerpendicularWheelPos = this.perpendicularEncoder.getCurrentInches();
 
-        // Get changes in odometer wheel positions since last update
+        // Get changes in odometry wheel positions since last update - results from the robot's perspective
         double deltaLeftWheelPos = this.coefficients.leftCoefficient * (newLeftWheelPos - this.leftWheelPos);
-        double deltaRightWheelPos = this.coefficients.rightCoefficient * (newRightWheelPos - this.rightWheelPos); // Manual adjustment for inverted odometry wheel
+        double deltaRightWheelPos = this.coefficients.rightCoefficient * (newRightWheelPos - this.rightWheelPos);
         double deltaPerpendicularWheelPos = this.coefficients.perpendicularCoefficient * (newPerpendicularWheelPos - this.perpendicularWheelPos);
 
-        // Calculate rotation (phi) using arc length difference
+        // Convert changes in robot-perspective wheel positions into changes in x/y/angle from the robot's perspective
         double phi = (deltaLeftWheelPos - deltaRightWheelPos) / this.lateralWheelDistance;
         double forwardRelative = (deltaLeftWheelPos + deltaRightWheelPos) / 2d;
         double rightwardRelative = deltaPerpendicularWheelPos - this.perpendicularWheelOffset * phi;
 
-        // Heading of movement is assumed average between last known and current rotation
-        //                    CURRENT ROTATION                                             LAST SAVED ROTATION       
-        // double currentRotation = phi + this.relativePose.getHeading(AngleUnit.RADIANS);
-        // double lastRotation = this.relativePose.getHeading(AngleUnit.RADIANS);
-        // double averageRotationOverObservationPeriod = (currentRotation + lastRotation) / 2;
-        double heading = this.fieldCentricPose.getHeading(AngleUnit.RADIANS) - phi;
-        double deltaX = forwardRelative * Math.sin(heading) + rightwardRelative * Math.cos(heading);
-        double deltaY = forwardRelative * Math.cos(heading) - rightwardRelative * Math.sin(heading);
+        // Computes the robot's new  heading for purposes of trig
+        double heading = this.fieldCentricPose.getHeading(AngleUnit.RADIANS) + phi;
 
+        //converts x and y positions from robot-relative to field-relative
+        double deltaX = forwardRelative * Math.sin(heading) + rightwardRelative * Math.cos(heading);
+        double deltaY = forwardRelative * Math.cos(heading) + rightwardRelative * Math.sin(heading);
+
+        // Updates the Pose (position + heading)
         this.fieldCentricPose = this.fieldCentricPose.add(new Pose(deltaY, deltaX, phi, AngleUnit.RADIANS));
 
         // Update encoder wheel position
@@ -121,7 +122,7 @@ public class OdometryLocalizer {
     public MovementVector getRobotCentricVelocity(MovementVector absoluteVelocity)
     {
         double theta = this.fieldCentricPose.getHeading(AngleUnit.RADIANS);
-        double forwardRelative = absoluteVelocity.getVertical() * Math.cos(theta) + absoluteVelocity.getHorizontal() * Math.sin(theta);
+        double forwardRelative = -(absoluteVelocity.getVertical() * Math.cos(theta) + absoluteVelocity.getHorizontal() * Math.sin(theta));
         double rightwardRelative = absoluteVelocity.getVertical() * Math.sin(theta) + absoluteVelocity.getHorizontal() * Math.cos(theta);
         return new MovementVector(forwardRelative, rightwardRelative, 0);
     }

@@ -5,9 +5,13 @@ import android.os.SystemClock;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import intothedeep.Constants;
+import t10.utils.Alliance;
 
 @Autonomous
 public class AutoPlaceYellow extends EasyAuto {
+    public AutoPlaceYellow() {
+        super(Alliance.RED);
+    }
 
     @Override
     public void run() {

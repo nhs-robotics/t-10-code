@@ -17,7 +17,7 @@ public class OdometryNavigation {
         this.odometry = odometry;
         this.driver = driver;
         this.minError = 0.5;
-        this.minAngleError = 5; //in degrees here
+        this.minAngleError = 2; //in degrees here
         maxLatVelocity = 10;
         maxAngVelocity = 15;
     }
@@ -30,7 +30,7 @@ public class OdometryNavigation {
         double initialX = odometry.getFieldCentricPose().getX();
         double finalY = odometry.getFieldCentricPose().getY() + distance;
         while(Math.abs(finalY - odometry.getFieldCentricPose().getY()) > minError) {
-            driver.setVelocity(odometry.getRobotCentricVelocity(new MovementVector(-10 * Math.signum(distance), 0,0)));
+            driver.setVelocity(odometry.getRobotCentricVelocity(new MovementVector(10 * Math.signum(distance), 0,0)));
             this.odometry.update();
             this.telemetryUpdate();
         }
@@ -58,30 +58,27 @@ public class OdometryNavigation {
         double finalY = initialY + distanceY;
         while((Math.abs(finalX - odometry.getFieldCentricPose().getX()) > minError) || (Math.abs(finalY - odometry.getFieldCentricPose().getY()) > minError)) {
             double speedX, speedY;
-            if((Math.abs(finalX - odometry.getFieldCentricPose().getX()) > minError))
-            {
-                speedX = 10 * Math.signum(distanceX);
-            }
-            else {
-                speedX = finalX - odometry.getFieldCentricPose().getX();
-            }
-            if((Math.abs(finalY - odometry.getFieldCentricPose().getY()) > minError))
-            {
-                speedY = 10 * Math.signum(distanceY);
-            }
-            else {
-                speedY = finalY - odometry.getFieldCentricPose().getY();
-            }
+            speedX = 10 * Math.signum(distanceX);
+            speedY = 10 * Math.signum(distanceY);
             driver.setVelocity(odometry.getRobotCentricVelocity(new MovementVector(speedY, speedX,0)));
             this.odometry.update();
-            this.telemetryUpdate();
+        }
+        System.out.println("step 1 done");
+        while((Math.abs(finalX - odometry.getFieldCentricPose().getX()) > minError))
+        {
+            driveHorizontal(finalX - odometry.getFieldCentricPose().getX()); this.odometry.update();
+        }
+        while(Math.abs(finalY - odometry.getFieldCentricPose().getY()) > minError)
+        {
+            driveLateral(finalY - odometry.getFieldCentricPose().getY()); this.odometry.update();
         }
         driver.setVelocity(new MovementVector(0,0,0));
     }
 
     public void turnAbsolute(double angle)
     {
-        while(needAngleCorrectionDegrees(odometry.getFieldCentricPose().getHeading(AngleUnit.DEGREES), angle))
+        double targetAngle = -angle;
+        while(needAngleCorrectionDegrees(odometry.getFieldCentricPose().getHeading(AngleUnit.DEGREES), targetAngle))
         {
             driver.setVelocity(new MovementVector(0,0,findTurnSpeed(odometry.getFieldCentricPose().getHeading(AngleUnit.DEGREES), angle)));
             this.odometry.update();
@@ -93,8 +90,8 @@ public class OdometryNavigation {
     public void turnRelative(double angle)
     {
         double targetAngle = angle + odometry.getFieldCentricPose().getHeading(AngleUnit.DEGREES);
-        if(targetAngle > 180) {targetAngle -= 180;}
-        if(targetAngle < -180) {targetAngle += 180;}
+        if(targetAngle > 180) {targetAngle -= 360;}
+        if(targetAngle < -180) {targetAngle += 360;}
         turnAbsolute(targetAngle);
     }
 
@@ -190,17 +187,17 @@ public class OdometryNavigation {
                 targetAngle = 180 * Math.signum(currentAngle);
             }
             if (targetAngle < currentAngle - Math.PI) {
-                direction = -1;
+                direction = 1;
                 return maxAngVelocity * direction;
             } else if (targetAngle > currentAngle + Math.PI) {
-                direction = 1;
+                direction = -1;
                 return maxAngVelocity * direction;
             }
 
             else if (targetAngle < currentAngle) {
-                direction = 1;
-            } else if (targetAngle > currentAngle) {
                 direction = -1;
+            } else if (targetAngle > currentAngle) {
+                direction = 1;
             }
         }
         if(Math.abs(targetAngle - currentAngle) < 5*minAngleError)
