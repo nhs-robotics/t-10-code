@@ -39,9 +39,9 @@ func (v Vertices) Less(i, j int) bool {
 }
 
 const (
-	ROBOT_WIDTH_CM  = 44 + 4
-	ROBOT_HEIGHT_CM = 30 + 2
-	ROBOT_DEPTH_CM  = 44 + 4
+	ROBOT_WIDTH_CM  = 39.37 + 1
+	ROBOT_HEIGHT_CM = 33
+	ROBOT_DEPTH_CM  = 44.45 + 1
 )
 
 func main() {
