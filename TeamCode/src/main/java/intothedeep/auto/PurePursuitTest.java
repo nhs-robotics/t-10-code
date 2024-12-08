@@ -3,7 +3,6 @@ package intothedeep.auto;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import intothedeep.Constants;
 import intothedeep.KevinRobotConfiguration;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import t10.bootstrap.AutonomousOpMode;
 import t10.geometry.Pose;
@@ -21,11 +20,10 @@ public class PurePursuitTest extends AutonomousOpMode {
     private OdometryLocalizer odometry;
     private Localizer localizer;
     private PurePursuitPathFollower path1;
+    private PurePursuitPathFollower path2;
 
     @Metric
     public Pose pose;
-
-    private Telemetry.Item x,y,h;
 
     @Override
     public void initialize() {
@@ -34,10 +32,9 @@ public class PurePursuitTest extends AutonomousOpMode {
         this.odometry = this.c.createOdometry();
         AprilTagLocalizer aprilTagLocalizer = new AprilTagLocalizer(Constants.Webcam.C270_FOCAL_LENGTH_X, Constants.Webcam.C270_FOCAL_LENGTH_Y, Constants.Webcam.C270_PRINCIPAL_POINT_X, Constants.Webcam.C270_PRINCIPAL_POINT_Y);
         this.localizer = new Localizer(
-//                aprilTagLocalizer,
-                null,
+                aprilTagLocalizer,
                 this.odometry,
-                new Pose(44, 0, 0, AngleUnit.DEGREES)
+                new Pose(-30, 62, 0, AngleUnit.DEGREES)
         );
         this.c.webcam.start(aprilTagLocalizer.aprilTagProcessor);
         this.path1 = new PurePursuitPathFollower.Builder()
@@ -48,37 +45,19 @@ public class PurePursuitTest extends AutonomousOpMode {
                 .addPoint(-44, 0)
                 .setLocalizer(this.localizer)
                 .setLookaheadDistance(12.5)
-                .setSpeed(40)
+                .setSpeed(30)
                 .build();
     }
 
     private void followPath(PurePursuitPathFollower path) {
         while (!this.isStopRequested() && !path.follow(this.driver)) {
             this.pose = this.localizer.getFieldCentricPose();
-            this.telemetry.update();
-
-//            pos = 0;
-//            Point lookaheadPoint = path.getLookaheadPoint(
-//                    pose,
-//                    12.5
-//            );
-//
-//            for (int i = 0; path1.path.length - 1 > i; i++) {
-//                Point p1 = path1.path[i];
-//                Point p2 = path1.path[i + 1];
-//
-//                if (isPointOnLine(p1, p2, lookaheadPoint)) {
-//                    pos += p1.distanceTo(pose);
-//                    break;
-//                } else {
-//                    pos += p1.distanceTo(p2);
-//                }
-//            }
         }
     }
 
     @Override
     public void run() {
         this.followPath(this.path1);
+        this.followPath(this.path2);
     }
 }
