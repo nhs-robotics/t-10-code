@@ -7,14 +7,19 @@ import t10.geometry.MovementVector;
 import t10.motion.profile.MotionProfile;
 import t10.motion.profile.TrapezoidalMotionProfile;
 
+import t10.novel.AbstractEncoder;
+import t10.novel.NovelEncoder;
+import t10.reconstructor.Pose;
+import t10.utils.MovementVector;
+
 /**
  * Odometry localization interface.
  */
 public class OdometryLocalizer {
     private final OdometryCoefficientSet coefficients;
-    private final NovelEncoder rightEncoder;
-    private final NovelEncoder leftEncoder;
-    private final NovelEncoder perpendicularEncoder;
+    private final AbstractEncoder rightEncoder;
+    private final AbstractEncoder leftEncoder;
+    private final AbstractEncoder perpendicularEncoder;
     private final double lateralWheelDistance;  // Distance between parallel wheels
     private final double perpendicularWheelOffset;  // Distance from robot center to perpendicular wheel
     private double leftWheelPos;
@@ -35,9 +40,9 @@ public class OdometryLocalizer {
      */
     public OdometryLocalizer(
             OdometryCoefficientSet coefficients,
-            NovelEncoder rightEncoder,
-            NovelEncoder leftEncoder,
-            NovelEncoder perpendicularEncoder,
+            AbstractEncoder rightEncoder,
+            AbstractEncoder leftEncoder,
+            AbstractEncoder perpendicularEncoder,
             double lateralWheelDistance,
             double perpendicularWheelOffset
     ) {
