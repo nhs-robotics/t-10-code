@@ -5,21 +5,34 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import t10.bootstrap.AbstractRobotConfiguration;
 import t10.bootstrap.Hardware;
 import t10.bootstrap.TeleOpOpMode;
+import t10.localizer.odometry.OdometryLocalizer;
 import t10.motion.NovelMotor;
+import t10.motion.mecanum.MecanumDriver;
+import t10.utils.PIDController;
 
 @TeleOp
 public class ArmLiftTestTeleOp extends TeleOpOpMode {
     private Config c;
+    private PIDController armLift;
+    private int armTarget;
 
     @Override
     public void initialize() {
         this.c = new Config(this.hardwareMap);
+        this.armLift = new PIDController(0.05, 0, 0);
     }
 
     @Override
     public void loop() {
         this.runLift(this.gamepad1.left_stick_y);
-        this.rotateArm(500 * this.gamepad1.right_stick_y);
+
+        if (Math.abs(this.gamepad1.right_stick_y) > 0.1) {
+            this.c.armRotation.motor.setPower(this.gamepad1.right_stick_y);
+            this.armTarget = this.c.armRotation.motor.getCurrentPosition();
+        } else {
+            double pwr = this.armLift.calculate(this.c.armRotation.motor.getCurrentPosition(), this.armTarget);
+            this.c.armRotation.motor.setPower(pwr);
+        }
 
         if (this.gamepad1.dpad_up) {
             this.extendArm(1);
@@ -33,10 +46,6 @@ public class ArmLiftTestTeleOp extends TeleOpOpMode {
     private void runLift(double power) {
         this.c.lift1.setPower(power);
         this.c.lift2.setPower(power);
-    }
-
-    private void rotateArm(double velocity) {
-        this.c.armRotation.motor.setVelocity(velocity);
     }
 
     private void extendArm(double power) {
@@ -58,6 +67,16 @@ public class ArmLiftTestTeleOp extends TeleOpOpMode {
 
         public Config(HardwareMap hardwareMap) {
             super(hardwareMap);
+        }
+
+        @Override
+        public MecanumDriver createMecanumDriver() {
+            return null;
+        }
+
+        @Override
+        public OdometryLocalizer createOdometry() {
+            return null;
         }
     }
 }
