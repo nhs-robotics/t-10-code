@@ -1,16 +1,10 @@
 package t10.localizer.odometry;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import t10.motion.NovelEncoder;
 import t10.geometry.Pose;
 import t10.geometry.MovementVector;
-import t10.motion.profile.MotionProfile;
-import t10.motion.profile.TrapezoidalMotionProfile;
 
 import t10.novel.AbstractEncoder;
-import t10.novel.NovelEncoder;
-import t10.reconstructor.Pose;
-import t10.utils.MovementVector;
 
 /**
  * Odometry localization interface.
