@@ -78,7 +78,7 @@ public class OdometryLocalizer {
 
         //converts x and y positions from robot-relative to field-relative
         double deltaX = forwardRelative * (Math.sin(heading)) + rightwardRelative * Math.cos(heading);
-        double deltaY = forwardRelative * Math.cos(heading) + rightwardRelative * Math.sin(heading);
+        double deltaY = forwardRelative * Math.cos(heading) - rightwardRelative * Math.sin(heading);
 
         // Updates the Pose (position + heading)
         this.fieldCentricPose = this.fieldCentricPose.add(new Pose(deltaY, deltaX, phi, AngleUnit.RADIANS));
@@ -122,7 +122,7 @@ public class OdometryLocalizer {
     public MovementVector getRobotCentricVelocity(MovementVector absoluteVelocity)
     {
         double theta = this.fieldCentricPose.getHeading(AngleUnit.RADIANS);
-        double forwardRelative = -(absoluteVelocity.getVertical() * Math.cos(theta) + absoluteVelocity.getHorizontal() * Math.sin(theta));
+        double forwardRelative = (absoluteVelocity.getVertical() * Math.cos(theta) - absoluteVelocity.getHorizontal() * Math.sin(theta));
         double rightwardRelative = absoluteVelocity.getVertical() * Math.sin(theta) + absoluteVelocity.getHorizontal() * Math.cos(theta);
         return new MovementVector(forwardRelative, rightwardRelative, 0);
     }

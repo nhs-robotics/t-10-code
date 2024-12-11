@@ -26,7 +26,7 @@ public class OdometryTestingTeleOp extends TeleOpOpMode {
     private Telemetry.Item x;
     private Telemetry.Item y;
     private Telemetry.Item r;
-    private Telemetry.Item vert, hor, direct270, direct0, direct45, direct225;
+    private Telemetry.Item vert, hor, direct270, direct0, direct90, direct180;
     private Telemetry.Item angle;
     private double distance;
     private Pose init_pose;
@@ -52,6 +52,11 @@ public class OdometryTestingTeleOp extends TeleOpOpMode {
         this.vert = this.telemetry.addData("vert: ", "0");
         this.hor = this.telemetry.addData("hor: ", "0");
 
+        this.direct0 = this.telemetry.addData("0: ", "0");
+        this.direct90 = this.telemetry.addData("90: ", "0");
+        this.direct180 = this.telemetry.addData("180: ", "0");
+        this.direct270 = this.telemetry.addData("-90: ", "0");
+
         distance = 10;
         init_pose = odometry.getFieldCentricPose();
         c.fl.motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -68,6 +73,11 @@ public class OdometryTestingTeleOp extends TeleOpOpMode {
         this.r.setValue(this.odometry.getFieldCentricPose().getHeading(AngleUnit.DEGREES));
         this.vert.setValue(this.odometry.getRobotCentricVelocity(1,0));
         this.hor.setValue(this.odometry.getRobotCentricVelocity(0,1));
+
+        this.direct0.setValue(navigator.findTurnSpeed(odometry.getFieldCentricPose().getHeading(AngleUnit.DEGREES),0));
+        this.direct90.setValue(navigator.findTurnSpeed(odometry.getFieldCentricPose().getHeading(AngleUnit.DEGREES),90));
+        this.direct180.setValue(navigator.findTurnSpeed(odometry.getFieldCentricPose().getHeading(AngleUnit.DEGREES),180));
+        this.direct270.setValue(navigator.findTurnSpeed(odometry.getFieldCentricPose().getHeading(AngleUnit.DEGREES),-90));
 
         gamepadController.x.onPress(() -> navigator.driveDiagonal(-distance,distance));
         gamepadController.a.onPress(() -> navigator.driveDiagonal(-distance,-distance));

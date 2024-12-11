@@ -61,21 +61,23 @@ public class PurePursuitTeleOp extends TeleOpOpMode {
         this.gamepadController = new GController(this.gamepad1)
                 .leftBumper.initialToggleState(true).ok();  // micro-movement
         this.atl = new AprilTagLocalizer(Constants.Webcam.C270_FOCAL_LENGTH_X, Constants.Webcam.C270_FOCAL_LENGTH_Y, Constants.Webcam.C270_PRINCIPAL_POINT_X, Constants.Webcam.C270_PRINCIPAL_POINT_Y);
+
         this.localizer = new Localizer(
-                null, // TODO: Switch to this.atl when Camera is calibrated.
+                this.atl, // TODO: Switch to this.atl when Camera is calibrated.
                 this.odometry,
-                new Pose(0, 0, 0, AngleUnit.RADIANS) //TODO: Change x back to 48
+                new Pose(0, 48, 0, AngleUnit.RADIANS) //TODO: Change x back to 48
         );
 
         // Initialize Path Followers
         {
             humanPlayerPathFollower = new PurePursuitPathFollower.Builder()
-                    .addPoint(0, -48)
-                    .addPoint(48, -48)
-                    .addPoint(0, 48)
-                    .addPoint(48, 48)
-                    .addPoint(48, -48)
-                    .addPoint(60, -60)
+                    .addPoint(0,-24)
+                    .addPoint(0,-48)
+                    .addPoint(48,-48)
+                    .addPoint(48,48)
+                    .addPoint(0,48)
+                    .addPoint(48,48)
+                    .addPoint(60,60)
                     .setLocalizer(this.localizer)
                     .setLookaheadDistance(purePursuitLookAheadDistance)
                     .setSpeed(purePursuitSpeed)
@@ -141,14 +143,14 @@ public class PurePursuitTeleOp extends TeleOpOpMode {
                     this.driver.useGamepad(this.gamepad1, this.gamepadController.leftBumper.isToggled() ? 0.25 : 1);
                 }
             } catch (IllegalStateException e) {
-                System.out.println("Too far from lookahead path.");
+
             }
         }
 
 
-        this.x.setValue(this.odometry.getFieldCentricPose().getX());
-        this.y.setValue(this.odometry.getFieldCentricPose().getY());
-        this.r.setValue(this.odometry.getFieldCentricPose().getHeading(AngleUnit.DEGREES));
+        this.x.setValue(this.localizer.getFieldCentricPose().getX());
+        this.y.setValue(this.localizer.getFieldCentricPose().getY());
+        this.r.setValue(this.localizer.getFieldCentricPose().getHeading(AngleUnit.DEGREES));
         this.vert.setValue(this.odometry.getRobotCentricVelocity(-1,0));
         this.hor.setValue(this.odometry.getRobotCentricVelocity(0,1));
         this.movementPower.setValue(this.gamepadController.leftBumper.isToggled() ? 0.25 : 1);

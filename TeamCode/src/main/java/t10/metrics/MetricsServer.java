@@ -137,6 +137,7 @@ public class MetricsServer extends WebSocketServer {
     @Override
     public void stop(int timeout) throws InterruptedException {
         this.timer.cancel();
+        this.timer.purge();
         super.stop(timeout);
     }
 
