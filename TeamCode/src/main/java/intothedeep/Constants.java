@@ -9,10 +9,10 @@ public class Constants {
      * <a href="https://horus.readthedocs.io/en/release-0.2/source/scanner-components/camera.html">Source</a>
      */
     public static class Webcam {
-        public static final double C270_FOCAL_LENGTH_X = 628.345;
-        public static final double C270_FOCAL_LENGTH_Y = 634.9043;
-        public static final double C270_PRINCIPAL_POINT_X = 296.3442;
-        public static final double C270_PRINCIPAL_POINT_Y = 178.5478;
+        public static final double C270_FOCAL_LENGTH_X = 649.5832;
+        public static final double C270_FOCAL_LENGTH_Y = 649.5805;
+        public static final double C270_PRINCIPAL_POINT_X = 330.0829;
+        public static final double C270_PRINCIPAL_POINT_Y = 231.2183;
         public static final int CAMERA_RES_WIDTH = 640;
         public static final int CAMERA_RES_HEIGHT = 480;
     }
