@@ -11,12 +11,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import t10.bootstrap.AbstractRobotConfiguration;
 import t10.bootstrap.Hardware;
-import t10.novel.NovelEncoder;
-import t10.novel.NovelMotor;
+import t10.motion.NovelEncoder;
 import t10.novel.OdometryEncoder;
-import t10.novel.mecanum.MecanumDriver;
-import t10.novel.odometry.NovelOdometry;
-import t10.novel.odometry.OdometryCoefficientSet;
 import t10.localizer.odometry.OdometryLocalizer;
 import t10.motion.NovelEncoder;
 import t10.motion.NovelMotor;
@@ -98,8 +94,8 @@ public class IntoTheDeepRobotConfiguration extends AbstractRobotConfiguration {
         );
     }
 
-    public NovelOdometry createOdometry() {
-        return new NovelOdometry(
+    public OdometryLocalizer createOdometry() {
+        return new OdometryLocalizer(
                 new OdometryCoefficientSet(1, 1, 1),
                 // 4-5-6 is right-left-perpendicular
                 new OdometryEncoder(octoQuad,4, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
