@@ -15,7 +15,7 @@ import t10.bootstrap.Hardware;
 import t10.bootstrap.TeleOpOpMode;
 import t10.localizer.odometry.OdometryLocalizer;
 import t10.motion.NovelMotor;
-import t10.novel.OdometryEncoder;
+import t10.motion.OdometryEncoder;
 import t10.motion.mecanum.MecanumDriver;
 
 @TeleOp(name = "OctoQuadTestTeleop")
