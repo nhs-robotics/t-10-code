@@ -1,11 +1,9 @@
 package intothedeep.teleop;
 
 import com.qualcomm.hardware.digitalchickenlabs.OctoQuad;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -15,7 +13,7 @@ import t10.bootstrap.Hardware;
 import t10.bootstrap.TeleOpOpMode;
 import t10.localizer.odometry.OdometryLocalizer;
 import t10.motion.NovelMotor;
-import t10.motion.OdometryEncoder;
+import t10.motion.OctoQuadEncoder;
 import t10.motion.mecanum.MecanumDriver;
 
 @TeleOp(name = "OctoQuadTestTeleop")
@@ -38,7 +36,7 @@ public class OctoQuadTestTeleop extends TeleOpOpMode {
         } else {
             this.c.novelMotor.setPower(0);
         }
-        this.r.setValue(this.c.odometryEncoder.getCurrentInches());
+        this.r.setValue(this.c.octoQuadEncoder.getCurrentInches());
     }
 }
 
@@ -50,7 +48,7 @@ class OctoQuadTestConfiguration extends AbstractRobotConfiguration {
     @Hardware(name = "OctoQuad")
     public OctoQuad octoQuad;
 
-    public OdometryEncoder odometryEncoder = new OdometryEncoder(octoQuad, 0,
+    public OctoQuadEncoder octoQuadEncoder = new OctoQuadEncoder(octoQuad, 0,
             Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN,
             Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION);
 

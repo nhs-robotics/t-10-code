@@ -2,9 +2,7 @@ package t10.motion;
 
 import com.qualcomm.hardware.digitalchickenlabs.OctoQuad;
 
-import t10.motion.AbstractEncoder;
-
-public class OdometryEncoder extends AbstractEncoder {
+public class OctoQuadEncoder extends AbstractEncoder {
     private final OctoQuad octoQuad;
     private final int channel;
     private final double ticksPerRevolution;
@@ -18,7 +16,7 @@ public class OdometryEncoder extends AbstractEncoder {
      * @param encoderDiameterIn The diameter of the encoder wheel in inches.
      * @param ticksPerRevolution The number of ticks the encoder has per revolution of the wheel.
      */
-    public OdometryEncoder(OctoQuad octoQuad, int channel, double encoderDiameterIn, double ticksPerRevolution) {
+    public OctoQuadEncoder(OctoQuad octoQuad, int channel, double encoderDiameterIn, double ticksPerRevolution) {
         this.octoQuad = octoQuad;
         this.channel = channel;
         this.ticksPerRevolution = ticksPerRevolution;
