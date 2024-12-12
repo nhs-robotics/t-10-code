@@ -8,7 +8,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import intothedeep.IntoTheDeepRobotConfiguration;
-import intothedeep.KevinRobotConfiguration;
 import t10.bootstrap.AbstractRobotConfiguration;
 import t10.bootstrap.TeleOpOpMode;
 import t10.gamepad.GController;

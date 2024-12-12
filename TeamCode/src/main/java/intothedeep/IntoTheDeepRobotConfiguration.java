@@ -13,17 +13,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import t10.bootstrap.AbstractRobotConfiguration;
 import t10.bootstrap.Hardware;
 import t10.motion.NovelEncoder;
-import t10.novel.OdometryEncoder;
+import t10.motion.OdometryEncoder;
 import t10.localizer.odometry.OdometryLocalizer;
 import t10.motion.NovelEncoder;
 import t10.motion.NovelMotor;
 import t10.motion.mecanum.MecanumDriver;
 import t10.localizer.odometry.OdometryCoefficientSet;
-import t10.novel.NovelEncoder;
-import t10.novel.NovelMotor;
-import t10.novel.OdometryEncoder;
-import t10.novel.mecanum.MecanumDriver;
-import t10.novel.odometry.OdometryCoefficientSet;
 
 public class IntoTheDeepRobotConfiguration extends AbstractRobotConfiguration {
     // Wheels

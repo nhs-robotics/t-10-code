@@ -1,8 +1,8 @@
-package t10.novel;
+package t10.motion;
 
 import com.qualcomm.hardware.digitalchickenlabs.OctoQuad;
 
-import t10.novel.AbstractEncoder;
+import t10.motion.AbstractEncoder;
 
 public class OdometryEncoder extends AbstractEncoder {
     private final OctoQuad octoQuad;

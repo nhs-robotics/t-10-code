@@ -1,4 +1,4 @@
-package t10.novel;
+package t10.motion;
 
 import org.openftc.easyopencv.OpenCvPipeline;
 
