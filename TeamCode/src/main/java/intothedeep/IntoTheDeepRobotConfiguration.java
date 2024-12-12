@@ -2,6 +2,7 @@ package intothedeep;
 
 import com.qualcomm.hardware.digitalchickenlabs.OctoQuad;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -18,6 +19,11 @@ import t10.motion.NovelEncoder;
 import t10.motion.NovelMotor;
 import t10.motion.mecanum.MecanumDriver;
 import t10.localizer.odometry.OdometryCoefficientSet;
+import t10.novel.NovelEncoder;
+import t10.novel.NovelMotor;
+import t10.novel.OdometryEncoder;
+import t10.novel.mecanum.MecanumDriver;
+import t10.novel.odometry.OdometryCoefficientSet;
 
 public class IntoTheDeepRobotConfiguration extends AbstractRobotConfiguration {
     // Wheels
@@ -56,9 +62,21 @@ public class IntoTheDeepRobotConfiguration extends AbstractRobotConfiguration {
     @Hardware(name = "imu")
     public IMU imu;
 
+    @Hardware(name = "LiftRight")
+    public NovelMotor liftRight;
+
+    @Hardware(name = "LiftLeft")
+    public NovelMotor liftLeft;
+
+    @Hardware(name = "ArmExtension")
+    public NovelMotor armExtension;
+
+    @Hardware(name = "ArmRotation")
+    public NovelMotor armRotation;
+
     @Hardware(name = "OctoQuad")
     public OctoQuad octoQuad;
-
+  
     public IntoTheDeepRobotConfiguration(HardwareMap hardwareMap) {
         super(hardwareMap);
 
@@ -88,8 +106,8 @@ public class IntoTheDeepRobotConfiguration extends AbstractRobotConfiguration {
                 new OdometryEncoder(octoQuad, 4, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
                 new OdometryEncoder(octoQuad, 5, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
                 new OdometryEncoder(octoQuad, 6, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
-                9.5,
-                11
+                11.5,
+                -6.5
         );
     }
 }

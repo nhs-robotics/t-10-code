@@ -14,8 +14,12 @@ import t10.bootstrap.AbstractRobotConfiguration;
 import t10.bootstrap.Hardware;
 import t10.bootstrap.TeleOpOpMode;
 import t10.localizer.odometry.OdometryLocalizer;
-import t10.motion.mecanum.MecanumDriver;
+import t10.novel.NovelEncoder;
+import t10.novel.NovelMotor;
 import t10.novel.OdometryEncoder;
+import t10.novel.mecanum.MecanumDriver;
+import t10.novel.odometry.NovelOdometry;
+import t10.novel.odometry.OdometryCoefficientSet;
 
 @TeleOp(name = "OctoQuadTestTeleop")
 public class OctoQuadTestTeleop extends TeleOpOpMode {
@@ -42,7 +46,6 @@ public class OctoQuadTestTeleop extends TeleOpOpMode {
 }
 
 class OctoQuadTestConfiguration extends AbstractRobotConfiguration {
-
     public OctoQuadTestConfiguration(HardwareMap hardwareMap) {
         super(hardwareMap);
     }
@@ -57,13 +60,15 @@ class OctoQuadTestConfiguration extends AbstractRobotConfiguration {
     @Hardware(name = "Motor",
     zeroPowerBehavior = DcMotor.ZeroPowerBehavior.FLOAT
     )
-    public t10.motion.NovelMotor novelMotor;
+  
+    public NovelMotor novelMotor;
 
     @Override
     public MecanumDriver createMecanumDriver() {
         return null;
     }
 
+    @Override
     public OdometryLocalizer createOdometry() {
         return null;
     }
