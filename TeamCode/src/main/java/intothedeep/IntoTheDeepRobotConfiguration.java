@@ -1,10 +1,14 @@
 package intothedeep;
 
+import com.qualcomm.hardware.digitalchickenlabs.OctoQuad;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import t10.bootstrap.AbstractRobotConfiguration;
 import t10.bootstrap.Hardware;
@@ -13,6 +17,11 @@ import t10.motion.NovelEncoder;
 import t10.motion.NovelMotor;
 import t10.motion.mecanum.MecanumDriver;
 import t10.localizer.odometry.OdometryCoefficientSet;
+import t10.novel.NovelEncoder;
+import t10.novel.NovelMotor;
+import t10.novel.OdometryEncoder;
+import t10.novel.mecanum.MecanumDriver;
+import t10.novel.odometry.OdometryCoefficientSet;
 
 public class IntoTheDeepRobotConfiguration extends AbstractRobotConfiguration {
 
@@ -52,17 +61,6 @@ public class IntoTheDeepRobotConfiguration extends AbstractRobotConfiguration {
     @Hardware(name = "imu")
     public IMU imu;
 
-    public IntoTheDeepRobotConfiguration(HardwareMap hardwareMap) {
-        super(hardwareMap);
-
-        this.imu.initialize(
-                new IMU.Parameters(new RevHubOrientationOnRobot(
-                        RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
-                        RevHubOrientationOnRobot.UsbFacingDirection.UP
-                ))
-        );
-    }
-
     @Hardware(name = "LiftRight")
     public NovelMotor liftRight;
 
@@ -75,6 +73,21 @@ public class IntoTheDeepRobotConfiguration extends AbstractRobotConfiguration {
     @Hardware(name = "ArmRotation")
     public NovelMotor armRotation;
 
+    @Hardware(name = "OctoQuad")
+    public OctoQuad octoQuad;
+  
+    public IntoTheDeepRobotConfiguration(HardwareMap hardwareMap) {
+        super(hardwareMap);
+
+        this.imu.initialize(
+                new IMU.Parameters(new RevHubOrientationOnRobot(
+                        RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+                        RevHubOrientationOnRobot.UsbFacingDirection.UP
+                ))
+        );
+    }
+
+
     @Override
     public MecanumDriver createMecanumDriver() {
         return new MecanumDriver(
@@ -86,18 +99,15 @@ public class IntoTheDeepRobotConfiguration extends AbstractRobotConfiguration {
         );
     }
 
-    @Override
     public OdometryLocalizer createOdometry() {
-        return null;
-
-        // TODO
-//        return new OdometryLocalizer(
-//                new OdometryCoefficientSet(1, 1, -1),
-//                new NovelEncoder(this..motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
-//                new NovelEncoder(this.odometryLeft.motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
-//                new NovelEncoder(this.odometryPerpendicular.motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
-//                11.5,
-//                -6.5
-//        );
+        return new OdometryLocalizer(
+                new OdometryCoefficientSet(1, 1, 1),
+                // 4-5-6 is right-left-perpendicular
+                new OdometryEncoder(octoQuad, 4, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
+                new OdometryEncoder(octoQuad, 5, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
+                new OdometryEncoder(octoQuad, 6, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
+                11.5,
+                -6.5
+        );
     }
 }

@@ -209,7 +209,7 @@
 
                     // Update marker position and rotation
                     poseMarker.group.position.set(poseX, 0.1, poseY);
-                    poseMarker.group.rotation.y = pose.heading + Math.PI;
+                    poseMarker.group.rotation.y = (-pose.heading) + Math.PI;
 
                     // Update label position
                     poseMarker.label.position.set(poseX, 0.4, poseY);
