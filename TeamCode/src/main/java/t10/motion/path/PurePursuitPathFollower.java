@@ -119,13 +119,13 @@ public class PurePursuitPathFollower {
      * Moves the robot towards the next position on the path.
      *
      * @param mecanumDriver The mecanum driver that this robot uses to drive.
-     * @param currentPoint The current location of this robot on the field.
+     * @param currentPose The current location of this robot on the field.
      * @param targetPoint The lookahead point that the robot is aiming towards.
      */
-    private void moveTowardsPosition(MecanumDriver mecanumDriver, Point currentPoint, Point targetPoint) {
+    private void moveTowardsPosition(MecanumDriver mecanumDriver, Pose currentPose, Point targetPoint) {
         // The distance between the robot's current location and its target position.
-        double dx = targetPoint.getX() - currentPoint.getX();
-        double dy = targetPoint.getY() - currentPoint.getY();
+        double dx = targetPoint.getX() - currentPose.getX();
+        double dy = targetPoint.getY() - currentPose.getY();
 
         // The angle between the robot's current location and its target position
         double angle = Math.atan2(dy, dx);
@@ -142,15 +142,17 @@ public class PurePursuitPathFollower {
                 //  |                |                                         |--slows the robot when it approaches its
                 //  |                |                                         |  destination
                 //  |                |                                         |
-                this.speed * (0.75 - angleDifference) * (currentPoint.distanceTo(targetPoint) / this.lookaheadDistance)
+                this.speed * (0.75 - angleDifference) * (currentPose.distanceTo(targetPoint) / this.lookaheadDistance)
         );
 
         // Sets the velocity as a vector so that the robot moves in the correct direction
         mecanumDriver.setVelocity(
-                new MovementVector(
+                getRobotCentricVelocity(
+                    new MovementVector(
                         Math.sin(angle) * velocity,
                         Math.cos(angle) * velocity,
-                        0
+                        0),
+                    currentPose
                 )
         );
 
@@ -337,5 +339,19 @@ public class PurePursuitPathFollower {
                     this.speed
             );
         }
+    }
+
+    public MovementVector getRobotCentricVelocity(MovementVector absoluteVelocity, Pose fieldCentricPose)
+    {
+        double theta = fieldCentricPose.getHeading(AngleUnit.RADIANS);
+        double forwardRelative = -(absoluteVelocity.getVertical() * Math.cos(theta) + absoluteVelocity.getHorizontal() * Math.sin(theta));
+        double rightwardRelative = absoluteVelocity.getVertical() * Math.sin(theta) + absoluteVelocity.getHorizontal() * Math.cos(theta);
+        return new MovementVector(forwardRelative, rightwardRelative, 0);
+    }
+
+    //IMPORTANT - this MUST be iterated, otherwise it'll keep going in the earlier direction while rotating - and not work
+    public MovementVector getRobotCentricVelocity(double lateral, double horizontal, Pose fieldCentricPose)
+    {
+        return getRobotCentricVelocity(new MovementVector(lateral, horizontal, 0), fieldCentricPose);
     }
 }

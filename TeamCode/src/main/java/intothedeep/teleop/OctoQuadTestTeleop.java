@@ -13,6 +13,7 @@ import intothedeep.Constants;
 import t10.bootstrap.AbstractRobotConfiguration;
 import t10.bootstrap.Hardware;
 import t10.bootstrap.TeleOpOpMode;
+import t10.localizer.odometry.OdometryLocalizer;
 import t10.novel.NovelEncoder;
 import t10.novel.NovelMotor;
 import t10.novel.OdometryEncoder;
@@ -45,7 +46,6 @@ public class OctoQuadTestTeleop extends TeleOpOpMode {
 }
 
 class OctoQuadTestConfiguration extends AbstractRobotConfiguration {
-
     public OctoQuadTestConfiguration(HardwareMap hardwareMap) {
         super(hardwareMap);
     }
@@ -60,6 +60,7 @@ class OctoQuadTestConfiguration extends AbstractRobotConfiguration {
     @Hardware(name = "Motor",
     zeroPowerBehavior = DcMotor.ZeroPowerBehavior.FLOAT
     )
+  
     public NovelMotor novelMotor;
 
     @Override
@@ -67,7 +68,8 @@ class OctoQuadTestConfiguration extends AbstractRobotConfiguration {
         return null;
     }
 
-    public NovelOdometry createOdometry() {
+    @Override
+    public OdometryLocalizer createOdometry() {
         return null;
     }
 }

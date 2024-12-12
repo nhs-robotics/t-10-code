@@ -8,7 +8,7 @@ import t10.geometry.MovementVector;
 import t10.motion.profile.MotionProfile;
 import t10.motion.profile.TrapezoidalMotionProfile;
 
-public class OdometryNavigation<MP> {
+public class OdometryNavigation {
     private OdometryLocalizer odometry;
     private MecanumDriver driver;
     public final double minError;
