@@ -1,6 +1,7 @@
 package intothedeep;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -62,14 +63,17 @@ public class IntoTheDeepRobotConfiguration extends AbstractRobotConfiguration {
         );
     }
 
-    @Hardware(name = "OL")
-    public NovelMotor odometryLeft;
+    @Hardware(name = "LiftRight")
+    public NovelMotor liftRight;
 
-    @Hardware(name = "OR")
-    public NovelMotor odometryRight;
+    @Hardware(name = "LiftLeft")
+    public NovelMotor liftLeft;
 
-    @Hardware(name = "OP")
-    public NovelMotor odometryPerpendicular;
+    @Hardware(name = "ArmExtension")
+    public NovelMotor armExtension;
+
+    @Hardware(name = "ArmRotation")
+    public NovelMotor armRotation;
 
     @Override
     public MecanumDriver createMecanumDriver() {
@@ -84,13 +88,16 @@ public class IntoTheDeepRobotConfiguration extends AbstractRobotConfiguration {
 
     @Override
     public OdometryLocalizer createOdometry() {
-        return new OdometryLocalizer(
-                new OdometryCoefficientSet(1, 1, -1),
-                new NovelEncoder(this.odometryRight.motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
-                new NovelEncoder(this.odometryLeft.motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
-                new NovelEncoder(this.odometryPerpendicular.motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
-                11.5,
-                -6.5
-        );
+        return null;
+
+        // TODO
+//        return new OdometryLocalizer(
+//                new OdometryCoefficientSet(1, 1, -1),
+//                new NovelEncoder(this..motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
+//                new NovelEncoder(this.odometryLeft.motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
+//                new NovelEncoder(this.odometryPerpendicular.motor, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
+//                11.5,
+//                -6.5
+//        );
     }
 }
