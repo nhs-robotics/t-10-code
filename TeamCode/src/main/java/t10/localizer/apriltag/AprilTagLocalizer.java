@@ -23,7 +23,7 @@ public class AprilTagLocalizer {
     private final double distanceRejectThresholdIn;
 
     public AprilTagLocalizer(double fx, double fy, double px, double py) {
-        this(AprilTagProcessor.TagFamily.TAG_36h11, true, fx, fy, px, py, 30);
+        this(AprilTagProcessor.TagFamily.TAG_36h11, true, fx, fy, px, py, 18);
     }
 
     public AprilTagLocalizer(AprilTagProcessor.TagFamily tagFamily, boolean draw, double focalLengthX, double focalLengthY, double principalPointX, double principalPointY, double distanceRejectThresholdIn) {
@@ -37,7 +37,7 @@ public class AprilTagLocalizer {
                 .setTagLibrary(AprilTagGameDatabase.getCurrentGameTagLibrary())
                 .setTagFamily(tagFamily)
                 .setCameraPose(
-                        new Position(DistanceUnit.INCH, 0, 0, 0, 0),
+                        new Position(DistanceUnit.INCH, 0, 0 , 0, 0),
                         new YawPitchRollAngles(AngleUnit.DEGREES, 0, -90, 0, 0)
                 )
                 .setLensIntrinsics(focalLengthX, focalLengthY, principalPointX, principalPointY)

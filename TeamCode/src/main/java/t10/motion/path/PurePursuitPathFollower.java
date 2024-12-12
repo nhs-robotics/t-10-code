@@ -15,13 +15,44 @@ import java.util.LinkedList;
 import static t10.utils.MathUtils.isPointOnLine;
 
 public class PurePursuitPathFollower {
+    /**
+     * The robot must be within this distance (in inches) at the end of its path to stop moving/finish the path.
+     */
     private static final double FOLLOWER_STOP_DISTANCE = 0.5;
+
+    /**
+     * The absolute points that the robot will follow which make up the path.
+     */
     public final Point[] path;
+
+    /**
+     * The {@link Localizer} that this path follower is using to determine its position.
+     */
     public final Localizer localizer;
+
+    /**
+     * This is the distance in inches of how far ahead on the path the robot will aim towards.
+     */
     public final double lookaheadDistance;
+
+    /**
+     * The speed in inches per second that the robot will aim to follow the path at.
+     */
     private final double speed;
+
+    /**
+     * The angle that the robot was last looking.
+     */
     private double lastAngle;
 
+    /**
+     * Creates a path follower to follow the path specified in {@code path}.
+     *
+     * @param path              The path that the robot will follow.
+     * @param localizer         The localizer the robot will use to determine its position on the field.
+     * @param lookaheadDistance The distance, in inches, the robot will aim towards on the path.
+     * @param speed             The speed the robot will attempt to follow the path at.
+     */
     public PurePursuitPathFollower(Point[] path, Localizer localizer, double lookaheadDistance, double speed) {
         if (path.length < 2) {
             throw new IllegalArgumentException("path must contain at least two points (a start and an end)");
@@ -62,6 +93,10 @@ public class PurePursuitPathFollower {
         return false;
     }
 
+    /**
+     * @param targetPoint The lookahead point that the robot is targeting to follow.
+     * @return The distance, in inches, along the path that the robot has traversed.
+     */
     private double getTraveledDistance(Point targetPoint) {
         double distanceTraveled = 0;
 
@@ -80,30 +115,47 @@ public class PurePursuitPathFollower {
         return distanceTraveled;
     }
 
+    /**
+     * Moves the robot towards the next position on the path.
+     *
+     * @param mecanumDriver The mecanum driver that this robot uses to drive.
+     * @param currentPoint The current location of this robot on the field.
+     * @param targetPoint The lookahead point that the robot is aiming towards.
+     */
     private void moveTowardsPosition(MecanumDriver mecanumDriver, Point currentPoint, Point targetPoint) {
+        // The distance between the robot's current location and its target position.
         double dx = targetPoint.getX() - currentPoint.getX();
         double dy = targetPoint.getY() - currentPoint.getY();
-        double distance = Math.sqrt(dx * dx + dy * dy);
 
-        if (distance > 0) {
-            // Get the motion profile's velocity
-            double angle = Math.atan2(dy, dx);
-            double angleDifference = MathUtils.angleDifference(angle, this.lastAngle, AngleUnit.RADIANS);
-            double velocity = Math.max(
-                    this.speed / 10,
-                    this.speed * (0.75 - angleDifference) * (currentPoint.distanceTo(targetPoint) / this.lookaheadDistance)
-            );
+        // The angle between the robot's current location and its target position
+        double angle = Math.atan2(dy, dx);
 
-            mecanumDriver.setVelocity(
-                    new MovementVector(
-                            Math.sin(angle) * velocity,
-                            Math.cos(angle) * velocity,
-                            0
-                    )
-            );
+        // The difference between the robots current angle and its last angle. This is used to slow the robot when it
+        // goes around corners
+        double angleDifference = MathUtils.angleDifference(angle, this.lastAngle, AngleUnit.RADIANS);
 
-            this.lastAngle = angle;
-        }
+        // Determines the velocity as a scalar
+        double velocity = Math.max(
+                this.speed / 10,  // minimum velocity
+                //  |--the max speed the robot will go
+                //  |                |--slows the robot around corners
+                //  |                |                                         |--slows the robot when it approaches its
+                //  |                |                                         |  destination
+                //  |                |                                         |
+                this.speed * (0.75 - angleDifference) * (currentPoint.distanceTo(targetPoint) / this.lookaheadDistance)
+        );
+
+        // Sets the velocity as a vector so that the robot moves in the correct direction
+        mecanumDriver.setVelocity(
+                new MovementVector(
+                        Math.sin(angle) * velocity,
+                        Math.cos(angle) * velocity,
+                        0
+                )
+        );
+
+        // Update the last angle to determine the angle difference on the next call
+        this.lastAngle = angle;
     }
 
     private double signumWithSpecialCase(double n) {
@@ -115,7 +167,7 @@ public class PurePursuitPathFollower {
      * Generates the furthest lookahead point on the path that is distance r from the point (x, y).
      *
      * @param point The point of the origin of the circle. This should be the absolute position of the robot.
-     * @param r The lookahead distance.
+     * @param r     The lookahead distance.
      * @return A double[] coordinate pair if the lookahead point exists, or null.
      * @see <a href="http://mathworld.wolfram.com/Circle-LineIntersection.html">Circle-Line Intersection</a>
      */
@@ -199,25 +251,56 @@ public class PurePursuitPathFollower {
             this.path = new LinkedList<>();
         }
 
+        /**
+         * Add the next point on the path.
+         *
+         * @param point The point to be added to the path, relative to the center of the field.
+         * @return This builder to be chained.
+         */
         public Builder addPoint(Point point) {
             this.path.add(point);
             return this;
         }
 
+        /**
+         * Add the next point on the path.
+         *
+         * @param x The X coordinate of the point to be added to the path, relative to the center of the field.
+         * @param y The Y coordinate of the point to be added to the path, relative to the center of the field.
+         * @return This builder to be chained.
+         */
         public Builder addPoint(double x, double y) {
             return this.addPoint(new Point(x, y));
         }
 
+        /**
+         * Remove a point on the path.
+         *
+         * @param point The point to be removed.
+         * @return This builder to be chained.
+         */
         public Builder removePoint(Point point) {
             this.path.remove(point);
             return this;
         }
 
+        /**
+         * Remove a point on the path by index
+         *
+         * @param idx The index of the point to be removed.
+         * @return This builder to be chained
+         */
         public Builder removePoint(int idx) {
             this.path.remove(idx);
             return this;
         }
 
+        /**
+         * Sets the lookahead distance in inches.
+         *
+         * @param lookaheadDistance The 
+         * @return
+         */
         public Builder setLookaheadDistance(double lookaheadDistance) {
             this.lookaheadDistance = lookaheadDistance;
             return this;
