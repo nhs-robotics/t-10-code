@@ -1,7 +1,7 @@
 package t10.bootstrap;
 
 import t10.localizer.odometry.OdometryLocalizer;
-import t10.motion.NovelEncoder;
+import t10.motion.MotorEncoder;
 import t10.motion.NovelMotor;
 import t10.motion.mecanum.MecanumDriver;
 import t10.vision.Webcam;
@@ -55,8 +55,8 @@ public abstract class AbstractRobotConfiguration {
                     } else if (type.equals(NovelMotor.class)) {
                         o = new NovelMotor(hardwareMap.get(DcMotorEx.class, configName), hardware.ticksPerRevolution(), hardware.diameterIn(), hardware.gearRatio());
                         ((NovelMotor) o).motor.setZeroPowerBehavior(hardware.zeroPowerBehavior());
-                    } else if (type.equals(NovelEncoder.class)) {
-                        o = new NovelEncoder(hardwareMap.get(DcMotor.class, configName), hardware.diameterIn(), hardware.ticksPerRevolution());
+                    } else if (type.equals(MotorEncoder.class)) {
+                        o = new MotorEncoder(hardwareMap.get(DcMotor.class, configName), hardware.diameterIn(), hardware.ticksPerRevolution());
                     } else {
                         o = hardwareMap.get(field.getType(), configName);
                     }

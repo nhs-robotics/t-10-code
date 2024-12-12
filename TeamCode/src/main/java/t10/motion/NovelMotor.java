@@ -14,7 +14,7 @@ public class NovelMotor {
     /**
      * The underlying encoder on this motor.
      */
-    public final NovelEncoder encoder;
+    public final MotorEncoder encoder;
 
     /**
      * Creates a NovelMotor, allowing velocity to be manipulated in in/s. <strong>AN ENCODER MUST BE CONNECTED TO THIS MOTOR FOR VELOCITY SUPPORT.</strong>
@@ -26,7 +26,7 @@ public class NovelMotor {
      */
     public NovelMotor(DcMotorEx motor, double ticksPerRevolution, double wheelDiameterInches, int gearRatio) {
         this.motor = motor;
-        this.encoder = new NovelEncoder(motor, wheelDiameterInches * gearRatio, ticksPerRevolution);
+        this.encoder = new MotorEncoder(motor, wheelDiameterInches * gearRatio, ticksPerRevolution);
         this.ticksPerRevolution = ticksPerRevolution;
         this.wheelDiameterInches = wheelDiameterInches;
         this.gearRatio = gearRatio;

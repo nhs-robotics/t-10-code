@@ -1,12 +1,11 @@
 package t10.motion;
 
-import com.qualcomm.hardware.digitalchickenlabs.OctoQuad;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 /**
  * A wrapper for an encoder, typically an odometry wheel.
  */
-public class NovelEncoder extends AbstractEncoder {
+public class MotorEncoder extends AbstractEncoder {
     private final DcMotor encoder;
     private final double ticksPerRevolution;
     private final double encoderDiameterIn;
@@ -18,7 +17,7 @@ public class NovelEncoder extends AbstractEncoder {
      * @param encoderDiameterIn The diameter of the encoder wheel in inches.
      * @param ticksPerRevolution The number of ticks the encoder has per revolution of the wheel.
      */
-    public NovelEncoder(DcMotor encoder, double encoderDiameterIn, double ticksPerRevolution) {
+    public MotorEncoder(DcMotor encoder, double encoderDiameterIn, double ticksPerRevolution) {
         this.encoder = encoder;
         this.encoder.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         this.ticksPerRevolution = ticksPerRevolution;
