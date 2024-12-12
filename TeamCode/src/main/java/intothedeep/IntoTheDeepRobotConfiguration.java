@@ -2,6 +2,7 @@ package intothedeep;
 
 import com.qualcomm.hardware.digitalchickenlabs.OctoQuad;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -60,10 +61,23 @@ public class IntoTheDeepRobotConfiguration extends AbstractRobotConfiguration {
     @Hardware(name = "imu")
     public IMU imu;
 
+    @Hardware(name = "LiftRight")
+    public NovelMotor liftRight;
+
+    @Hardware(name = "LiftLeft")
+    public NovelMotor liftLeft;
+
+    @Hardware(name = "ArmExtension")
+    public NovelMotor armExtension;
+
+    @Hardware(name = "ArmRotation")
+    public NovelMotor armRotation;
+
+    @Hardware(name = "OctoQuad")
+    public OctoQuad octoQuad;
+  
     public IntoTheDeepRobotConfiguration(HardwareMap hardwareMap) {
         super(hardwareMap);
-
-        OctoQuad octoQuad = hardwareMap.get(OctoQuad.class,"OctoQuad");
 
         this.imu.initialize(
                 new IMU.Parameters(new RevHubOrientationOnRobot(
@@ -72,18 +86,6 @@ public class IntoTheDeepRobotConfiguration extends AbstractRobotConfiguration {
                 ))
         );
     }
-
-    @Hardware(name = "OL")
-    public NovelMotor odometryLeft;
-
-    @Hardware(name = "OR")
-    public NovelMotor odometryRight;
-
-    @Hardware(name = "OP")
-    public NovelMotor odometryPerpendicular;
-
-    @Hardware(name = "OctoQuad")
-    public OctoQuad octoQuad;
 
 
     @Override
@@ -101,9 +103,9 @@ public class IntoTheDeepRobotConfiguration extends AbstractRobotConfiguration {
         return new OdometryLocalizer(
                 new OdometryCoefficientSet(1, 1, 1),
                 // 4-5-6 is right-left-perpendicular
-                new OdometryEncoder(octoQuad,4, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
-                new OdometryEncoder(octoQuad,5, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
-                new OdometryEncoder(octoQuad,6, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
+                new OdometryEncoder(octoQuad, 4, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
+                new OdometryEncoder(octoQuad, 5, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
+                new OdometryEncoder(octoQuad, 6, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
                 11.5,
                 -6.5
         );
