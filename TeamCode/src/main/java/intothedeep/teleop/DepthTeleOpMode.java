@@ -9,7 +9,7 @@ import intothedeep.Constants;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-import intothedeep.IntoTheDeepRobotConfiguration;
+import intothedeep.SnowballConfig;
 import t10.bootstrap.Hardware;
 import t10.bootstrap.TeleOpOpMode;
 import t10.gamepad.GController;
@@ -129,7 +129,7 @@ public class DepthTeleOpMode extends TeleOpOpMode {
     }
 }
 
-class Config extends IntoTheDeepRobotConfiguration
+class Config extends SnowballConfig
 {
 
     public Config(HardwareMap hardwareMap)

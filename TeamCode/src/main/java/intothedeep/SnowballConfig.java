@@ -14,7 +14,7 @@ import t10.motion.NovelMotor;
 import t10.motion.mecanum.MecanumDriver;
 import t10.localizer.odometry.OdometryCoefficientSet;
 
-public class IntoTheDeepRobotConfiguration extends AbstractRobotConfiguration {
+public class SnowballConfig extends AbstractRobotConfiguration {
     // Wheels
     @Hardware(
             name = "FL",
@@ -66,7 +66,7 @@ public class IntoTheDeepRobotConfiguration extends AbstractRobotConfiguration {
     @Hardware(name = "OctoQuad")
     public OctoQuad octoQuad;
   
-    public IntoTheDeepRobotConfiguration(HardwareMap hardwareMap) {
+    public SnowballConfig(HardwareMap hardwareMap) {
         super(hardwareMap);
 
         this.imu.initialize(

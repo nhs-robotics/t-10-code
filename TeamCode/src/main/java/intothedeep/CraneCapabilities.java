@@ -3,13 +3,13 @@ package intothedeep;
 import t10.utils.PIDController;
 
 public class CraneCapabilities {
-    private final IntoTheDeepRobotConfiguration c;
+    private final SnowballConfig c;
     private final PIDController armRotationStabilizer;
     private final PIDController craneStabilizer;
     private int armRotationTarget;
     private int craneTarget;
 
-    public CraneCapabilities(IntoTheDeepRobotConfiguration c) {
+    public CraneCapabilities(SnowballConfig c) {
         this.c = c;
         this.armRotationStabilizer = new PIDController(0.05, 0, 0);
         this.craneStabilizer = new PIDController(0.01, 0, 0);

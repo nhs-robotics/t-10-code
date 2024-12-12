@@ -2,21 +2,21 @@ package intothedeep.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import intothedeep.CraneCapabilities;
-import intothedeep.IntoTheDeepRobotConfiguration;
+import intothedeep.SnowballConfig;
 import t10.bootstrap.TeleOpOpMode;
 import t10.gamepad.GController;
 import t10.motion.mecanum.MecanumDriver;
 
 @TeleOp
 public class CompetitionTeleOp extends TeleOpOpMode {
-    private IntoTheDeepRobotConfiguration config;
+    private SnowballConfig config;
     private CraneCapabilities crane;
     private GController g2;
     private MecanumDriver driver;
 
     @Override
     public void initialize() {
-        this.config = new IntoTheDeepRobotConfiguration(this.hardwareMap);
+        this.config = new SnowballConfig(this.hardwareMap);
         this.crane = new CraneCapabilities(this.config);
         this.g2 = new GController(this.gamepad2)
                 .dpadUp.onPress(() -> this.crane.extendArm(1)).onRelease(() -> this.crane.extendArm(0)).ok()

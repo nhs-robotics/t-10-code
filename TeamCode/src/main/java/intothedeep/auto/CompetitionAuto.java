@@ -1,22 +1,20 @@
 package intothedeep.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import intothedeep.CraneCapabilities;
-import intothedeep.IntoTheDeepRobotConfiguration;
+
+import intothedeep.SnowballConfig;
 import t10.bootstrap.AutonomousOpMode;
-import t10.gamepad.GController;
 import t10.geometry.MovementVector;
 import t10.motion.mecanum.MecanumDriver;
-import t10.utils.Alliance;
 
 @Autonomous
 public class CompetitionAuto extends AutonomousOpMode {
-    private IntoTheDeepRobotConfiguration config;
+    private SnowballConfig config;
     private MecanumDriver driver;
 
     @Override
     public void initialize() {
-        this.config = new IntoTheDeepRobotConfiguration(this.hardwareMap);
+        this.config = new SnowballConfig(this.hardwareMap);
         this.driver = this.config.createMecanumDriver();
     }
 

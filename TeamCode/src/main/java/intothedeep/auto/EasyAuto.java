@@ -1,6 +1,5 @@
 package intothedeep.auto;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import t10.bootstrap.AbstractRobotConfiguration;
@@ -8,7 +7,7 @@ import t10.bootstrap.AutonomousOpMode;
 import t10.localizer.odometry.OdometryLocalizer;
 import t10.motion.mecanum.MecanumDriver;
 
-import intothedeep.IntoTheDeepRobotConfiguration;
+import intothedeep.SnowballConfig;
 import t10.localizer.odometry.OdometryNavigation;
 import t10.geometry.Pose;
 import t10.utils.Alliance;
@@ -34,7 +33,7 @@ public abstract class EasyAuto extends AutonomousOpMode {
 
     @Override
     public void initialize() {
-        AbstractRobotConfiguration c = new IntoTheDeepRobotConfiguration(this.hardwareMap);
+        AbstractRobotConfiguration c = new SnowballConfig(this.hardwareMap);
         this.driver = c.createMecanumDriver();
         this.odometry = c.createOdometry();
         this.navigator = new OdometryNavigation(odometry, driver);

@@ -3,7 +3,7 @@ package intothedeep.teleop;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import intothedeep.IntoTheDeepRobotConfiguration;
+import intothedeep.SnowballConfig;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -61,7 +61,7 @@ public class TempTeleop extends TeleOpOpMode {
         this.driver.useGamepad(this.gamepad1, 0.5);
     }
 }
-class TempTeleopConfig extends IntoTheDeepRobotConfiguration
+class TempTeleopConfig extends SnowballConfig
 {
 
     public TempTeleopConfig(HardwareMap hardwareMap)

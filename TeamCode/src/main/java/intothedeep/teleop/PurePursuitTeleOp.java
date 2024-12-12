@@ -7,7 +7,7 @@ import intothedeep.Constants;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-import intothedeep.IntoTheDeepRobotConfiguration;
+import intothedeep.SnowballConfig;
 import t10.bootstrap.AbstractRobotConfiguration;
 import t10.bootstrap.TeleOpOpMode;
 import t10.gamepad.GController;
@@ -54,7 +54,7 @@ public class PurePursuitTeleOp extends TeleOpOpMode {
         this.movementPower = this.telemetry.addData("movement power: ", "0");
         this.vert = this.telemetry.addData("vert: ", "0");
         this.hor = this.telemetry.addData("hor: ", "0");
-        this.c = new IntoTheDeepRobotConfiguration(this.hardwareMap);
+        this.c = new SnowballConfig(this.hardwareMap);
         this.driver = this.c.createMecanumDriver();
         this.odometry = this.c.createOdometry();
         this.gamepadController = new GController(this.gamepad1)
