@@ -1,20 +1,25 @@
 package intothedeep.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import intothedeep.KevinRobotConfiguration;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import intothedeep.IntoTheDeepRobotConfiguration;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+
+import t10.bootstrap.Hardware;
 import t10.bootstrap.TeleOpOpMode;
 import t10.gamepad.GController;
 import t10.localizer.odometry.OdometryLocalizer;
 import t10.motion.mecanum.MecanumDriver;
 import t10.localizer.Localizer;
 import t10.geometry.Pose;
+import t10.vision.Webcam;
 
 @TeleOp
 public class TempTeleop extends TeleOpOpMode {
-    private KevinRobotConfiguration c;
+    private TempTeleopConfig c;
     private MecanumDriver driver;
     private OdometryLocalizer odometry;
     private GController gamepadController;
@@ -24,7 +29,7 @@ public class TempTeleop extends TeleOpOpMode {
 
     @Override
     public void initialize() {
-        this.c = new KevinRobotConfiguration(this.hardwareMap);
+        this.c = new TempTeleopConfig(this.hardwareMap);
         this.driver = this.c.createMecanumDriver();
         this.odometry = this .c.createOdometry();
         this.gamepadController = new GController(this.gamepad1).x.initialToggleState(true).ok();  // micro-movement
@@ -55,4 +60,15 @@ public class TempTeleop extends TeleOpOpMode {
         this.odometry.update();
         this.driver.useGamepad(this.gamepad1, 0.5);
     }
+}
+class TempTeleopConfig extends IntoTheDeepRobotConfiguration
+{
+
+    public TempTeleopConfig(HardwareMap hardwareMap)
+    {
+        super(hardwareMap);
+    }
+
+    @Hardware(name = "Webcam")
+    public Webcam webcam;
 }
