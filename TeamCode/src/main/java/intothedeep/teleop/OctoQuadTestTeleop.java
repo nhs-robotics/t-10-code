@@ -12,8 +12,8 @@ import t10.bootstrap.AbstractRobotConfiguration;
 import t10.bootstrap.Hardware;
 import t10.bootstrap.TeleOpOpMode;
 import t10.localizer.odometry.OdometryLocalizer;
-import t10.motion.NovelMotor;
-import t10.motion.OctoQuadEncoder;
+import t10.motion.hardware.Motor;
+import t10.motion.hardware.OctoQuadEncoder;
 import t10.motion.mecanum.MecanumDriver;
 
 @TeleOp(name = "OctoQuadTestTeleop")
@@ -30,11 +30,11 @@ public class OctoQuadTestTeleop extends TeleOpOpMode {
     @Override
     public void loop() {
         if (this.gamepad1.a) {
-            this.c.novelMotor.setPower(0.2);
+            this.c.motor.setPower(0.2);
         } else if (this.gamepad1.b) {
-            this.c.novelMotor.setPower(-0.2);
+            this.c.motor.setPower(-0.2);
         } else {
-            this.c.novelMotor.setPower(0);
+            this.c.motor.setPower(0);
         }
         this.r.setValue(this.c.octoQuadEncoder.getCurrentInches());
     }
@@ -56,7 +56,7 @@ class OctoQuadTestConfiguration extends AbstractRobotConfiguration {
     zeroPowerBehavior = DcMotor.ZeroPowerBehavior.FLOAT
     )
   
-    public NovelMotor novelMotor;
+    public Motor motor;
 
     @Override
     public MecanumDriver createMecanumDriver() {

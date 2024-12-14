@@ -1,4 +1,4 @@
-package t10.motion;
+package t10.motion.hardware;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 

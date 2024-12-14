@@ -1,11 +1,10 @@
-package t10.novel;
+package t10.motion.hardware;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import java.security.InvalidParameterException;
 
-public class NovelPositionalDCMotor {
-
+public class PositionalMotor {
     private final DcMotorEx motor;
     private final double ticksPerRevolution;
     private final double startPosition;
@@ -16,7 +15,8 @@ public class NovelPositionalDCMotor {
     private double targetPosition;
     private double startTicksPosition;
     private double positionBeforeMovement;
-    public NovelPositionalDCMotor(DcMotorEx motor, double ticksPerRevolution, double startPosition, double endPosition, double speed, int coefficient) {
+
+    public PositionalMotor(DcMotorEx motor, double ticksPerRevolution, double startPosition, double endPosition, double speed, int coefficient) {
         if (startPosition >= endPosition) {
             throw new InvalidParameterException("startPosition must be less than endPosition");
         }

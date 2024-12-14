@@ -8,9 +8,9 @@ import com.qualcomm.robotcore.hardware.IMU;
 
 import t10.bootstrap.AbstractRobotConfiguration;
 import t10.bootstrap.Hardware;
-import t10.motion.OctoQuadEncoder;
+import t10.motion.hardware.Motor;
+import t10.motion.hardware.OctoQuadEncoder;
 import t10.localizer.odometry.OdometryLocalizer;
-import t10.motion.NovelMotor;
 import t10.motion.mecanum.MecanumDriver;
 import t10.localizer.odometry.OdometryCoefficientSet;
 
@@ -22,7 +22,7 @@ public class SnowballConfig extends AbstractRobotConfiguration {
             ticksPerRevolution = Constants.TickCounts.MOVEMENT_MOTOR_TICK_COUNT,
             zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
     )
-    public NovelMotor fl;
+    public Motor fl;
 
     @Hardware(
             name = "FR",
@@ -30,7 +30,7 @@ public class SnowballConfig extends AbstractRobotConfiguration {
             ticksPerRevolution = Constants.TickCounts.MOVEMENT_MOTOR_TICK_COUNT,
             zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
     )
-    public NovelMotor fr;
+    public Motor fr;
 
     @Hardware(
             name = "BL",
@@ -38,7 +38,7 @@ public class SnowballConfig extends AbstractRobotConfiguration {
             ticksPerRevolution = Constants.TickCounts.MOVEMENT_MOTOR_TICK_COUNT,
             zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
     )
-    public NovelMotor bl;
+    public Motor bl;
 
     @Hardware(
             name = "BR",
@@ -46,22 +46,22 @@ public class SnowballConfig extends AbstractRobotConfiguration {
             ticksPerRevolution = Constants.TickCounts.MOVEMENT_MOTOR_TICK_COUNT,
             zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
     )
-    public NovelMotor br;
+    public Motor br;
 
     @Hardware(name = "imu")
     public IMU imu;
 
     @Hardware(name = "LiftRight")
-    public NovelMotor liftRight;
+    public Motor liftRight;
 
     @Hardware(name = "LiftLeft")
-    public NovelMotor liftLeft;
+    public Motor liftLeft;
 
     @Hardware(name = "ArmExtension")
-    public NovelMotor armExtension;
+    public Motor armExtension;
 
     @Hardware(name = "ArmRotation")
-    public NovelMotor armRotation;
+    public Motor armRotation;
 
     @Hardware(name = "OctoQuad")
     public OctoQuad octoQuad;

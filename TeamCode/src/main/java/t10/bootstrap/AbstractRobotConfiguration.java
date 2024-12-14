@@ -1,8 +1,8 @@
 package t10.bootstrap;
 
 import t10.localizer.odometry.OdometryLocalizer;
-import t10.motion.MotorEncoder;
-import t10.motion.NovelMotor;
+import t10.motion.hardware.Motor;
+import t10.motion.hardware.MotorEncoder;
 import t10.motion.mecanum.MecanumDriver;
 import t10.vision.Webcam;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -29,7 +29,7 @@ import java.lang.reflect.Field;
  *          ticksPerRevolution = 500,
  *          zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
  *      )
- *      public NovelMotor chainWheel;
+ *      public Motor chainWheel;
  * }
  * }</pre>
  *
@@ -52,9 +52,9 @@ public abstract class AbstractRobotConfiguration {
 
                     if (type.equals(Webcam.class)) {
                         o = new Webcam(hardwareMap, configName);
-                    } else if (type.equals(NovelMotor.class)) {
-                        o = new NovelMotor(hardwareMap.get(DcMotorEx.class, configName), hardware.ticksPerRevolution(), hardware.diameterIn(), hardware.gearRatio());
-                        ((NovelMotor) o).motor.setZeroPowerBehavior(hardware.zeroPowerBehavior());
+                    } else if (type.equals(Motor.class)) {
+                        o = new Motor(hardwareMap.get(DcMotorEx.class, configName), hardware.ticksPerRevolution(), hardware.diameterIn(), hardware.gearRatio());
+                        ((Motor) o).motor.setZeroPowerBehavior(hardware.zeroPowerBehavior());
                     } else if (type.equals(MotorEncoder.class)) {
                         o = new MotorEncoder(hardwareMap.get(DcMotor.class, configName), hardware.diameterIn(), hardware.ticksPerRevolution());
                     } else {

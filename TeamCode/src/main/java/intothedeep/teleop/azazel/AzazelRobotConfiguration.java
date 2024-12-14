@@ -3,9 +3,8 @@ package intothedeep.teleop.azazel;
 import t10.bootstrap.AbstractRobotConfiguration;
 import t10.bootstrap.Hardware;
 import t10.localizer.odometry.OdometryLocalizer;
-import t10.motion.NovelMotor;
+import t10.motion.hardware.Motor;
 import t10.motion.mecanum.MecanumDriver;
-import t10.localizer.odometry.OdometryCoefficientSet;
 import t10.vision.Webcam;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.*;
@@ -22,18 +21,18 @@ public class AzazelRobotConfiguration extends AbstractRobotConfiguration {
     // Wheels
     // NOTE: LinearSlideLeft has the perpendicular  odometer encoder
     @Hardware(name = "LinearSlideLeft")
-    public NovelMotor linearSlideLeft;
+    public Motor linearSlideLeft;
 
     @Hardware(name = "LinearSlideRight")
-    public NovelMotor linearSlideRight;
+    public Motor linearSlideRight;
 
     // NOTE: LinearSlideLeft has the right odometer encoder
     @Hardware(name = "SpinningIntake")
-    public NovelMotor spinningIntake;
+    public Motor spinningIntake;
 
     // NOTE: LinearSlideLeft has the left odometer encoder
     @Hardware(name = "Roller")
-    public NovelMotor roller;
+    public Motor roller;
 
     // Servos
     @Hardware(name = "AirplaneLauncher")
@@ -45,16 +44,16 @@ public class AzazelRobotConfiguration extends AbstractRobotConfiguration {
 
     // Wheels
     @Hardware(name = "FL", diameterIn = 3.7795275590551185, ticksPerRevolution = Constants.TickCounts.MOVEMENT_MOTOR_TICK_COUNT, zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE)
-    public NovelMotor fl;
+    public Motor fl;
 
     @Hardware(name = "FR", diameterIn = 3.7795275590551185, ticksPerRevolution = Constants.TickCounts.MOVEMENT_MOTOR_TICK_COUNT, zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE)
-    public NovelMotor fr;
+    public Motor fr;
 
     @Hardware(name = "BL", diameterIn = 3.7795275590551185, ticksPerRevolution = Constants.TickCounts.MOVEMENT_MOTOR_TICK_COUNT, zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE)
-    public NovelMotor bl;
+    public Motor bl;
 
     @Hardware(name = "BR", diameterIn = 3.7795275590551185, ticksPerRevolution = Constants.TickCounts.MOVEMENT_MOTOR_TICK_COUNT, zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE)
-    public NovelMotor br;
+    public Motor br;
 
     // Servos
     @Hardware(name = "ContainerPixelHolder")

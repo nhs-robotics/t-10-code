@@ -2,7 +2,7 @@ package t10.localizer.odometry;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-import t10.motion.AbstractEncoder;
+import t10.motion.hardware.AbstractEncoder;
 import t10.geometry.Pose;
 import t10.geometry.MovementVector;
 

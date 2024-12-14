@@ -1,6 +1,4 @@
-package t10.motion;
-
-import org.openftc.easyopencv.OpenCvPipeline;
+package t10.motion.hardware;
 
 /**
  *

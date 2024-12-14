@@ -1,24 +1,24 @@
 package t10.motion.mecanum;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
-import t10.motion.NovelMotor;
+import t10.motion.hardware.Motor;
 import t10.geometry.MovementVector;
 
 /**
  * Wrapper class for driving a mecanum robot.
  */
 public class MecanumDriver {
-    private final NovelMotor frontLeft;
-    private final NovelMotor frontRight;
-    private final NovelMotor backLeft;
-    private final NovelMotor backRight;
+    private final Motor frontLeft;
+    private final Motor frontRight;
+    private final Motor backLeft;
+    private final Motor backRight;
     private final MecanumCoefficientMatrix omniDriveCoefficients;
 
     public MecanumDriver(
-            NovelMotor frontLeft,
-            NovelMotor frontRight,
-            NovelMotor backLeft,
-            NovelMotor backRight,
+            Motor frontLeft,
+            Motor frontRight,
+            Motor backLeft,
+            Motor backRight,
             MecanumCoefficientMatrix omniDriveCoefficients
     ) {
         this.frontLeft = frontLeft;

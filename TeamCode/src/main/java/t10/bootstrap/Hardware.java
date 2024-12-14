@@ -1,7 +1,7 @@
 package t10.bootstrap;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import t10.motion.NovelMotor;
+import t10.motion.hardware.Motor;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -17,9 +17,9 @@ import java.lang.annotation.Target;
  * public Webcam webcam;
  * }</pre>
  *
- * The following example sets {@code chainWheel} to a {@link NovelMotor} found in the hardware map at "Chain". It also configures
+ * The following example sets {@code chainWheel} to a {@link Motor} found in the hardware map at "Chain". It also configures
  * <ul>
- *     <li>the wheel diameter to be 9.6cm when initializing the NovelMotor</li>
+ *     <li>the wheel diameter to be 9.6cm when initializing the Motor</li>
  *     <li>the ticks per revolution to 500</li>
  *     <li>the zero power behavior to brake</li>
  * </ul>
@@ -30,10 +30,10 @@ import java.lang.annotation.Target;
  *          ticksPerRevolution = 500,
  *          zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
  *      )
- *      public NovelMotor chainWheel;
+ *      public Motor chainWheel;
  * }</pre>
  * <p>
- * Note that the types of the variables correspond to the type of hardware found in the hardware map. Chain is a motor, so NovelMotor can be used. It cannot be used for webcam, because "Webcam" does not point to a motor.
+ * Note that the types of the variables correspond to the type of hardware found in the hardware map. Chain is a motor, so Motor can be used. It cannot be used for webcam, because "Webcam" does not point to a motor.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)

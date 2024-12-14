@@ -11,19 +11,19 @@ import java.util.List;
 import intothedeep.Constants;
 import t10.bootstrap.TeleOpOpMode;
 import t10.gamepad.GController;
-import t10.novel.NovelPositionalDCMotor;
+import t10.motion.hardware.PositionalMotor;
 
 @TeleOp(name = "DCMotor Servo Teleop")
 public class ServoControllerTesterTeleop extends TeleOpOpMode {
     private GController gamepadController;
-    public List<NovelPositionalDCMotor> servos = new ArrayList<>();
+    public List<PositionalMotor> servos = new ArrayList<>();
     private Telemetry.Item servoTelemetry;
 
     @Override
     public void initialize() {
         // TEMP SPEED OF 0.1 FOR TESTING BECAUSE THINGS BROKE
-        servos.add(new NovelPositionalDCMotor(hardwareMap.get(DcMotorEx.class, "linearSlide1"), Constants.TickCounts.MOVEMENT_MOTOR_TICK_COUNT, 0, 1, 0.1, 1));
-        servos.add(new NovelPositionalDCMotor(hardwareMap.get(DcMotorEx.class, "linearSlide2"), Constants.TickCounts.MOVEMENT_MOTOR_TICK_COUNT, 0, 1, 0.1, -1));
+        servos.add(new PositionalMotor(hardwareMap.get(DcMotorEx.class, "linearSlide1"), Constants.TickCounts.MOVEMENT_MOTOR_TICK_COUNT, 0, 1, 0.1, 1));
+        servos.add(new PositionalMotor(hardwareMap.get(DcMotorEx.class, "linearSlide2"), Constants.TickCounts.MOVEMENT_MOTOR_TICK_COUNT, 0, 1, 0.1, -1));
 
         this.gamepadController = new GController(this.gamepad1)
                 .x.onPress(() -> {

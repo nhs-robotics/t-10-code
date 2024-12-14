@@ -1,11 +1,11 @@
-package t10.motion;
+package t10.motion.hardware;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 /**
  * Enables manipulation of the velocity of a motor.
  */
-public class NovelMotor {
+public class Motor {
     public final DcMotorEx motor;
     public final double ticksPerRevolution;
     public final double wheelDiameterInches;
@@ -17,14 +17,14 @@ public class NovelMotor {
     public final MotorEncoder encoder;
 
     /**
-     * Creates a NovelMotor, allowing velocity to be manipulated in in/s. <strong>AN ENCODER MUST BE CONNECTED TO THIS MOTOR FOR VELOCITY SUPPORT.</strong>
+     * Creates a Motor, allowing velocity to be manipulated in in/s. <strong>AN ENCODER MUST BE CONNECTED TO THIS MOTOR FOR VELOCITY SUPPORT.</strong>
      *
-     * @param motor The motor that this NovelMotor should control.
+     * @param motor The motor that this Motor should control.
      * @param ticksPerRevolution The number of ticks per revolution of the motor.
      * @param wheelDiameterInches The diameter of the wheel in inches.
      * @param gearRatio The gear ratio of this motor.
      */
-    public NovelMotor(DcMotorEx motor, double ticksPerRevolution, double wheelDiameterInches, int gearRatio) {
+    public Motor(DcMotorEx motor, double ticksPerRevolution, double wheelDiameterInches, int gearRatio) {
         this.motor = motor;
         this.encoder = new MotorEncoder(motor, wheelDiameterInches * gearRatio, ticksPerRevolution);
         this.ticksPerRevolution = ticksPerRevolution;
