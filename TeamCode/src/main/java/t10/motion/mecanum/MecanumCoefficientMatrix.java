@@ -30,12 +30,12 @@ public class MecanumCoefficientMatrix {
     /**
      * The default horizontal coefficient set.
      */
-    public final MecanumCoefficientSet horizontal = new MecanumCoefficientSet(-1, 1, 1, -1);
+    public final MecanumCoefficientSet horizontal = new MecanumCoefficientSet(1, -1, -1, 1);
 
     /**
      * The default rotational coefficient set.
      */
-    public final MecanumCoefficientSet rotational = new MecanumCoefficientSet(-1, 1, -1, 1);
+    public final MecanumCoefficientSet rotational = new MecanumCoefficientSet(1, -1, 1, -1);
 
     /**
      * Creates a new coefficient matrix.
