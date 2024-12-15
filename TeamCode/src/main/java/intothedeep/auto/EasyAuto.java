@@ -21,6 +21,7 @@ public abstract class EasyAuto extends AutonomousOpMode {
     public double idealY = 0;
     private final Alliance alliance;
     private double startingTile = 0;
+    private AbstractRobotConfiguration config;
 
     public EasyAuto(Alliance alliance) {
         this.alliance = alliance;
@@ -33,9 +34,9 @@ public abstract class EasyAuto extends AutonomousOpMode {
 
     @Override
     public void initialize() {
-        AbstractRobotConfiguration c = new SnowballConfig(this.hardwareMap);
-        this.driver = c.createMecanumDriver();
-        this.odometry = c.createOdometry();
+        config = new SnowballConfig(this.hardwareMap);
+        this.driver = config.createMecanumDriver();
+        this.odometry = config.createOdometry();
         this.navigator = new OdometryNavigation(odometry, driver);
         setInitialPose(alliance, startingTile);
     }
@@ -49,9 +50,15 @@ public abstract class EasyAuto extends AutonomousOpMode {
     }
 
     public void setInitialPose(Alliance alliance, double startingTile) {
-        double startingX = alliance == Alliance.RED ? 60: -60;
-        double startingY = (startingTile * 24 - 84) * (alliance == Alliance.RED ? 1 : -1);
-        double startingHeading = alliance == Alliance.RED ? 90 : -90;
+        double startingX = 0;
+        double startingY = 0;
+        double startingHeading = 0;
+        if(alliance != Alliance.NULL)
+        {
+             startingX = alliance == Alliance.RED ? 60: -60;
+             startingY = (startingTile * 24 - 84) * (alliance == Alliance.RED ? 1 : -1);
+             startingHeading = alliance == Alliance.RED ? 90 : -90;
+        }
         setInitialPose(startingY, startingX, startingHeading);
     }
 
