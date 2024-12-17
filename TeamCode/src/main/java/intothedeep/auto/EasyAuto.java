@@ -34,7 +34,7 @@ public abstract class EasyAuto extends AutonomousOpMode {
 
     @Override
     public void initialize() {
-        config = new SnowballConfig(this.hardwareMap);
+        this.config = new SnowballConfig(this.hardwareMap);
         this.driver = config.createMecanumDriver();
         this.odometry = config.createOdometry();
         this.navigator = new OdometryNavigation(odometry, driver);
