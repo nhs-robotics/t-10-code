@@ -19,8 +19,9 @@ public class TrapezoidalMotionProfile implements MotionProfile {
     private final double lookAhead;
     private final double direction;
     private boolean finished = false;
-    private boolean changedDirection = true;
+    public boolean changedDirection = true;
     private double deltaDistMin = 0;
+    public String state = "init";
 
     public TrapezoidalMotionProfile(
             double initialVelocity,
@@ -99,10 +100,11 @@ public class TrapezoidalMotionProfile implements MotionProfile {
             deltaDistance += lookAhead * Math.signum(initialVelocity);
         }
         else {
-            deltaDistance += lookAhead * -1 * Math.signum(initialVelocity);
+            deltaDistance += lookAhead * direction;
         }
 
         if (Math.abs(deltaDistance) < Math.abs(this.accelerateEndDistance) || Math.signum(deltaDistance * accelerateEndDistance) == -1) {
+            state = "accelerating";
             // Acceleration phase
             if(!changedDirection)
             {
@@ -118,16 +120,22 @@ public class TrapezoidalMotionProfile implements MotionProfile {
             else {
                 return MathUtils.solveSpeed(initialVelocity,firstAcceleration,deltaDistance) * direction;
             }
-        } else if (Math.abs(deltaDistance) < Math.abs(this.cruiseEndDistance)) {
+        } else if (Math.abs(deltaDistance) < Math.abs(this.cruiseEndDistance + accelerateEndDistance)) {
             // Cruise phase
+            state = "cruising";
             return this.peakVelocity;
-        } else if (Math.abs(deltaDistance) < Math.abs(this.distance)) {
-            // Deceleration phase
-            return MathUtils.solveVelocity(this.peakVelocity, secondAcceleration, this.distance - this.cruiseEndDistance - deltaDistance);
-        } else {
-            // After the motion profile is complete
-            finished = true;
-            return 0;
+        }
+        else {
+            deltaDistance -= lookAhead * direction;
+            if (Math.abs(deltaDistance) < Math.abs(this.distance)) {
+                // Deceleration phase
+                state = "decelerating";
+                return MathUtils.solveVelocity(this.peakVelocity, secondAcceleration, deltaDistance - (accelerateEndDistance + cruiseEndDistance));
+            } else {
+                // After the motion profile is complete
+                finished = true;
+                return 0;
+            }
         }
     }
 
