@@ -55,7 +55,8 @@ public class SnowballConfig extends AbstractRobotConfiguration {
             ticksPerRevolution = Constants.TickCounts.MOVEMENT_MOTOR_TICK_COUNT)
     public Motor liftRight;
 
-    @Hardware(name = "LiftLeft", ticksPerRevolution = Constants.TickCounts.MOVEMENT_MOTOR_TICK_COUNT)
+    @Hardware(name = "LiftLeft", 
+            ticksPerRevolution = Constants.TickCounts.MOVEMENT_MOTOR_TICK_COUNT)
     public Motor liftLeft;
 
     @Hardware(name = "ArmExtension")
