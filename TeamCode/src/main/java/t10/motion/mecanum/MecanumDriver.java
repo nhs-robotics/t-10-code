@@ -62,7 +62,7 @@ public class MecanumDriver {
      */
     public void useGamepad(Gamepad gamepad, double powerMultipler) {
         MecanumCoefficientSet coefficientSet = this.omniDriveCoefficients.calculateCoefficientsWithPower(
-                gamepad.left_stick_y,
+                -gamepad.left_stick_y,
                 gamepad.left_stick_x,
                 gamepad.right_stick_x
         );

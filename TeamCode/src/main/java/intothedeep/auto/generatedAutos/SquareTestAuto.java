@@ -9,14 +9,14 @@ import t10.utils.Alliance;
 @Autonomous(name = "SquareTestAuto")
 public class SquareTestAuto extends EasyAuto {
 	public SquareTestAuto() {
-		super(Alliance.RED);
+		super(null);
 	}
 
 	@Override
 	public void run() {
 		verticalMovement(10);
-		horizontalMovement(10);
-		verticalMovement(-10);
 		horizontalMovement(-10);
+		verticalMovement(-10);
+		horizontalMovement(10);
 	}
 }
