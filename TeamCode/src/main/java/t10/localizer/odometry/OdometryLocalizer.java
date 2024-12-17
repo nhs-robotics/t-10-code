@@ -121,8 +121,8 @@ public class OdometryLocalizer {
     public MovementVector getRobotCentricVelocity(MovementVector absoluteVelocity)
     {
         double theta = this.fieldCentricPose.getHeading(AngleUnit.RADIANS);
-        double forwardRelative = (absoluteVelocity.getVertical() * Math.cos(theta) - absoluteVelocity.getHorizontal() * Math.sin(theta));
-        double rightwardRelative = absoluteVelocity.getVertical() * Math.sin(theta) + absoluteVelocity.getHorizontal() * Math.cos(theta);
+        double forwardRelative = (absoluteVelocity.getVertical() * Math.cos(theta) + absoluteVelocity.getHorizontal() * Math.sin(theta));
+        double rightwardRelative = -absoluteVelocity.getVertical() * Math.sin(theta) + absoluteVelocity.getHorizontal() * Math.cos(theta);
         return new MovementVector(forwardRelative, rightwardRelative, 0);
     }
 
