@@ -101,6 +101,10 @@ public class MathUtils {
         return Math.sqrt(Math.pow(initialVelocity, 2) + 2 * acceleration * displacement);
     }
 
+    public static double solveSpeed(double initialVelocity, double acceleration, double displacement) {
+        return Math.sqrt(Math.abs(Math.pow(initialVelocity, 2) + 2 * acceleration * displacement));
+    }
+
     public static double solveDisplacement(double finalVelocity, double initialVelocity, double acceleration) {
         return (Math.pow(finalVelocity, 2) - Math.pow(initialVelocity, 2)) / (2 * acceleration);
     }
