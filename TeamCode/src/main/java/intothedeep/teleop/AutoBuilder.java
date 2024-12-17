@@ -95,13 +95,13 @@ public class AutoBuilder extends TeleOpOpMode {
                     MovementVector movementVector = new MovementVector(0, 0, 0);
                     switch (commandType) {
                         case VERTICAL:
-                            movementVector = new MovementVector(this.gamepad1.left_stick_y, 0, 0);
+                            movementVector = new MovementVector(-this.gamepad1.left_stick_y, 0, 0);
                             break;
                         case HORIZONTAL:
                             movementVector = new MovementVector(0, this.gamepad1.left_stick_x, 0);
                             break;
                         case DIAGONAL:
-                            movementVector = new MovementVector(this.gamepad1.left_stick_y, this.gamepad1.left_stick_x, 0);
+                            movementVector = new MovementVector(-this.gamepad1.left_stick_y, this.gamepad1.left_stick_x, 0);
                             break;
                         case ROTATIONAL:
                             movementVector = new MovementVector(0, 0, this.gamepad1.right_stick_x);
@@ -147,7 +147,7 @@ public class AutoBuilder extends TeleOpOpMode {
             redAutoFileWriter.close();
             blueAutoFileWriter.close();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            //throw new RuntimeException(e);
         }
     }
 

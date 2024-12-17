@@ -55,7 +55,8 @@ public class SnowballConfig extends AbstractRobotConfiguration {
             ticksPerRevolution = Constants.TickCounts.MOVEMENT_MOTOR_TICK_COUNT)
     public Motor liftRight;
 
-    @Hardware(name = "LiftLeft", ticksPerRevolution = Constants.TickCounts.MOVEMENT_MOTOR_TICK_COUNT)
+    @Hardware(name = "LiftLeft", 
+            ticksPerRevolution = Constants.TickCounts.MOVEMENT_MOTOR_TICK_COUNT)
     public Motor liftLeft;
 
     @Hardware(name = "ArmExtension")
@@ -92,7 +93,7 @@ public class SnowballConfig extends AbstractRobotConfiguration {
     public OdometryLocalizer createOdometry() {
         return new OdometryLocalizer(
                 new OdometryCoefficientSet(1, 1, -1),
-                // 4-5-6 is right-left-perpendicular
+                // 4-6-5 is right-left-perpendicular
                 new OctoQuadEncoder(octoQuad, 4, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
                 new OctoQuadEncoder(octoQuad, 6, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
                 new OctoQuadEncoder(octoQuad, 5, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
