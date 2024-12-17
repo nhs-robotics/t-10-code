@@ -53,7 +53,7 @@ public abstract class EasyAuto extends AutonomousOpMode {
         double startingX = 0;
         double startingY = 0;
         double startingHeading = 0;
-        if(alliance != Alliance.NULL)
+        if(alliance != null)
         {
              startingX = alliance == Alliance.RED ? 60: -60;
              startingY = (startingTile * 24 - 84) * (alliance == Alliance.RED ? 1 : -1);

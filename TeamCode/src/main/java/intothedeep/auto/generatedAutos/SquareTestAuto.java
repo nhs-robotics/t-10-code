@@ -9,7 +9,7 @@ import t10.utils.Alliance;
 @Autonomous(name = "SquareTestAuto")
 public class SquareTestAuto extends EasyAuto {
 	public SquareTestAuto() {
-		super(Alliance.NULL);
+		super(null);
 	}
 
 	@Override
