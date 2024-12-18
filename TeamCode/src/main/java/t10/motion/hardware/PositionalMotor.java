@@ -4,52 +4,73 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import java.security.InvalidParameterException;
 
+import t10.utils.PIDController;
+
+/**
+* A controller for DC motors that allows them to be controlled by setting a target position
+ */
 public class PositionalMotor {
     private final DcMotorEx motor;
-    private final double ticksPerRevolution;
-    private final double startPosition;
-    private final double endPosition;
+    private final PIDController pid;
+    private final double offsetTicks;
+    private final double ticksPerRotation;
+    private final double minBoundTicks;
+    private final double maxBoundTicks;
     private final double speed;
-    private double currentPosition;
-    private int coefficient;
-    private double targetPosition;
-    private double startTicksPosition;
-    private double positionBeforeMovement;
+    private double currentPositionTicks = 0;
+    private double targetTicks;
 
-    public PositionalMotor(DcMotorEx motor, double ticksPerRevolution, double startPosition, double endPosition, double speed, int coefficient) {
-        if (startPosition >= endPosition) {
-            throw new InvalidParameterException("startPosition must be less than endPosition");
+    /**
+     * Creates a PositionalMotor
+     * @param motor the motor to control
+     * @param ticksPerRotation the motor's ticks for one full revolution
+     * @param minBoundRotation the minimum inclusive rotation, in rotations, the motor will be allowed to rotate to (relative to initial position)
+     * @param maxBoundRotation the maximum inclusive rotation, in rotations, the motor will be allowed to rotate to (relative to initial position)
+     * @param initialRotation the initial position, in rotations, of the motor
+     * @param speed the speed for the motor to rotate at (can be negative for inverted rotation)
+     */
+    public PositionalMotor(DcMotorEx motor, double ticksPerRotation, double minBoundRotation, double maxBoundRotation, double initialRotation, double speed) {
+        if (minBoundRotation >= maxBoundRotation) {
+            throw new InvalidParameterException("minBoundRotation must be less than maxBoundRotation");
         }
 
         this.motor = motor;
-        this.ticksPerRevolution = ticksPerRevolution;
-        this.startPosition = startPosition;
-        this.currentPosition = startPosition;
-        this.endPosition = endPosition;
-        this.coefficient = coefficient;
+        this.ticksPerRotation = ticksPerRotation;
+        this.minBoundTicks = rotationToTicks(minBoundRotation);
+        this.maxBoundTicks = rotationToTicks(maxBoundRotation);
+        this.currentPositionTicks = rotationToTicks(initialRotation);
+        this.offsetTicks = rotationToTicks(initialRotation);
+
         this.speed = speed;
+
+        this.pid = new PIDController(0.1, 0, 0);
     }
 
-    public void setPosition(double position) {
-        if (position < startPosition || position > endPosition) {
-            throw new InvalidParameterException("Position is not within bounds [" + startPosition + "," + endPosition + "]");
+    private double rotationToTicks(double rotation) {
+        return rotation * ticksPerRotation;
+    }
+
+    private double ticksToRotation(double ticks) {
+        return ticks / ticksPerRotation;
+    }
+
+    public void setPosition(double rotation) {
+        if (rotation < ticksToRotation(minBoundTicks) || rotation > ticksToRotation(maxBoundTicks)) {
+            throw new InvalidParameterException("Position is not within bounds [" + ticksToRotation(minBoundTicks) + "," + ticksToRotation(maxBoundTicks) + "]");
         }
 
-        this.targetPosition = position;
-        this.startTicksPosition = motor.getCurrentPosition();
-        this.positionBeforeMovement = currentPosition;
+        this.targetTicks = rotationToTicks(rotation);
     }
 
     public void update() {
-        double revolutions = targetPosition - currentPosition;
-        double ticks = revolutions * ticksPerRevolution;
+        double ticks = targetTicks - currentPositionTicks;
 
-        motor.setVelocity(ticks * coefficient * speed);
+        motor.setVelocity(ticks * speed);
 
-        currentPosition = ((motor.getCurrentPosition() - startTicksPosition) / ticksPerRevolution) + positionBeforeMovement;
+        currentPositionTicks = motor.getCurrentPosition() + offsetTicks;
     }
 
     public double getPosition() {
-        return currentPosition;
+        return ticksToRotation(currentPositionTicks);
     }
 }
