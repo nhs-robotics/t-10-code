@@ -75,16 +75,17 @@ public class PositionalMotor {
     /**
      * @return The position that you last set the motor to.
      * This is the position the PID is maintaining.
+     * This is relative to initialPosition.
      */
-    public double getTargetPosition() {
-        return this.targetPosition + this.initialPosition;
+    public int getTargetPosition() {
+        return this.targetPosition + initialPosition;
     }
 
     /**
-     * @return The actual position of the motor in real life, which is not exactly what you've last set position to due
-     *         to physical error.
+     * @return The actual position of the motor in real life.
+     * This is relative to initialPosition.
      */
-    public double getPosition() {
-        return this.motor.getCurrentPosition();
+    public int getPosition() {
+        return this.motor.getCurrentPosition() + initialPosition;
     }
 }
