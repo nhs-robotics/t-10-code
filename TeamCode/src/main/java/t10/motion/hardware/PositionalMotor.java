@@ -73,7 +73,7 @@ public class PositionalMotor {
     /**
      * @return The position that you last set the motor to.
      */
-    public double getPosition() {
+    public double getTargetPosition() {
         return this.targetPosition + this.initialPosition;
     }
 
@@ -81,7 +81,7 @@ public class PositionalMotor {
      * @return The actual position of the motor in real life, which is not exactly what you've last set position to due
      *         to physical error.
      */
-    public double getRealPosition() {
+    public double getPosition() {
         return this.motor.getCurrentPosition();
     }
 }
