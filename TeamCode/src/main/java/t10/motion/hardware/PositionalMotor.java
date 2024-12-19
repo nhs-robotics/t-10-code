@@ -39,9 +39,10 @@ public class PositionalMotor {
     }
 
     /**
-     * Sets the position of the motor in ticks, relative to {@code initialPosition}.
+     * Sets the target position of the motor in ticks, relative to {@code initialPosition}.
+     * Said target position is the position that the PID will attempt to maintain.
      *
-     * @param position The position in ticks to set the motor to.
+     * @param position The position in ticks to set the motor to, relative to the initialPosition.
      */
     public void setPosition(int position) {
         if (position < this.minBoundPosition || position > this.maxBoundPosition) {
@@ -59,7 +60,8 @@ public class PositionalMotor {
     }
 
     /**
-     * Must be called as frequently as possible.
+     * Must be called as frequently as possible, if you want to run the PID.
+     * If you're running the motor to change the position, don't call this or things will be jerky.
      */
     public void update() {
         this.motor.setPower(
@@ -72,6 +74,7 @@ public class PositionalMotor {
 
     /**
      * @return The position that you last set the motor to.
+     * This is the position the PID is maintaining.
      */
     public double getTargetPosition() {
         return this.targetPosition + this.initialPosition;
