@@ -7,70 +7,81 @@ import java.security.InvalidParameterException;
 import t10.utils.PIDController;
 
 /**
-* A controller for DC motors that allows them to be controlled by setting a target position
+ * A controller for DC motors that allows them to be controlled by setting a target position
  */
 public class PositionalMotor {
     private final DcMotorEx motor;
-    private final PIDController pid;
-    private final double offsetTicks;
-    private final double ticksPerRotation;
-    private final double minBoundTicks;
-    private final double maxBoundTicks;
-    private final double speed;
-    private double currentPositionTicks = 0;
-    private double targetTicks;
+    private final PIDController pidController;
+    private final int minBoundPosition;
+    private final int maxBoundPosition;
+    private final int initialPosition;
+    private int targetPosition;
 
     /**
      * Creates a PositionalMotor
-     * @param motor the motor to control
-     * @param ticksPerRotation the motor's ticks for one full revolution
-     * @param minBoundRotation the minimum inclusive rotation, in rotations, the motor will be allowed to rotate to (relative to initial position)
-     * @param maxBoundRotation the maximum inclusive rotation, in rotations, the motor will be allowed to rotate to (relative to initial position)
-     * @param initialRotation the initial position, in rotations, of the motor
-     * @param speed the speed for the motor to rotate at (can be negative for inverted rotation)
+     *
+     * @param motor            the motor to control
+     * @param minBoundPosition the minimum inclusive position the motor will be allowed to rotate to
+     * @param maxBoundPosition the maximum inclusive position the motor will be allowed to rotate to
+     * @param initialPosition  the initial position of the motor (probably 0)
      */
-    public PositionalMotor(DcMotorEx motor, double ticksPerRotation, double minBoundRotation, double maxBoundRotation, double initialRotation, double speed) {
-        if (minBoundRotation >= maxBoundRotation) {
+    public PositionalMotor(DcMotorEx motor, int minBoundPosition, int maxBoundPosition, int initialPosition, PIDController pidController) {
+        if (minBoundPosition >= maxBoundPosition) {
             throw new InvalidParameterException("minBoundRotation must be less than maxBoundRotation");
         }
 
         this.motor = motor;
-        this.ticksPerRotation = ticksPerRotation;
-        this.minBoundTicks = rotationToTicks(minBoundRotation);
-        this.maxBoundTicks = rotationToTicks(maxBoundRotation);
-        this.currentPositionTicks = rotationToTicks(initialRotation);
-        this.offsetTicks = rotationToTicks(initialRotation);
-
-        this.speed = speed;
-
-        this.pid = new PIDController(0.1, 0, 0);
+        this.minBoundPosition = minBoundPosition;
+        this.maxBoundPosition = maxBoundPosition;
+        this.initialPosition = initialPosition;
+        this.pidController = pidController;
+        this.setPosition(initialPosition);
     }
 
-    private double rotationToTicks(double rotation) {
-        return rotation * ticksPerRotation;
-    }
-
-    private double ticksToRotation(double ticks) {
-        return ticks / ticksPerRotation;
-    }
-
-    public void setPosition(double rotation) {
-        if (rotation < ticksToRotation(minBoundTicks) || rotation > ticksToRotation(maxBoundTicks)) {
-            throw new InvalidParameterException("Position is not within bounds [" + ticksToRotation(minBoundTicks) + "," + ticksToRotation(maxBoundTicks) + "]");
+    /**
+     * Sets the position of the motor in ticks, relative to {@code initialPosition}.
+     *
+     * @param position The position in ticks to set the motor to.
+     */
+    public void setPosition(int position) {
+        if (position < this.minBoundPosition || position > this.maxBoundPosition) {
+            throw new IllegalArgumentException(
+                    String.format(
+                            "Position (%d) is outside bounds [%d, %d]",
+                            position,
+                            this.minBoundPosition,
+                            this.maxBoundPosition
+                    )
+            );
         }
 
-        this.targetTicks = rotationToTicks(rotation);
+        this.targetPosition = position - this.initialPosition;
     }
 
+    /**
+     * Must be called as frequently as possible.
+     */
     public void update() {
-        double ticks = targetTicks - currentPositionTicks;
-
-        motor.setVelocity(ticks * speed);
-
-        currentPositionTicks = motor.getCurrentPosition() + offsetTicks;
+        this.motor.setPower(
+                this.pidController.calculate(
+                        this.motor.getCurrentPosition(),
+                        this.targetPosition
+                )
+        );
     }
 
+    /**
+     * @return The position that you last set the motor to.
+     */
     public double getPosition() {
-        return ticksToRotation(currentPositionTicks);
+        return this.targetPosition + this.initialPosition;
+    }
+
+    /**
+     * @return The actual position of the motor in real life, which is not exactly what you've last set position to due
+     *         to physical error.
+     */
+    public double getRealPosition() {
+        return this.motor.getCurrentPosition();
     }
 }
