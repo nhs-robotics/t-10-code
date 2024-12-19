@@ -5,8 +5,8 @@ import t10.geometry.MovementVector;
 import t10.geometry.Point;
 import t10.geometry.Pose;
 import t10.localizer.Localizer;
+import t10.utils.OdometryUtils;
 import t10.motion.mecanum.MecanumDriver;
-import t10.motion.profile.TrapezoidalMotionProfile;
 import t10.utils.MathUtils;
 
 import java.util.Arrays;
@@ -147,7 +147,7 @@ public class PurePursuitPathFollower {
 
         // Sets the velocity as a vector so that the robot moves in the correct direction
         mecanumDriver.setVelocity(
-                getRobotCentricVelocity(
+                OdometryUtils.getRobotCentricVelocity(
                     new MovementVector(
                         Math.sin(angle) * velocity,
                         Math.cos(angle) * velocity,
@@ -339,19 +339,5 @@ public class PurePursuitPathFollower {
                     this.speed
             );
         }
-    }
-
-    public MovementVector getRobotCentricVelocity(MovementVector absoluteVelocity, Pose fieldCentricPose)
-    {
-        double theta = fieldCentricPose.getHeading(AngleUnit.RADIANS);
-        double forwardRelative = -(absoluteVelocity.getVertical() * Math.cos(theta) + absoluteVelocity.getHorizontal() * Math.sin(theta));
-        double rightwardRelative = absoluteVelocity.getVertical() * Math.sin(theta) + absoluteVelocity.getHorizontal() * Math.cos(theta);
-        return new MovementVector(forwardRelative, rightwardRelative, 0);
-    }
-
-    //IMPORTANT - this MUST be iterated, otherwise it'll keep going in the earlier direction while rotating - and not work
-    public MovementVector getRobotCentricVelocity(double lateral, double horizontal, Pose fieldCentricPose)
-    {
-        return getRobotCentricVelocity(new MovementVector(lateral, horizontal, 0), fieldCentricPose);
     }
 }

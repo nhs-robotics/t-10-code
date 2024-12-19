@@ -5,6 +5,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import t10.motion.hardware.AbstractEncoder;
 import t10.geometry.Pose;
 import t10.geometry.MovementVector;
+import t10.utils.OdometryUtils;
 
 /**
  * Odometry localization interface.
@@ -120,15 +121,12 @@ public class OdometryLocalizer {
 
     public MovementVector getRobotCentricVelocity(MovementVector absoluteVelocity)
     {
-        double theta = this.fieldCentricPose.getHeading(AngleUnit.RADIANS);
-        double forwardRelative = (absoluteVelocity.getVertical() * Math.cos(theta) + absoluteVelocity.getHorizontal() * Math.sin(theta));
-        double rightwardRelative = -absoluteVelocity.getVertical() * Math.sin(theta) + absoluteVelocity.getHorizontal() * Math.cos(theta);
-        return new MovementVector(forwardRelative, rightwardRelative, 0);
+        return OdometryUtils.getRobotCentricVelocity(absoluteVelocity,getFieldCentricPose());
     }
 
     //IMPORTANT - this MUST be iterated, otherwise it'll keep going in the earlier direction while rotating - and not work
     public MovementVector getRobotCentricVelocity(double lateral, double horizontal)
     {
-        return getRobotCentricVelocity(new MovementVector(lateral, horizontal, 0));
+        return OdometryUtils.getRobotCentricVelocity(new MovementVector(lateral, horizontal, 0), getFieldCentricPose());
     }
 }
