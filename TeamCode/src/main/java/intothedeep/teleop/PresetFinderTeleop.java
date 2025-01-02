@@ -2,17 +2,8 @@ package intothedeep.teleop;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-package intothedeep.teleop;
-
-import t10.bootstrap.TeleOpOpMode;
-import t10.gamepad.GController;
-
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.util.List;
 
