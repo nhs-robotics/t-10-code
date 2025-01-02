@@ -44,7 +44,7 @@ public class Constants {
         });
 
         public static final MecanumCoefficientMatrix KEVIN_COEFFICIENTS = new MecanumCoefficientMatrix(new double[]{
-                1, -1, 1, -1
+                -1, 1, -1, 1
         });
 
         public static final MecanumCoefficientMatrix SOFTWARE_ROBOT_COEFFICIENTS = new MecanumCoefficientMatrix(new double[]{

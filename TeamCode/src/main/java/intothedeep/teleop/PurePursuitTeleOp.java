@@ -8,6 +8,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import intothedeep.SnowballConfig;
+import intothedeep.teleop.azazel.AzazelRobotConfiguration;
 import t10.bootstrap.AbstractRobotConfiguration;
 import t10.bootstrap.TeleOpOpMode;
 import t10.gamepad.GController;
@@ -54,7 +55,7 @@ public class PurePursuitTeleOp extends TeleOpOpMode {
         this.movementPower = this.telemetry.addData("movement power: ", "0");
         this.vert = this.telemetry.addData("vert: ", "0");
         this.hor = this.telemetry.addData("hor: ", "0");
-        this.c = new SnowballConfig(this.hardwareMap);
+        this.c = new AzazelRobotConfiguration(this.hardwareMap);
         this.driver = this.c.createMecanumDriver();
         this.odometry = this.c.createOdometry();
         this.gamepadController = new GController(this.gamepad1)
@@ -70,6 +71,10 @@ public class PurePursuitTeleOp extends TeleOpOpMode {
         // Initialize Path Followers
         {
             humanPlayerPathFollower = new PurePursuitPathFollower.Builder()
+                    .addPoint(48,0)
+                    .addPoint(48,48)
+                    .addPoint(0,48)
+                    /*
                     .addPoint(0,-24)
                     .addPoint(0,-48)
                     .addPoint(48,-48)
@@ -77,6 +82,7 @@ public class PurePursuitTeleOp extends TeleOpOpMode {
                     .addPoint(0,48)
                     .addPoint(48,48)
                     .addPoint(60,60)
+                    */
                     .setLocalizer(this.localizer)
                     .setLookaheadDistance(purePursuitLookAheadDistance)
                     .setSpeed(purePursuitSpeed)
