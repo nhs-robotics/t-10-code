@@ -31,7 +31,7 @@ import java.util.List;
 public class DepthTeleOpMode extends TeleOpOpMode {
     private MecanumDriver driver;
     private GController gamepadController;
-    private TempTeleopConfig c;
+    private SnowballWithWebcamConfig c;
     private OdometryLocalizer odometry;
     private DepthPointCloudProcessor p;
     private Localizer localizer;
@@ -42,7 +42,7 @@ public class DepthTeleOpMode extends TeleOpOpMode {
 
     @Override
     public void initialize() {
-        this.c = new TempTeleopConfig(this.hardwareMap);
+        this.c = new SnowballWithWebcamConfig(this.hardwareMap);
         this.driver = this.c.createMecanumDriver();
         this.odometry = this .c.createOdometry();
         this.gamepadController = new GController(this.gamepad1).x.initialToggleState(true).ok();  // micro-movement
@@ -127,16 +127,4 @@ public class DepthTeleOpMode extends TeleOpOpMode {
             throw new RuntimeException(e);
         }
     }
-}
-
-class Config extends SnowballConfig
-{
-
-    public Config(HardwareMap hardwareMap)
-    {
-        super(hardwareMap);
-    }
-
-    @Hardware(name = "Webcam")
-    public Webcam webcam;
 }

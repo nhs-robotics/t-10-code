@@ -22,8 +22,8 @@ public class ServoControllerTesterTeleop extends TeleOpOpMode {
     @Override
     public void initialize() {
         // TEMP SPEED OF 0.1 FOR TESTING BECAUSE THINGS BROKE
-        servos.add(new PositionalMotor(hardwareMap.get(DcMotorEx.class, "linearSlide1"), Constants.TickCounts.MOVEMENT_MOTOR_TICK_COUNT, 0, 1, 0.1, 1));
-        servos.add(new PositionalMotor(hardwareMap.get(DcMotorEx.class, "linearSlide2"), Constants.TickCounts.MOVEMENT_MOTOR_TICK_COUNT, 0, 1, 0.1, -1));
+        //servos.add(new PositionalMotor(hardwareMap.get(DcMotorEx.class, "linearSlide1"), Constants.TickCounts.MOVEMENT_MOTOR_TICK_COUNT, 0, 1, 0.1, 1));
+        //servos.add(new PositionalMotor(hardwareMap.get(DcMotorEx.class, "linearSlide2"), Constants.TickCounts.MOVEMENT_MOTOR_TICK_COUNT, 0, 1, 0.1, -1));
 
         this.gamepadController = new GController(this.gamepad1)
                 .x.onPress(() -> {
