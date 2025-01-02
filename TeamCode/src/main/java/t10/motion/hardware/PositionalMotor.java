@@ -16,6 +16,7 @@ public class PositionalMotor {
     private final int maxBoundPosition;
     private final int initialPosition;
     private int targetPosition;
+    private int coefficient;
 
     /**
      * Creates a PositionalMotor
@@ -25,7 +26,7 @@ public class PositionalMotor {
      * @param maxBoundPosition the maximum inclusive position the motor will be allowed to rotate to
      * @param initialPosition  the initial position of the motor (probably 0)
      */
-    public PositionalMotor(DcMotorEx motor, int minBoundPosition, int maxBoundPosition, int initialPosition, PIDController pidController) {
+    public PositionalMotor(DcMotorEx motor, int minBoundPosition, int maxBoundPosition, int initialPosition, PIDController pidController, int coefficient) {
         if (minBoundPosition >= maxBoundPosition) {
             throw new InvalidParameterException("minBoundRotation must be less than maxBoundRotation");
         }
@@ -35,7 +36,7 @@ public class PositionalMotor {
         this.maxBoundPosition = maxBoundPosition;
         this.initialPosition = initialPosition;
         this.pidController = pidController;
-        this.setPosition(initialPosition);
+        this.coefficient = coefficient;
     }
 
     /**
@@ -66,9 +67,9 @@ public class PositionalMotor {
     public void update() {
         this.motor.setPower(
                 this.pidController.calculate(
-                        this.motor.getCurrentPosition(),
+                        this.motor.getCurrentPosition() * this.coefficient,
                         this.targetPosition
-                )
+                ) * this.coefficient
         );
     }
 
@@ -86,6 +87,6 @@ public class PositionalMotor {
      * This is relative to initialPosition.
      */
     public int getPosition() {
-        return this.motor.getCurrentPosition() + initialPosition;
+        return (this.motor.getCurrentPosition() * this.coefficient) + initialPosition;
     }
 }
