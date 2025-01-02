@@ -18,40 +18,19 @@ public class CraneCapabilities {
     }
 
     public void runCrane(double speed) {
-        this.c.liftLeft.motor.setVelocity(speed*c.liftLeft.ticksPerRevolution);
-        this.c.liftRight.setVelocity(-speed*c.liftRight.ticksPerRevolution);
-        if(speed != 0)
-        {
+        this.c.liftLeft.motor.setVelocity(speed * c.liftLeft.ticksPerRevolution);
+        this.c.liftRight.setVelocity(-speed * c.liftRight.ticksPerRevolution);
+        if (speed != 0) {
             runningCrane = true;
-        }
-    }
-
-    public void runRotation(double power) {
-        this.c.armRotation.setPower(power);
-        this.armRotationTarget = this.c.armRotation.motor.getCurrentPosition();
-        if(power != 0)
-        {
-            runningRotation = true;
         }
     }
 
     public void update() {
         // Crane
-        if(!runningCrane) {
+        if (!runningCrane) {
             double powerForCrane = this.craneStabilizer.calculate(this.c.liftLeft.motor.getCurrentPosition(), this.craneTarget);
             this.runCrane(powerForCrane);
         }
         runningCrane = false;
-
-        // Rotation
-        if(!runningRotation) {
-            double powerForRotationMotor = this.armRotationStabilizer.calculate(this.c.armRotation.motor.getCurrentPosition(), this.armRotationTarget);
-            this.c.armRotation.setPower(powerForRotationMotor);
-        }
-        runningRotation = false;
-    }
-
-    public void extendArm(double power) {
-        this.c.armExtension.setPower(power);
     }
 }
