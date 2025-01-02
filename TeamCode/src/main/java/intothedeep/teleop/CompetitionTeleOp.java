@@ -60,11 +60,17 @@ public class CompetitionTeleOp extends TeleOpOpMode {
         this.x.setValue(this.odometry.getFieldCentricPose().getX());
         this.y.setValue(this.odometry.getFieldCentricPose().getY());
         this.r.setValue(this.odometry.getFieldCentricPose().getHeading(AngleUnit.DEGREES));
+        updateAll();
 
+    }
+
+    private void updateAll()
+    {
         telemetry.update();
         odometry.update();
         this.driver.useGamepad(this.gamepad1, 1);
         this.g2.update();
         this.crane.update();
+        this.arm.update();
     }
 }
