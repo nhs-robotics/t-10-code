@@ -5,6 +5,7 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import t10.bootstrap.AbstractRobotConfiguration;
 import t10.bootstrap.Hardware;
@@ -67,6 +68,9 @@ public class SnowballConfig extends AbstractRobotConfiguration {
 
     @Hardware(name = "OctoQuad")
     public OctoQuad octoQuad;
+
+    @Hardware(name = "Grabber")
+    public Servo claw;
   
     public SnowballConfig(HardwareMap hardwareMap) {
         super(hardwareMap);
