@@ -20,7 +20,7 @@ public class CompetitionTeleOp extends TeleOpOpMode {
     private SnowballConfig config;
     private CraneCapabilities crane;
     private ArmCapabilities arm;
-    private GController g2;
+    protected GController g2;
     private MecanumDriver driver;
     private OdometryLocalizer odometry;
 
