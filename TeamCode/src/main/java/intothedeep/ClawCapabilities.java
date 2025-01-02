@@ -27,6 +27,17 @@ public class ClawCapabilities {
         isOpen = false;
     }
 
+    public void setPosition(boolean open) {
+        if (open)
+            open();
+        else
+            close();
+    }
+
+    public void toggle() {
+        setPosition(!isOpen);
+    }
+
     public boolean isOpen() {
         return isOpen;
     }
