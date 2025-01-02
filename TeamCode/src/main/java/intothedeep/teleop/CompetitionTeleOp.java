@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
+import intothedeep.ArmCapabilities;
 import intothedeep.CraneCapabilities;
 import intothedeep.SnowballConfig;
 import t10.bootstrap.TeleOpOpMode;
@@ -18,6 +19,7 @@ import t10.motion.mecanum.MecanumDriver;
 public class CompetitionTeleOp extends TeleOpOpMode {
     private SnowballConfig config;
     private CraneCapabilities crane;
+    private ArmCapabilities arm;
     private GController g2;
     private MecanumDriver driver;
     private OdometryLocalizer odometry;
@@ -30,9 +32,10 @@ public class CompetitionTeleOp extends TeleOpOpMode {
     public void initialize() {
         this.config = new SnowballConfig(this.hardwareMap);
         this.crane = new CraneCapabilities(this.config);
+        this.arm = new ArmCapabilities(this.config);
         this.g2 = new GController(this.gamepad2)
-                .dpadUp.onPress(() -> this.crane.extendArm(1)).onRelease(() -> this.crane.extendArm(0)).ok()
-                .dpadDown.onPress(() -> this.crane.extendArm(-1)).onRelease(() -> this.crane.extendArm(0)).ok();
+                .dpadUp.onPress(() -> this.arm.extendArm(1)).onRelease(() -> this.arm.extendArm(0)).ok()
+                .dpadDown.onPress(() -> this.arm.extendArm(-1)).onRelease(() -> this.arm.extendArm(0)).ok();
         this.driver = this.config.createMecanumDriver();
         this.odometry = config.createOdometry();
 
@@ -44,9 +47,9 @@ public class CompetitionTeleOp extends TeleOpOpMode {
     @Override
     public void loop() {
         if (Math.abs(this.gamepad2.left_stick_y) < 0.1) {
-            this.crane.runRotation(0);
+            this.arm.runRotation(0);
         } else {
-            this.crane.runRotation(this.gamepad2.left_stick_y);
+            this.arm.runRotation(this.gamepad2.left_stick_y);
         }
 
         if (Math.abs(this.gamepad2.right_stick_y) < 0.1) {
