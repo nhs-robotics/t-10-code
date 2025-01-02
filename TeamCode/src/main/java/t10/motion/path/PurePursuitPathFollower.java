@@ -147,7 +147,7 @@ public class PurePursuitPathFollower {
 
         // Sets the velocity as a vector so that the robot moves in the correct direction
         mecanumDriver.setVelocity(
-                OdometryUtils.getRobotCentricVelocity(
+                OdometryUtils.changeToRobotCenteredVelocity(
                     new MovementVector(
                         Math.sin(angle) * velocity,
                         Math.cos(angle) * velocity,

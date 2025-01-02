@@ -5,11 +5,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-import intothedeep.CraneCapabilities;
 import intothedeep.SnowballConfig;
 import t10.bootstrap.TeleOpOpMode;
 import t10.gamepad.GController;
-import t10.geometry.Pose;
 import t10.localizer.odometry.OdometryLocalizer;
 import t10.motion.mecanum.MecanumDriver;
 import t10.motion.profile.TrapezoidalMotionProfile;
@@ -66,7 +64,7 @@ public class VeloProfileTestDrive extends TeleOpOpMode {
         velocity = profile.getVelocity(odometry.getFieldCentricPose().getY() - currentY);
         this.veloProfile.setValue(velocity);
         if (velocitying) {
-            driver.setVelocity(odometry.getRobotCentricVelocity(profile.getVelocity(odometry.getFieldCentricPose().getY() - currentY), 0));
+            driver.setVelocity(odometry.changeToRobotCenteredVelocity(profile.getVelocity(odometry.getFieldCentricPose().getY() - currentY), 0));
         }
         else {
             this.driver.useGamepad(this.gamepad1, 1);
@@ -80,7 +78,7 @@ public class VeloProfileTestDrive extends TeleOpOpMode {
         while(!profile1.isDone())
         {
             double currentPosY = odometry.getFieldCentricPose().getY();
-            driver.setVelocity(odometry.getRobotCentricVelocity(profile1.getVelocity(currentPosY - startPoseY),0));
+            driver.setVelocity(odometry.changeToRobotCenteredVelocity(profile1.getVelocity(currentPosY - startPoseY),0));
         }
     }
 }
