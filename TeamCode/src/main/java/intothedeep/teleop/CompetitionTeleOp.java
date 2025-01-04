@@ -7,6 +7,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import intothedeep.ArmCapabilities;
+import intothedeep.ClawCapabilities;
 import intothedeep.CraneCapabilities;
 import intothedeep.SnowballConfig;
 import t10.bootstrap.TeleOpOpMode;
@@ -20,9 +21,11 @@ public class CompetitionTeleOp extends TeleOpOpMode {
     private SnowballConfig config;
     private CraneCapabilities crane;
     private ArmCapabilities arm;
+    protected GController g1;
     protected GController g2;
     private MecanumDriver driver;
     private OdometryLocalizer odometry;
+    private ClawCapabilities clawCapabilities;
 
     private Telemetry.Item x;
     private Telemetry.Item y;
@@ -33,9 +36,12 @@ public class CompetitionTeleOp extends TeleOpOpMode {
         this.config = new SnowballConfig(this.hardwareMap);
         this.crane = new CraneCapabilities(this.config);
         this.arm = new ArmCapabilities(this.config);
+        this.clawCapabilities = new ClawCapabilities(this.config);
         this.g2 = new GController(this.gamepad2)
                 .dpadUp.onPress(() -> this.arm.extendArm(1)).onRelease(() -> this.arm.extendArm(0)).ok()
                 .dpadDown.onPress(() -> this.arm.extendArm(-1)).onRelease(() -> this.arm.extendArm(0)).ok();
+        this.g1 = new GController(this.gamepad1)
+                .a.onPress(() -> this.clawCapabilities.toggle()).ok();
         this.driver = this.config.createMecanumDriver();
         this.odometry = config.createOdometry();
 
@@ -70,6 +76,7 @@ public class CompetitionTeleOp extends TeleOpOpMode {
         odometry.update();
         this.driver.useGamepad(this.gamepad1, 1);
         this.g2.update();
+        this.g1.update();
         this.crane.update();
         this.arm.update();
     }

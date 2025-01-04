@@ -6,8 +6,8 @@ public class ClawCapabilities {
     private final SnowballConfig c;
     private final Servo claw;
     private boolean isOpen;
-    private final double openPosition = 0.1;
-    private final double closedPosition = 0.9;
+    private final double OPEN_POSITION = 0.05;
+    private final double CLOSED_POSITION = 0.55;
 
     public ClawCapabilities(SnowballConfig c) {
         this.c = c;
@@ -17,13 +17,13 @@ public class ClawCapabilities {
 
     public void open() {
         if (isOpen) return;
-        claw.setPosition(openPosition);
+        claw.setPosition(OPEN_POSITION);
         isOpen = true;
     }
 
     public void close() {
         if (!isOpen) return;
-        claw.setPosition(closedPosition);
+        claw.setPosition(CLOSED_POSITION);
         isOpen = false;
     }
 
