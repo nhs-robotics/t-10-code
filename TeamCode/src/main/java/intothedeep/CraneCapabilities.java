@@ -46,7 +46,7 @@ public class CraneCapabilities {
 
     public void runCrane(double speed) {
         this.c.liftLeft.motor.setVelocity(speed * c.liftLeft.ticksPerRevolution);
-        this.c.liftRight.setVelocity(-speed * c.liftRight.ticksPerRevolution);
+        this.c.liftRight.setVelocity(speed * c.liftRight.ticksPerRevolution);
         if (speed != 0) {
             runningCrane = true;
         }
