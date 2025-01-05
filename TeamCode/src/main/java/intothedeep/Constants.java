@@ -32,7 +32,7 @@ public class Constants {
         public static final int CRANE_MAX = (int)(LIFT_MOTOR_TICK_COUNT * 2);
         public static final int CRANE_LOW_BASKET = (int)(CRANE_MAX * 0.5);
         public static final int CRANE_HIGH_BASKET = (int)(CRANE_MAX * 0.8);
-        public static final int CRANE_DIFFERENCE_FAIL_SAFE = 500;
+        public static final int CRANE_DIFFERENCE_FAIL_SAFE = 500*(10^5);
     }
 
     public static class Odometry {

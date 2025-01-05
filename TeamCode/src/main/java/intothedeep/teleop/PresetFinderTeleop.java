@@ -10,7 +10,7 @@ import java.util.List;
 @TeleOp(name = "Preset Finder")
 public class PresetFinderTeleop extends CompetitionTeleOp {
     public List<DcMotorEx> motors;
-    private Telemetry.Item selectedMotorTelemetry;
+    private Telemetry.Item selectedMotorTelemetry, diffMotor;
 
     private int selectedMotorIndex = 0;
     @Override
@@ -29,6 +29,7 @@ public class PresetFinderTeleop extends CompetitionTeleOp {
                     }
                 }).ok();
         this.selectedMotorTelemetry = this.telemetry.addData("Selected Motor ", selectedMotorIndex);
+        this.diffMotor = this.telemetry.addData("Motor Difference: ", 0);
     }
 
     @Override
@@ -36,5 +37,6 @@ public class PresetFinderTeleop extends CompetitionTeleOp {
         super.loop();
         int motorPosition = motors.get(selectedMotorIndex).getCurrentPosition();
         this.selectedMotorTelemetry.setValue(selectedMotorIndex + ": " + motorPosition);
+        this.diffMotor.setValue(config.liftRight.motor.getCurrentPosition() - config.liftLeft.motor.getCurrentPosition());
     }
 }

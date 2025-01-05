@@ -18,8 +18,8 @@ import t10.motion.mecanum.MecanumDriver;
 
 @TeleOp
 public class CompetitionTeleOp extends TeleOpOpMode {
-    private SnowballConfig config;
-    private CraneCapabilities crane;
+    protected SnowballConfig config;
+    protected CraneCapabilities crane;
     private ArmCapabilities arm;
     protected GController g1;
     protected GController g2;
