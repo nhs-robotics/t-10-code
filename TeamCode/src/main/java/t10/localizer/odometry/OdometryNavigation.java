@@ -2,11 +2,8 @@ package t10.localizer.odometry;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-import intothedeep.Constants;
 import t10.motion.mecanum.MecanumDriver;
 import t10.geometry.MovementVector;
-import t10.motion.profile.MotionProfile;
-import t10.motion.profile.TrapezoidalMotionProfile;
 
 public class OdometryNavigation {
     private OdometryLocalizer odometry;
@@ -33,7 +30,7 @@ public class OdometryNavigation {
         double initialX = odometry.getFieldCentricPose().getX();
         double finalY = odometry.getFieldCentricPose().getY() + distance;
         while(Math.abs(finalY - odometry.getFieldCentricPose().getY()) > minError) {
-            driver.setVelocity(odometry.getRobotCentricVelocity(new MovementVector(10 * Math.signum(distance), 0,0)));
+            driver.setVelocity(odometry.changeToRobotCenteredVelocity(new MovementVector(10 * Math.signum(distance), 0,0)));
             this.odometry.update();
         }
         driver.setVelocity(new MovementVector(0,0,0));
@@ -45,7 +42,7 @@ public class OdometryNavigation {
         double initialX = odometry.getFieldCentricPose().getX();
         double finalX = initialX + distance;
         while(Math.abs(finalX - odometry.getFieldCentricPose().getX()) > minError) {
-            driver.setVelocity(odometry.getRobotCentricVelocity(new MovementVector(0, 10 * Math.signum(distance),0)));
+            driver.setVelocity(odometry.changeToRobotCenteredVelocity(new MovementVector(0, 10 * Math.signum(distance),0)));
             this.odometry.update();
         }
         driver.setVelocity(new MovementVector(0,0,0));
@@ -61,7 +58,7 @@ public class OdometryNavigation {
             double speedX, speedY;
             speedX = 10 * Math.signum(distanceX);
             speedY = 10 * Math.signum(distanceY);
-            driver.setVelocity(odometry.getRobotCentricVelocity(new MovementVector(speedY, speedX,0)));
+            driver.setVelocity(odometry.changeToRobotCenteredVelocity(new MovementVector(speedY, speedX,0)));
             this.odometry.update();
         }
         System.out.println("step 1 done");
@@ -116,7 +113,7 @@ public class OdometryNavigation {
             else {
                 speedY = targetY - odometry.getFieldCentricPose().getY();
             }
-            driver.setVelocity(odometry.getRobotCentricVelocity(new MovementVector(speedY, speedX,0)));
+            driver.setVelocity(odometry.changeToRobotCenteredVelocity(new MovementVector(speedY, speedX,0)));
             this.odometry.update();
         }
         driver.setVelocity(new MovementVector(0,0,0));

@@ -7,7 +7,7 @@ import t10.geometry.Pose;
 
 public class OdometryUtils {
 
-    public static MovementVector getRobotCentricVelocity(MovementVector absoluteVelocity, Pose pose)
+    public static MovementVector changeToRobotCenteredVelocity(MovementVector absoluteVelocity, Pose pose)
     {
         double theta = pose.getHeading(AngleUnit.RADIANS);
         double forwardRelative = (absoluteVelocity.getVertical() * Math.cos(theta) + absoluteVelocity.getHorizontal() * Math.sin(theta));
@@ -15,9 +15,8 @@ public class OdometryUtils {
         return new MovementVector(forwardRelative, rightwardRelative, 0);
     }
 
-    //IMPORTANT - this MUST be iterated, otherwise it'll keep going in the earlier direction while rotating - and not work
-    public static MovementVector getRobotCentricVelocity(double lateral, double horizontal, Pose pose)
+       public static MovementVector changeToRobotCenteredVelocity(double lateral, double horizontal, Pose pose)
     {
-        return getRobotCentricVelocity(new MovementVector(lateral, horizontal, 0), pose);
+        return changeToRobotCenteredVelocity(new MovementVector(lateral, horizontal, 0), pose);
     }
 }

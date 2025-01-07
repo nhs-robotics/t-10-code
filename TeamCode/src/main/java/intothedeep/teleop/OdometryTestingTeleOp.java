@@ -70,8 +70,8 @@ public class OdometryTestingTeleOp extends TeleOpOpMode {
         this.x.setValue(this.odometry.getFieldCentricPose().getX());
         this.y.setValue(this.odometry.getFieldCentricPose().getY());
         this.r.setValue(this.odometry.getFieldCentricPose().getHeading(AngleUnit.DEGREES));
-        this.vert.setValue(this.odometry.getRobotCentricVelocity(1,0));
-        this.hor.setValue(this.odometry.getRobotCentricVelocity(0,1));
+        this.vert.setValue(this.odometry.changeToRobotCenteredVelocity(1,0));
+        this.hor.setValue(this.odometry.changeToRobotCenteredVelocity(0,1));
 
         this.direct0.setValue(navigator.findTurnSpeed(odometry.getFieldCentricPose().getHeading(AngleUnit.DEGREES),0));
         this.direct90.setValue(navigator.findTurnSpeed(odometry.getFieldCentricPose().getHeading(AngleUnit.DEGREES),90));

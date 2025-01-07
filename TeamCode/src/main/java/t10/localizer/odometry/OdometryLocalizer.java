@@ -20,6 +20,7 @@ public class OdometryLocalizer {
     private double leftWheelPos;
     private double rightWheelPos;
     private double perpendicularWheelPos;
+    private double lastTime = (double) System.currentTimeMillis() / 1000, velocityX = 0, velocityY = 0;
     private Pose fieldCentricPose;
 
     /**
@@ -87,6 +88,12 @@ public class OdometryLocalizer {
         this.leftWheelPos = newLeftWheelPos;
         this.rightWheelPos = newRightWheelPos;
         this.perpendicularWheelPos = newPerpendicularWheelPos;
+
+        // Gets the velocitities
+        double deltaT = (double) System.currentTimeMillis() / 1000 - lastTime;
+        this.velocityX = deltaX / deltaT;
+        this.velocityY = deltaY / deltaT;
+        lastTime = (double) System.currentTimeMillis() / 1000;
     }
 
     /**
@@ -107,6 +114,12 @@ public class OdometryLocalizer {
         return this.fieldCentricPose;
     }
 
+    public double getVelocityX() {return this.velocityX; }
+
+    public double getVelocityY() {return this.velocityY; }
+
+    public double getSpeed() {return Math.sqrt(velocityX*velocityX + velocityY*velocityY);}
+
     /**
      * Sets a new reference pose for robot-centric positioning
      *
@@ -119,14 +132,13 @@ public class OdometryLocalizer {
         this.perpendicularWheelPos = this.perpendicularEncoder.getCurrentInches();
     }
 
-    public MovementVector getRobotCentricVelocity(MovementVector absoluteVelocity)
+    public MovementVector changeToRobotCenteredVelocity(MovementVector absoluteVelocity)
     {
-        return OdometryUtils.getRobotCentricVelocity(absoluteVelocity,getFieldCentricPose());
+        return OdometryUtils.changeToRobotCenteredVelocity(absoluteVelocity,getFieldCentricPose());
     }
 
-    //IMPORTANT - this MUST be iterated, otherwise it'll keep going in the earlier direction while rotating - and not work
-    public MovementVector getRobotCentricVelocity(double lateral, double horizontal)
+    public MovementVector changeToRobotCenteredVelocity(double lateral, double horizontal)
     {
-        return OdometryUtils.getRobotCentricVelocity(new MovementVector(lateral, horizontal, 0), getFieldCentricPose());
+        return OdometryUtils.changeToRobotCenteredVelocity(new MovementVector(lateral, horizontal, 0), getFieldCentricPose());
     }
 }

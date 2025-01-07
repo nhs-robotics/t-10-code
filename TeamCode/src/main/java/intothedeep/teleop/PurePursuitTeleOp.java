@@ -156,8 +156,8 @@ public class PurePursuitTeleOp extends TeleOpOpMode {
         this.x.setValue(this.localizer.getFieldCentricPose().getX());
         this.y.setValue(this.localizer.getFieldCentricPose().getY());
         this.r.setValue(this.localizer.getFieldCentricPose().getHeading(AngleUnit.DEGREES));
-        this.vert.setValue(this.odometry.getRobotCentricVelocity(-1,0));
-        this.hor.setValue(this.odometry.getRobotCentricVelocity(0,1));
+        this.vert.setValue(this.odometry.changeToRobotCenteredVelocity(-1,0));
+        this.hor.setValue(this.odometry.changeToRobotCenteredVelocity(0,1));
         this.movementPower.setValue(this.gamepadController.leftBumper.isToggled() ? 0.25 : 1);
         this.telemetry.update();
         this.odometry.update();
