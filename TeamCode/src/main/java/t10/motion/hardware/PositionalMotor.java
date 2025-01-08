@@ -16,7 +16,7 @@ public class PositionalMotor {
     private final int maxBoundPosition;
     private final int initialPosition;
     private int targetPosition;
-    private int coefficient;
+    public int coefficient;
 
     /**
      * Creates a PositionalMotor
@@ -45,7 +45,7 @@ public class PositionalMotor {
      *
      * @param position The position in ticks to set the motor to, relative to the initialPosition.
      */
-    public void setPosition(int position) {
+    public void setTargetPosition(int position) {
         if (position < this.minBoundPosition || position > this.maxBoundPosition) {
             throw new IllegalArgumentException(
                     String.format(
@@ -61,14 +61,36 @@ public class PositionalMotor {
     }
 
     /**
+     * Sets the target position of the motor in ticks, relative to {@code initialPosition}.
+     * Said target position is the position that the PID will attempt to maintain.
+     *
+     * @param position The position in ticks to set the motor to, relative to the initialPosition.
+     * @param overrideBounds Whether or not the boundaries should be ignored
+     */
+    public void setTargetPosition(int position, boolean overrideBounds) {
+        if (!overrideBounds && (position < this.minBoundPosition || position > this.maxBoundPosition)) {
+            throw new IllegalArgumentException(
+                    String.format(
+                            "Position (%d) is outside bounds [%d, %d]",
+                            position,
+                            this.minBoundPosition,
+                            this.maxBoundPosition
+                    )
+            );
+        }
+
+        this.targetPosition = position * coefficient - this.initialPosition;
+    }
+
+    /**
      * Must be called as frequently as possible, if you want to run the PID.
      * If you're running the motor to change the position, don't call this or things will be jerky.
      */
     public void update() {
         this.motor.setPower(
                 this.pidController.calculate(
-                        this.motor.getCurrentPosition() * this.coefficient,
-                        this.targetPosition
+                        this.getPosition(),
+                        this.getTargetPosition()
                 ) * this.coefficient
         );
     }
@@ -88,5 +110,13 @@ public class PositionalMotor {
      */
     public int getPosition() {
         return (this.motor.getCurrentPosition() * this.coefficient) + initialPosition;
+    }
+
+    /**
+     * @return The number of encoder ticks between the current position and the target position
+     */
+    public int distToPosition()
+    {
+        return getTargetPosition() - getPosition();
     }
 }

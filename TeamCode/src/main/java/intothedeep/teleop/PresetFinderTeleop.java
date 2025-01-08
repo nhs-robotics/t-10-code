@@ -7,10 +7,14 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import java.util.List;
 
+import t10.motion.hardware.PositionalMotor;
+import t10.utils.PIDController;
+
 @TeleOp(name = "Preset Finder")
 public class PresetFinderTeleop extends CompetitionTeleOp {
     public List<DcMotorEx> motors;
-    private Telemetry.Item selectedMotorTelemetry, diffMotor;
+    private Telemetry.Item selectedMotorTelemetry, diffMotor, testPIDLeft, testPIDRight;
+    private PIDController testPID;
 
     private int selectedMotorIndex = 0;
     @Override
@@ -30,6 +34,9 @@ public class PresetFinderTeleop extends CompetitionTeleOp {
                 }).ok();
         this.selectedMotorTelemetry = this.telemetry.addData("Selected Motor ", selectedMotorIndex);
         this.diffMotor = this.telemetry.addData("Motor Difference: ", 0);
+        this.testPIDLeft = this.telemetry.addData("Left Power", 0);
+        this.testPIDRight = this.telemetry.addData("Right Power", 0);
+        this.testPID = new PIDController(0.16, 0, 0);
     }
 
     @Override
@@ -38,5 +45,15 @@ public class PresetFinderTeleop extends CompetitionTeleOp {
         int motorPosition = motors.get(selectedMotorIndex).getCurrentPosition();
         this.selectedMotorTelemetry.setValue(selectedMotorIndex + ": " + motorPosition);
         this.diffMotor.setValue(config.liftRight.motor.getCurrentPosition() - config.liftLeft.motor.getCurrentPosition());
+        this.testPIDLeft.setValue(getPowerPID(crane.liftLeft));
+        this.testPIDRight.setValue(getPowerPID(crane.liftRight));
+    }
+
+    public double getPowerPID(PositionalMotor fancyMotor)
+    {
+                return testPID.calculate(
+                        fancyMotor.getPosition(),
+                        fancyMotor.getTargetPosition()
+                ) * fancyMotor.coefficient;
     }
 }

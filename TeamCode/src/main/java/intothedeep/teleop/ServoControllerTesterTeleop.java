@@ -1,14 +1,12 @@
 package intothedeep.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import intothedeep.Constants;
 import t10.bootstrap.TeleOpOpMode;
 import t10.gamepad.GController;
 import t10.motion.hardware.PositionalMotor;
@@ -27,8 +25,8 @@ public class ServoControllerTesterTeleop extends TeleOpOpMode {
 
         this.gamepadController = new GController(this.gamepad1)
                 .x.onPress(() -> {
-                    servos.get(0).setPosition(1);
-                    servos.get(1).setPosition(1);
+                    servos.get(0).setTargetPosition(1);
+                    servos.get(1).setTargetPosition(1);
                 }).ok();
         this.servoTelemetry = this.telemetry.addData("Servos positions ", servos.get(0).getPosition() + ", " + servos.get(1).getPosition());
     }
