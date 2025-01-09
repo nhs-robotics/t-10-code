@@ -15,7 +15,6 @@ public class PresetFinderTeleop extends CompetitionTeleOp {
     public List<DcMotorEx> motors;
     private Telemetry.Item selectedMotorTelemetry, diffMotor, extension, arm, craneLeft, craneRight;
     private Telemetry.Item testPIDLeft, testPIDRight;
-    private PIDController testPID;
 
     private int selectedMotorIndex = 0;
     @Override
@@ -41,7 +40,6 @@ public class PresetFinderTeleop extends CompetitionTeleOp {
         this.diffMotor = this.telemetry.addData("Motor Difference: ", 0);
         this.testPIDLeft = this.telemetry.addData("Left Power", 0);
         this.testPIDRight = this.telemetry.addData("Right Power", 0);
-        this.testPID = new PIDController(0.16, 0, 0);
     }
 
     @Override
