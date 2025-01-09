@@ -137,7 +137,6 @@ public class OdometryLocalizer {
         return OdometryUtils.changeToRobotCenteredVelocity(absoluteVelocity,getFieldCentricPose());
     }
 
-    //IMPORTANT - this MUST be iterated, otherwise it'll keep going in the earlier direction while rotating - and not work
     public MovementVector changeToRobotCenteredVelocity(double lateral, double horizontal)
     {
         return OdometryUtils.changeToRobotCenteredVelocity(new MovementVector(lateral, horizontal, 0), getFieldCentricPose());

@@ -15,8 +15,7 @@ public class OdometryUtils {
         return new MovementVector(forwardRelative, rightwardRelative, 0);
     }
 
-    //IMPORTANT - this MUST be iterated, otherwise it'll keep going in the earlier direction while rotating - and not work
-    public static MovementVector changeToRobotCenteredVelocity(double lateral, double horizontal, Pose pose)
+       public static MovementVector changeToRobotCenteredVelocity(double lateral, double horizontal, Pose pose)
     {
         return changeToRobotCenteredVelocity(new MovementVector(lateral, horizontal, 0), pose);
     }
