@@ -25,8 +25,8 @@ public class ServoControllerTesterTeleop extends TeleOpOpMode {
 
         this.gamepadController = new GController(this.gamepad1)
                 .x.onPress(() -> {
-                    servos.get(0).setTargetPosition(1);
-                    servos.get(1).setTargetPosition(1);
+                    servos.get(0).setTargetPosition(1, false);
+                    servos.get(1).setTargetPosition(1, false);
                 }).ok();
         this.servoTelemetry = this.telemetry.addData("Servos positions ", servos.get(0).getPosition() + ", " + servos.get(1).getPosition());
     }

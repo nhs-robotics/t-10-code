@@ -19,27 +19,27 @@ public class CraneCapabilities {
     public CraneCapabilities(SnowballConfig c) {
         this.c = c;
         this.armRotationStabilizer = new PIDController(0.05, 0, 0);
-        this.craneStabilizer = new PIDController(0.16, 0, 0);
+        this.craneStabilizer = new PIDController(0.01, 0, 0);
 
         liftLeft = new PositionalMotor(this.c.liftLeft.motor, 0, Constants.TickCounts.CRANE_MAX, 0, craneStabilizer, 1);
-        liftRight = new PositionalMotor(this.c.liftLeft.motor, 0, Constants.TickCounts.CRANE_MAX, 0, craneStabilizer, -1);
+        liftRight = new PositionalMotor(this.c.liftRight.motor, 0, Constants.TickCounts.CRANE_MAX, 0, craneStabilizer, -1);
     }
 
     public void positionBottom() {
-        this.liftLeft.setTargetPosition(0);
-        this.liftRight.setTargetPosition(0);
+        this.liftLeft.setTargetPosition(0, false);
+        this.liftRight.setTargetPosition(0, false);
         this.shouldUpdatePositionalMotors = true;
     }
 
     public void positionLowBasket() {
-        this.liftLeft.setTargetPosition(Constants.TickCounts.CRANE_LOW_BASKET);
-        this.liftRight.setTargetPosition(Constants.TickCounts.CRANE_LOW_BASKET);
+        this.liftLeft.setTargetPosition(Constants.TickCounts.CRANE_LOW_BASKET, false);
+        this.liftRight.setTargetPosition(Constants.TickCounts.CRANE_LOW_BASKET, false);
         this.shouldUpdatePositionalMotors = true;
     }
 
     public void positionHighBasket() {
-        this.liftLeft.setTargetPosition(Constants.TickCounts.CRANE_HIGH_BASKET);
-        this.liftRight.setTargetPosition(Constants.TickCounts.CRANE_HIGH_BASKET);
+        this.liftLeft.setTargetPosition(Constants.TickCounts.CRANE_HIGH_BASKET, false);
+        this.liftRight.setTargetPosition(Constants.TickCounts.CRANE_HIGH_BASKET, false);
         this.shouldUpdatePositionalMotors = true;
     }
 
@@ -48,10 +48,10 @@ public class CraneCapabilities {
         this.c.liftRight.motor.setVelocity(speed * c.liftRight.ticksPerRevolution);
         if (speed != 0) {
             runningCrane = true;
-        }
-        else if(!shouldUpdatePositionalMotors) {
-            this.liftLeft.setTargetPosition(liftLeft.getPosition(), true);
-            this.liftRight.setTargetPosition(liftRight.getPosition(), true);
+            if(!shouldUpdatePositionalMotors) {
+                this.liftLeft.setTargetPosition(liftLeft.getPosition(), true);
+                this.liftRight.setTargetPosition(liftRight.getPosition(), true);
+            }
         }
     }
 
@@ -65,6 +65,7 @@ public class CraneCapabilities {
         if (Math.abs(this.liftLeft.getPosition() - this.liftRight.getPosition()) >= Constants.TickCounts.CRANE_DIFFERENCE_FAIL_SAFE) {
             throw new RuntimeException("Difference between left and right lifts is too high!! Stopping!");
         }
+        runningCrane = false;
     }
 
     public void updatePositionalMotors() {

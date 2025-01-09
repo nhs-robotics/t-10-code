@@ -39,26 +39,6 @@ public class PositionalMotor {
         this.coefficient = coefficient;
     }
 
-    /**
-     * Sets the target position of the motor in ticks, relative to {@code initialPosition}.
-     * Said target position is the position that the PID will attempt to maintain.
-     *
-     * @param position The position in ticks to set the motor to, relative to the initialPosition.
-     */
-    public void setTargetPosition(int position) {
-        if (position < this.minBoundPosition || position > this.maxBoundPosition) {
-            throw new IllegalArgumentException(
-                    String.format(
-                            "Position (%d) is outside bounds [%d, %d]",
-                            position,
-                            this.minBoundPosition,
-                            this.maxBoundPosition
-                    )
-            );
-        }
-
-        this.targetPosition = position - this.initialPosition;
-    }
 
     /**
      * Sets the target position of the motor in ticks, relative to {@code initialPosition}.
@@ -101,7 +81,7 @@ public class PositionalMotor {
      * This is relative to initialPosition.
      */
     public int getTargetPosition() {
-        return this.targetPosition + initialPosition;
+        return (this.targetPosition + initialPosition) * coefficient;
     }
 
     /**
