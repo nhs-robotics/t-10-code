@@ -75,6 +75,11 @@ public class PositionalMotor {
         );
     }
 
+    public double getPIDPower()
+    {
+        return this.pidController.calculate(this.getPosition(), this.getTargetPosition()) * this.coefficient;
+    }
+
     /**
      * @return The position that you last set the motor to.
      * This is the position the PID is maintaining.

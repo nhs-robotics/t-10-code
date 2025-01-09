@@ -56,15 +56,7 @@ public class PresetFinderTeleop extends CompetitionTeleOp {
         this.craneLeft.setValue(config.liftLeft.motor.getCurrentPosition());
         this.craneRight.setValue(config.liftRight.motor.getCurrentPosition());
         this.diffMotor.setValue(config.liftRight.motor.getCurrentPosition() - config.liftLeft.motor.getCurrentPosition());
-        this.testPIDLeft.setValue(getPowerPID(crane.liftLeft));
-        this.testPIDRight.setValue(getPowerPID(crane.liftRight));
-    }
-
-    public double getPowerPID(PositionalMotor fancyMotor)
-    {
-                return testPID.calculate(
-                        fancyMotor.getPosition(),
-                        fancyMotor.getTargetPosition()
-                ) * fancyMotor.coefficient;
+        this.testPIDLeft.setValue(crane.liftLeft.getPIDPower());
+        this.testPIDRight.setValue(crane.liftRight.getPIDPower());
     }
 }
