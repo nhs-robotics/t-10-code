@@ -23,7 +23,7 @@ public class CraneCapabilities {
         this.craneStabilizer = new PIDController(0.01, 0, 0);
 
         liftLeft = new PositionalMotor(this.c.liftLeft.motor, 0, Constants.TickCounts.CRANE_MAX, 0, craneStabilizer, 1);
-        liftRight = new PositionalMotor(this.c.liftLeft.motor, 0, Constants.TickCounts.CRANE_MAX, 0, craneStabilizer, -1);
+        liftRight = new PositionalMotor(this.c.liftRight.motor, 0, Constants.TickCounts.CRANE_MAX, 0, craneStabilizer, -1);
     }
 
     public void positionBottom() {
