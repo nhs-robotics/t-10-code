@@ -72,18 +72,18 @@ public abstract class EasyAuto extends AutonomousOpMode {
 
     public void horizontalMovement(double distX) {
         idealX += distX;
-        this.navigator.driveHorizontal(distX);
+        this.navigator.odometryDrive(0, distX);
     }
 
     public void verticalMovement(double distY) {
         idealY += distY;
-        this.navigator.driveVertical(distY);
+        this.navigator.odometryDrive(distY, 0);
     }
 
     public void diagonalMovement(double distX, double distY) {
         idealX += distX;
         idealY += distY;
-        this.navigator.driveDiagonal(distX,distY);
+        this.navigator.odometryDrive(distY, distX);
     }
 
     public void turnTo(double angle) {
@@ -109,18 +109,17 @@ public abstract class EasyAuto extends AutonomousOpMode {
 
     public void horizontalCorrect()
     {
-        navigator.driveHorizontal(idealX - odometry.getFieldCentricPose().getX());
+        navigator.odometryDrive(0, idealX - odometry.getFieldCentricPose().getX());
     }
 
     public void verticalCorrect()
     {
-        navigator.driveVertical(idealY - odometry.getFieldCentricPose().getY());
+        navigator.odometryDrive(idealY - odometry.getFieldCentricPose().getY(),0);
     }
 
     public void correctAll()
     {
         angleCorrect();
-        horizontalCorrect();
-        verticalCorrect();
+        navigator.odometryDrive(idealY - odometry.getFieldCentricPose().getY(), idealX - odometry.getFieldCentricPose().getX());
     }
 }

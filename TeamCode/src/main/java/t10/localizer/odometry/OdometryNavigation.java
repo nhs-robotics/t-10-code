@@ -18,44 +18,18 @@ public class OdometryNavigation {
         this.driver = driver;
     }
 
-    public void driveVertical(double distance) {
-        double finalY = odometry.getFieldCentricPose().getY() + distance;
-        while(Math.abs(finalY - odometry.getFieldCentricPose().getY()) > MIN_ERROR) {
-            driver.setVelocity(odometry.changeToRobotCenteredVelocity(MAX_LATERAL_VELOCITY * Math.signum(distance), 0));
-            this.odometry.update();
-        }
-        driver.setVelocity(new MovementVector(0,0,0));
-    }
 
-    public void driveHorizontal(double distance) {
-        double finalX = odometry.getFieldCentricPose().getX() + distance;
-        while(Math.abs(finalX - odometry.getFieldCentricPose().getX()) > MIN_ERROR) {
-            driver.setVelocity(odometry.changeToRobotCenteredVelocity(0, MAX_LATERAL_VELOCITY * Math.signum(distance)));
-            this.odometry.update();
-        }
-        driver.setVelocity(new MovementVector(0,0,0));
-    }
-
-    public void driveDiagonal(double distanceX, double distanceY) {
+    public void odometryDrive(double distanceY, double distanceX) {
         double finalX = odometry.getFieldCentricPose().getX() + distanceX;
         double finalY = odometry.getFieldCentricPose().getY() + distanceY;
-        while((Math.abs(finalX - odometry.getFieldCentricPose().getX()) > MIN_ERROR) || (Math.abs(finalY - odometry.getFieldCentricPose().getY()) > MIN_ERROR)) {
-            double speedX, speedY;
-            speedX = MAX_LATERAL_VELOCITY * Math.signum(distanceX);
-            speedY = MAX_LATERAL_VELOCITY * Math.signum(distanceY);
-            driver.setVelocity(odometry.changeToRobotCenteredVelocity(speedY, speedX));
+        double distX, distY;
+        do {
+            distX = finalX - odometry.getFieldCentricPose().getX();
+            distY = finalY - odometry.getFieldCentricPose().getY();
+            double scaleFactor = MAX_LATERAL_VELOCITY / Math.max(Math.abs(distX),Math.abs(distY));
+            driver.setVelocity(odometry.changeToRobotCenteredVelocity(distY * scaleFactor, distX * scaleFactor));
             this.odometry.update();
-        }
-        System.out.println("step 1 done");
-        while((Math.abs(finalX - odometry.getFieldCentricPose().getX()) > MIN_ERROR))
-        {
-            driveHorizontal(finalX - odometry.getFieldCentricPose().getX()); this.odometry.update();
-        }
-        while(Math.abs(finalY - odometry.getFieldCentricPose().getY()) > MIN_ERROR)
-        {
-            driveVertical(finalY - odometry.getFieldCentricPose().getY()); this.odometry.update();
-        }
-        driver.setVelocity(new MovementVector(0,0,0));
+        } while (Math.abs(distX) > MIN_ERROR && Math.abs(distY) > MIN_ERROR);
     }
 
     public void turnAbsolute(double angle) {

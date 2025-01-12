@@ -78,10 +78,10 @@ public class OdometryTestingTeleOp extends TeleOpOpMode {
         this.direct180.setValue(navigator.findTurnSpeed(odometry.getFieldCentricPose().getHeading(AngleUnit.DEGREES),180));
         this.direct270.setValue(navigator.findTurnSpeed(odometry.getFieldCentricPose().getHeading(AngleUnit.DEGREES),-90));
 
-        gamepadController.x.onPress(() -> navigator.driveDiagonal(-distance,distance));
-        gamepadController.a.onPress(() -> navigator.driveDiagonal(-distance,-distance));
-        gamepadController.y.onPress(() -> navigator.driveDiagonal(distance,distance));
-        gamepadController.b.onPress(() -> navigator.driveDiagonal(distance,-distance));
+        gamepadController.x.onPress(() -> navigator.odometryDrive(distance, -distance));
+        gamepadController.a.onPress(() -> navigator.odometryDrive(-distance, -distance));
+        gamepadController.y.onPress(() -> navigator.odometryDrive(distance, distance));
+        gamepadController.b.onPress(() -> navigator.odometryDrive(-distance, distance));
 
 
         gamepadController.dpadLeft.onPress(() -> navigator.turnAbsolute(-90));
