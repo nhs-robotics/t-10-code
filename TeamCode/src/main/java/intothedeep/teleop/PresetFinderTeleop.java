@@ -48,5 +48,6 @@ public class PresetFinderTeleop extends CompetitionTeleOp {
         this.craneLeft.setValue(config.liftLeft.motor.getCurrentPosition());
         this.craneRight.setValue(config.liftRight.motor.getCurrentPosition());
         this.diffMotor.setValue(config.liftRight.motor.getCurrentPosition() - config.liftLeft.motor.getCurrentPosition());
+        telemetry.update();
     }
 }

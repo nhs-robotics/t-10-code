@@ -30,6 +30,7 @@ public class CompetitionTeleOp extends TeleOpOpMode {
     private Telemetry.Item x;
     private Telemetry.Item y;
     private Telemetry.Item r;
+    private Telemetry.Item diffMotor, extension, rotation, craneLeft, craneRight;
 
     @Override
     public void initialize() {
@@ -45,9 +46,18 @@ public class CompetitionTeleOp extends TeleOpOpMode {
         this.driver = this.config.createMecanumDriver();
         this.odometry = config.createOdometry();
 
+        this.config.liftLeft.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        this.config.liftRight.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        this.config.armRotation.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        this.config.armExtension.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         this.x = this.telemetry.addData("x_novel: ", "0");
         this.y = this.telemetry.addData("y_novel: ", "0");
         this.r = this.telemetry.addData("r_novel: ", "0");
+        this.extension = this.telemetry.addData("Extension: ", 0);
+        this.rotation = this.telemetry.addData("Rotation: ", 0);
+        this.craneLeft = this.telemetry.addData("Crane Left: ", 0);
+        this.craneRight = this.telemetry.addData("Crane Right: ", 0);
     }
 
     @Override
@@ -66,6 +76,10 @@ public class CompetitionTeleOp extends TeleOpOpMode {
         this.x.setValue(this.odometry.getFieldCentricPose().getX());
         this.y.setValue(this.odometry.getFieldCentricPose().getY());
         this.r.setValue(this.odometry.getFieldCentricPose().getHeading(AngleUnit.DEGREES));
+        this.extension.setValue(config.armExtension.motor.getCurrentPosition());
+        this.rotation.setValue(config.armRotation.motor.getCurrentPosition());
+        this.craneLeft.setValue(config.liftLeft.motor.getCurrentPosition());
+        this.craneRight.setValue(config.liftRight.motor.getCurrentPosition());
         updateAll();
 
     }
