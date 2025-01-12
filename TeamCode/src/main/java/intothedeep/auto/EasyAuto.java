@@ -77,7 +77,7 @@ public abstract class EasyAuto extends AutonomousOpMode {
 
     public void verticalMovement(double distY) {
         idealY += distY;
-        this.navigator.driveLateral(distY);
+        this.navigator.driveVertical(distY);
     }
 
     public void diagonalMovement(double distX, double distY) {
@@ -114,7 +114,7 @@ public abstract class EasyAuto extends AutonomousOpMode {
 
     public void verticalCorrect()
     {
-        navigator.driveLateral(idealY - odometry.getFieldCentricPose().getY());
+        navigator.driveVertical(idealY - odometry.getFieldCentricPose().getY());
     }
 
     public void correctAll()

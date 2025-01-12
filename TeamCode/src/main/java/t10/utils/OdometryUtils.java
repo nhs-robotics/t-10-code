@@ -7,16 +7,14 @@ import t10.geometry.Pose;
 
 public class OdometryUtils {
 
-    public static MovementVector changeToRobotCenteredVelocity(MovementVector absoluteVelocity, Pose pose)
-    {
-        double theta = pose.getHeading(AngleUnit.RADIANS);
+    public static MovementVector changeToRobotCenteredVelocity(MovementVector absoluteVelocity, Pose currentPose) {
+        double theta = currentPose.getHeading(AngleUnit.RADIANS);
         double forwardRelative = (absoluteVelocity.getVertical() * Math.cos(theta) + absoluteVelocity.getHorizontal() * Math.sin(theta));
         double rightwardRelative = -absoluteVelocity.getVertical() * Math.sin(theta) + absoluteVelocity.getHorizontal() * Math.cos(theta);
         return new MovementVector(forwardRelative, rightwardRelative, 0);
     }
 
-       public static MovementVector changeToRobotCenteredVelocity(double lateral, double horizontal, Pose pose)
-    {
-        return changeToRobotCenteredVelocity(new MovementVector(lateral, horizontal, 0), pose);
+    public static MovementVector changeToRobotCenteredVelocity(double lateral, double horizontal, Pose currentPose) {
+        return changeToRobotCenteredVelocity(new MovementVector(lateral, horizontal, 0), currentPose);
     }
 }
