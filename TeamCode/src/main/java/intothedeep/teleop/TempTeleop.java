@@ -19,7 +19,7 @@ import t10.vision.Webcam;
 
 @TeleOp
 public class TempTeleop extends TeleOpOpMode {
-    private TempTeleopConfig c;
+    private SnowballWithWebcamConfig c;
     private MecanumDriver driver;
     private OdometryLocalizer odometry;
     private GController gamepadController;
@@ -29,7 +29,7 @@ public class TempTeleop extends TeleOpOpMode {
 
     @Override
     public void initialize() {
-        this.c = new TempTeleopConfig(this.hardwareMap);
+        this.c = new SnowballWithWebcamConfig(this.hardwareMap);
         this.driver = this.c.createMecanumDriver();
         this.odometry = this .c.createOdometry();
         this.gamepadController = new GController(this.gamepad1).x.initialToggleState(true).ok();  // micro-movement
@@ -61,10 +61,10 @@ public class TempTeleop extends TeleOpOpMode {
         this.driver.useGamepad(this.gamepad1, 0.5);
     }
 }
-class TempTeleopConfig extends SnowballConfig
+class SnowballWithWebcamConfig extends SnowballConfig
 {
 
-    public TempTeleopConfig(HardwareMap hardwareMap)
+    public SnowballWithWebcamConfig(HardwareMap hardwareMap)
     {
         super(hardwareMap);
     }

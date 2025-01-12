@@ -149,6 +149,7 @@ public class AutoBuilder extends TeleOpOpMode {
         } catch (IOException e) {
             //throw new RuntimeException(e);
         }
+        super.stop();
     }
 
     private Writer initializeFileWriter(Alliance alliance) {

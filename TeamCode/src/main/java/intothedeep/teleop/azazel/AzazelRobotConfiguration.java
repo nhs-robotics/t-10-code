@@ -2,6 +2,7 @@ package intothedeep.teleop.azazel;
 
 import t10.bootstrap.AbstractRobotConfiguration;
 import t10.bootstrap.Hardware;
+import t10.localizer.odometry.OdometryCoefficientSet;
 import t10.localizer.odometry.OdometryLocalizer;
 import t10.motion.hardware.Motor;
 import t10.motion.mecanum.MecanumDriver;
@@ -87,7 +88,11 @@ public class AzazelRobotConfiguration extends AbstractRobotConfiguration {
 
     @Override
     public OdometryLocalizer createOdometry() {
-        return null;
-        //return new OdometryLocalizer(OdometryCoefficientSet.DEFAULT, spinningIntake.encoder, roller.encoder, linearSlideLeft.encoder, Constants.Odometry.ODOMETRY_LATERAL_WHEEL_DISTANCE, Constants.Odometry.ODOMETRY_PERPENDICULAR_WHEEL_OFFSET);
+        return new OdometryLocalizer(OdometryCoefficientSet.DEFAULT,
+                spinningIntake.encoder,
+                roller.encoder,
+                linearSlideLeft.encoder,
+                12,
+                7);
     }
 }
