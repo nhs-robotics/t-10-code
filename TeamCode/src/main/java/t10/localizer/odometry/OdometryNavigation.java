@@ -18,14 +18,20 @@ public class OdometryNavigation {
         this.driver = driver;
     }
 
-
+    /**
+     * @param distanceY The distance to travel in the field-relative Y direction (the 0 direction, in odometry)
+     * @param distanceX The distance to travel in the field-relative X direction (the 90 direction, in odometry)
+     */
     public void odometryDrive(double distanceY, double distanceX) {
         double finalX = odometry.getFieldCentricPose().getX() + distanceX;
         double finalY = odometry.getFieldCentricPose().getY() + distanceY;
         double distX, distY;
         do {
+            // Find the remaining displacement
             distX = finalX - odometry.getFieldCentricPose().getX();
             distY = finalY - odometry.getFieldCentricPose().getY();
+
+            // Preserving their relative sizes, scale them so one direction is at the maximum velocity
             double scaleFactor = MAX_LATERAL_VELOCITY / Math.max(Math.abs(distX),Math.abs(distY));
             driver.setVelocity(odometry.changeToRobotCenteredVelocity(distY * scaleFactor, distX * scaleFactor));
             this.odometry.update();
