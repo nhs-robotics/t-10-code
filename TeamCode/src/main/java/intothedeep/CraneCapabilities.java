@@ -37,10 +37,12 @@ public class CraneCapabilities {
 
     public void update() {
         // Crane
+        /*
         if(!runningCrane) {
             double powerForCrane = this.craneStabilizer.calculate(this.c.liftLeft.motor.getCurrentPosition(), this.craneTarget);
             this.runCrane(powerForCrane);
         }
+         */
         runningCrane = false;
 
         // Rotation
