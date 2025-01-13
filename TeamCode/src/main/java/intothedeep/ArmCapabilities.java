@@ -9,6 +9,7 @@ public class ArmCapabilities {
     private boolean runningRotation = false;
     public final int HORIZONTAL_TICKS = 0;
     public final int INSPECTION_TICKS = 0;
+    public final int MAX_TICKS = 788;
     private final int minError = 10;
 
     public ArmCapabilities(SnowballConfig configuration) {

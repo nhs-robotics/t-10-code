@@ -16,6 +16,8 @@ public class CraneCapabilities {
     private boolean runningCrane = false;
     private boolean runningRotation = false;
     private boolean shouldUpdatePositionalMotors = false;
+    private final int maxExtension = 3450;
+    private final int minExtension = 0;
 
     public CraneCapabilities(SnowballConfig c) {
         this.c = c;
@@ -55,7 +57,7 @@ public class CraneCapabilities {
     public void update() {
         // Crane
         if (shouldUpdatePositionalMotors) {
-            updatePositionalMotors();
+            //updatePositionalMotors();
         }
 
         if (Math.abs(this.liftLeft.getPosition() - this.liftRight.getPosition()) >= Constants.TickCounts.CRANE_DIFFERENCE_FAIL_SAFE) {

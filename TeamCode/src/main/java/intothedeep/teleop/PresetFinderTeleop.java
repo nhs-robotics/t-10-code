@@ -29,10 +29,6 @@ public class PresetFinderTeleop extends CompetitionTeleOp {
                     }
                 }).ok();
         //this.selectedMotorTelemetry = this.telemetry.addData("Selected Motor ", selectedMotorIndex);
-        this.extension = this.telemetry.addData("Extension: ", 0);
-        this.arm = this.telemetry.addData("Rotation: ", 0);
-        this.craneLeft = this.telemetry.addData("Crane Left: ", 0);
-        this.craneRight = this.telemetry.addData("Crane Right: ", 0);
         this.diffMotor = this.telemetry.addData("Motor Difference: ", 0);
     }
 
@@ -43,10 +39,6 @@ public class PresetFinderTeleop extends CompetitionTeleOp {
         int motorPosition = motors.get(selectedMotorIndex).getCurrentPosition();
         this.selectedMotorTelemetry.setValue(selectedMotorIndex + ": " + motorPosition);
          */
-        this.extension.setValue(config.armExtension.motor.getCurrentPosition());
-        this.arm.setValue(config.armRotation.motor.getCurrentPosition());
-        this.craneLeft.setValue(config.liftLeft.motor.getCurrentPosition());
-        this.craneRight.setValue(config.liftRight.motor.getCurrentPosition());
         this.diffMotor.setValue(config.liftRight.motor.getCurrentPosition() - config.liftLeft.motor.getCurrentPosition());
         telemetry.update();
     }
