@@ -78,8 +78,8 @@ public class OdometryLocalizer {
         double heading = this.fieldCentricPose.getHeading(AngleUnit.RADIANS) + phi;
 
         //converts x and y positions from robot-relative to field-relative
-        double deltaX = forwardRelative * (Math.sin(heading)) + rightwardRelative * Math.cos(heading);
-        double deltaY = forwardRelative * Math.cos(heading) - rightwardRelative * Math.sin(heading);
+        double deltaX = OdometryUtils.changeToFieldCenteredCoordinates(forwardRelative,rightwardRelative,heading).getHorizontal();
+        double deltaY = OdometryUtils.changeToFieldCenteredCoordinates(forwardRelative,rightwardRelative,heading).getVertical();
 
         // Updates the Pose (position + heading)
         this.fieldCentricPose = this.fieldCentricPose.add(new Pose(deltaY, deltaX, phi, AngleUnit.RADIANS));
@@ -134,11 +134,11 @@ public class OdometryLocalizer {
 
     public MovementVector changeToRobotCenteredVelocity(MovementVector absoluteVelocity)
     {
-        return OdometryUtils.changeToRobotCenteredVelocity(absoluteVelocity, getFieldCentricPose());
+        return OdometryUtils.changeToRobotCenteredCoordinates(absoluteVelocity, getFieldCentricPose());
     }
 
     public MovementVector changeToRobotCenteredVelocity(double lateral, double horizontal)
     {
-        return OdometryUtils.changeToRobotCenteredVelocity(lateral, horizontal, getFieldCentricPose());
+        return OdometryUtils.changeToRobotCenteredCoordinates(lateral, horizontal, getFieldCentricPose().getHeading(AngleUnit.RADIANS));
     }
 }
