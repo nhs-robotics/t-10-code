@@ -80,16 +80,15 @@ public class AutoBuilder extends TeleOpOpMode {
                     blueAutoFileWriter = initializeFileWriter(Alliance.BLUE);
                     sleep(1);
                     startingTileSet = true;
+
                 }
             } else if (commandTypeSet) {
                 print(new String[]{"Use Joysticks to move",
                         "Press [RB] to save movement"});
                 if (gamepad1.right_bumper) {
                     this.driver.halt();
-                    String newAutoCode = generateAutoCode(commandType, this.odometry.getFieldCentricPose());
-                    redAutoFileWriter.append(newAutoCode);
-                    blueAutoFileWriter.append(newAutoCode);
-                    this.odometry.setFieldCentricPose(new Pose(0, 0, this.odometry.getFieldCentricPose().getHeading(AngleUnit.DEGREES), AngleUnit.DEGREES));
+                    redAutoFileWriter.append(generateAutoCode(commandType, this.odometry.getFieldCentricPose(), Alliance.RED));
+                    blueAutoFileWriter.append(generateAutoCode(commandType, this.odometry.getFieldCentricPose(), Alliance.BLUE));
                     commandTypeSet = false;
                 } else {
                     MovementVector movementVector = new MovementVector(0, 0, 0);
@@ -185,14 +184,14 @@ public class AutoBuilder extends TeleOpOpMode {
         }
     }
 
-    private String generateAutoCode(CommandType commandType, Pose pose) {
+    private String generateAutoCode(CommandType commandType, Pose pose, Alliance alliance) {
+        double x = pose.getX() * (alliance == Alliance.BLUE ? -1 : 1);
+        double y = pose.getY() * (alliance == Alliance.BLUE ? -1 : 1);
         switch (commandType) {
             case VERTICAL:
-                return "\t\tverticalMovement(" + pose.getY() + ");\n";
             case HORIZONTAL:
-                return "\t\thorizontalMovement(" + pose.getX() + ");\n";
             case DIAGONAL:
-                return "\t\tdiagonalMovement(" + pose.getX() + ", " + pose.getY() + ");\n";
+                return "\t\tdriveTo(" + y + ", " + x + ");\n";
             case ROTATIONAL:
                 return "\t\tturnTo(" + pose.getHeading(AngleUnit.DEGREES) + ");\n";
         }

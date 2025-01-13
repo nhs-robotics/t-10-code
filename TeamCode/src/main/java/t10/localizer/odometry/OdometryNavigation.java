@@ -38,12 +38,51 @@ public class OdometryNavigation {
         } while (Math.abs(distX) > MIN_ERROR && Math.abs(distY) > MIN_ERROR);
     }
 
+    /**
+     * @param targetY The distance to travel in the field-relative Y direction (the 0 direction, in odometry)
+     * @param targetX The distance to travel in the field-relative X direction (the 90 direction, in odometry)
+     */
+    public void driveTo(double targetY, double targetX) {
+        double distX, distY;
+        do {
+            // Find the remaining displacement
+            distX = targetX - odometry.getFieldCentricPose().getX();
+            distY = targetY - odometry.getFieldCentricPose().getY();
+
+            // Preserving their relative sizes, scale them so one direction is at the maximum velocity
+            double scaleFactor = MAX_LATERAL_VELOCITY / Math.max(Math.abs(distX),Math.abs(distY));
+            driver.setVelocity(odometry.changeToRobotCenteredVelocity(distY * scaleFactor, distX * scaleFactor));
+            this.odometry.update();
+        } while (Math.abs(distX) > MIN_ERROR && Math.abs(distY) > MIN_ERROR);
+    }
+
     public void turnAbsolute(double angle) {
         while (needAngleCorrectionDegrees(odometry.getFieldCentricPose().getHeading(AngleUnit.DEGREES), angle)) {
             driver.setVelocity(new MovementVector(0, 0, findTurnSpeed(odometry.getFieldCentricPose().getHeading(AngleUnit.DEGREES), angle)));
             this.odometry.update();
         }
         driver.setVelocity(new MovementVector(0, 0, 0));
+    }
+
+    public void turnAbsoluteNew(double angle) {
+        double targetAngle = fixNegativeAngle(angle % 360.0);
+        double currentAngle = fixNegativeAngle(odometry.getFieldCentricPose().getHeading(AngleUnit.DEGREES));
+
+        boolean turnRight = fixNegativeAngle(targetAngle - currentAngle) < 180;
+
+        double difference;
+        do {
+            currentAngle = fixNegativeAngle(odometry.getFieldCentricPose().getHeading(AngleUnit.DEGREES));
+            double speed = turnRight ? MAX_ANG_VELOCITY : -MAX_ANG_VELOCITY;
+            MovementVector movementVector = new MovementVector(0, 0, speed);
+            driver.setVelocity(odometry.changeToRobotCenteredVelocity(movementVector));
+            difference = Math.abs(targetAngle - currentAngle);
+        } // If target2
+        while (Math.min(difference, 360 - difference) < MIN_ANGLE_ERROR);
+    }
+
+    public double fixNegativeAngle(double angle) {
+        return angle < 0.0 ? angle + 360 : angle; // Turn negative angles into positive angles
     }
 
     public void turnRelative(double angle) {

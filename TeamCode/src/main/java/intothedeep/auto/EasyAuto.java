@@ -43,18 +43,10 @@ public abstract class EasyAuto extends AutonomousOpMode {
 
     public void setInitialPose(double y, double x, double theta)
     {
-        odometry.setFieldCentricPose(new Pose(y,x,0, AngleUnit.DEGREES));
+        odometry.setFieldCentricPose(new Pose(y,x,-theta, AngleUnit.DEGREES));
         idealY = y;
         idealX = x;
-        idealAngle = 0;
-        /*
-        TODO: Setting idealAngle to 0 is a terrible fix to ensure easyAuto motion is 'relative' to
-         the robot's starting position, because autoBuilder only generates relative motion, not
-         absolute motion. NEVER update easyAuto or autoBuilder to use AprilTagLocalizer, because
-         that would automatically adjust the robots absolute position to be the correct position &
-         orientation, as opposed to it's relative one. When we eventually fix the absolute vs.
-         relative issue, idealAngle should be set to -theta.
-         */
+        idealAngle = -theta;
     }
 
     public void setInitialPose(Alliance alliance, double startingTile) {
@@ -84,6 +76,12 @@ public abstract class EasyAuto extends AutonomousOpMode {
         idealX += distX;
         idealY += distY;
         this.navigator.odometryDrive(distY, distX);
+    }
+
+    public void driveTo(double targetY, double targetX) {
+        idealX = targetX;
+        idealY = targetY;
+        this.navigator.driveTo(targetY, targetX);
     }
 
     public void turnTo(double angle) {
