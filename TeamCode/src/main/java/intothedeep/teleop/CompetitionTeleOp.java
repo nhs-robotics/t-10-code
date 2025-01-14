@@ -31,6 +31,7 @@ public class CompetitionTeleOp extends TeleOpOpMode {
     private Telemetry.Item y;
     private Telemetry.Item r;
     private Telemetry.Item diffMotor, extension, rotation, craneLeft, craneRight;
+    private boolean ignoreBounds = false, microMove = false;
 
     @Override
     public void initialize() {
@@ -39,10 +40,12 @@ public class CompetitionTeleOp extends TeleOpOpMode {
         this.arm = new ArmCapabilities(this.config);
         this.clawCapabilities = new ClawCapabilities(this.config);
         this.g2 = new GController(this.gamepad2)
-                .dpadUp.onPress(() -> this.arm.extendArm(1)).onRelease(() -> this.arm.extendArm(0)).ok()
-                .dpadDown.onPress(() -> this.arm.extendArm(-1)).onRelease(() -> this.arm.extendArm(0)).ok();
-        this.g1 = new GController(this.gamepad1)
+                .dpadUp.onPress(() -> this.arm.extendSafe(1, ignoreBounds)).onRelease(() -> this.arm.extendSafe(0, ignoreBounds)).ok()
+                .dpadDown.onPress(() -> this.arm.extendSafe(-1, ignoreBounds)).onRelease(() -> this.arm.extendSafe(0, ignoreBounds)).ok()
                 .a.onPress(() -> this.clawCapabilities.toggle()).ok();
+        this.g1 = new GController(this.gamepad1)
+                .x.onToggleOn(() -> microMove = true).onToggleOff(() -> microMove = false).ok()
+                .a.onToggleOn(() -> ignoreBounds = true).onToggleOff(() -> ignoreBounds = false).ok();
         this.driver = this.config.createMecanumDriver();
         this.odometry = config.createOdometry();
 
@@ -63,16 +66,17 @@ public class CompetitionTeleOp extends TeleOpOpMode {
     @Override
     public void loop() {
         if (Math.abs(this.gamepad2.left_stick_y) < 0.1) {
-            this.arm.runRotation(0);
+            this.arm.rotateSafe(0, ignoreBounds);
         } else {
-            this.arm.runRotation(this.gamepad2.left_stick_y);
+            this.arm.rotateSafe(this.gamepad2.left_stick_y, ignoreBounds);
         }
 
         if (Math.abs(this.gamepad2.right_stick_y) < 0.1) {
-            this.crane.runCrane(0);
+            this.crane.runCrane(0, ignoreBounds);
         } else {
-            this.crane.runCrane(this.gamepad2.right_stick_y);
+            this.crane.runCrane(this.gamepad2.right_stick_y, ignoreBounds);
         }
+
         this.x.setValue(this.odometry.getFieldCentricPose().getX());
         this.y.setValue(this.odometry.getFieldCentricPose().getY());
         this.r.setValue(this.odometry.getFieldCentricPose().getHeading(AngleUnit.DEGREES));
@@ -81,7 +85,6 @@ public class CompetitionTeleOp extends TeleOpOpMode {
         this.craneLeft.setValue(config.liftLeft.motor.getCurrentPosition());
         this.craneRight.setValue(config.liftRight.motor.getCurrentPosition());
         updateAll();
-
     }
 
     private void updateAll()

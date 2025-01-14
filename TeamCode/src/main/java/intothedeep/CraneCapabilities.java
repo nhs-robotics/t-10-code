@@ -1,7 +1,6 @@
 package intothedeep;
 
-import android.icu.text.Transliterator;
-
+import t10.motion.hardware.Motor;
 import t10.motion.hardware.PositionalMotor;
 import t10.utils.PIDController;
 
@@ -16,8 +15,8 @@ public class CraneCapabilities {
     private boolean runningCrane = false;
     private boolean runningRotation = false;
     private boolean shouldUpdatePositionalMotors = false;
-    private final int maxExtension = 3450;
-    private final int minExtension = 0;
+    private final int MAX_EXTENSION = 3450;
+    private final int MIN_EXTENSION = 0;
 
     public CraneCapabilities(SnowballConfig c) {
         this.c = c;
@@ -46,10 +45,10 @@ public class CraneCapabilities {
         this.shouldUpdatePositionalMotors = true;
     }
 
-    public void runCrane(double speed) {
-        this.c.liftLeft.motor.setVelocity(speed * c.liftLeft.ticksPerRevolution);
-        this.c.liftRight.motor.setVelocity(speed * c.liftRight.ticksPerRevolution);
-        if (speed != 0) {
+    public void runCrane(double velocity, boolean ignoreBounds) {
+        setVelocitySafe(velocity * c.liftLeft.ticksPerRevolution, this.c.liftLeft, ignoreBounds);
+        setVelocitySafe(velocity * c.liftRight.ticksPerRevolution, this.c.liftRight, ignoreBounds);
+        if (velocity != 0) {
             runningCrane = true;
         }
     }
@@ -68,7 +67,23 @@ public class CraneCapabilities {
     public void updatePositionalMotors() {
         this.liftLeft.update();
         this.liftRight.update();
-
-
     }
+
+    public void setVelocitySafe(double velocity, Motor motor, boolean ignoreBounds)
+    {
+        int currentPosition = motor.motor.getCurrentPosition();
+        if(ignoreBounds) {
+            motor.motor.setVelocity(velocity);
+        }
+        else if (currentPosition < MIN_EXTENSION && velocity < 0) {
+            //Do nothing
+        }
+        else if (currentPosition > MAX_EXTENSION && velocity > 0) {
+            //Do nothing
+        }
+        else {
+            motor.motor.setVelocity(velocity);
+        }
+    }
+
 }

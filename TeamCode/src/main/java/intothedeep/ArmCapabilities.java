@@ -1,5 +1,6 @@
 package intothedeep;
 
+import t10.motion.hardware.Motor;
 import t10.utils.PIDController;
 
 public class ArmCapabilities {
@@ -9,7 +10,10 @@ public class ArmCapabilities {
     private boolean runningRotation = false;
     public final int HORIZONTAL_TICKS = 0;
     public final int INSPECTION_TICKS = 0;
-    public final int MAX_TICKS = 788;
+    public final int MIN_ROTATION = -50; //TODO: find better value
+    public final int MAX_ROTATION = 788; //Fully Up
+    public final int MAX_EXTENSION = 0; //Fully Retracted
+    public final int MIN_EXTENSION = -6330; //Fully Extended
     private final int minError = 10;
 
     public ArmCapabilities(SnowballConfig configuration) {
@@ -28,13 +32,30 @@ public class ArmCapabilities {
         }
     }
 
-    public void turnTo(int TargetTicks)
+    public void rotateSafe(double power, boolean ignoreBounds)
     {
-        double dist = config.armRotation.encoder.getCurrentTicks() - TargetTicks;
+        int currentPosition = config.armRotation.motor.getCurrentPosition();
+        if(ignoreBounds) {
+            runRotation(power);
+        }
+        else if (currentPosition < MIN_ROTATION && power < 0) {
+            //Do nothing
+        }
+        else if (currentPosition > MAX_ROTATION && power > 0) {
+            //Do nothing
+        }
+        else {
+            runRotation(power);
+        }
+    }
+
+    public void rotateTo(int TargetTicks)
+    {
+        double dist = TargetTicks - config.armRotation.motor.getCurrentPosition();
         while(Math.abs(dist) < minError)
         {
             runRotation(Math.signum(dist));
-            dist = config.armRotation.encoder.getCurrentTicks() - TargetTicks;
+            dist = TargetTicks - config.armRotation.encoder.getCurrentTicks();
         }
         runRotation(0);
     }
@@ -48,7 +69,26 @@ public class ArmCapabilities {
         runningRotation = false;
     }
 
+
+
     public void extendArm(double power) {
         this.config.armExtension.setPower(power);
+    }
+
+    public void extendSafe(double power, boolean ignoreBounds)
+    {
+        int currentPosition = config.armExtension.motor.getCurrentPosition();
+        if(ignoreBounds) {
+            extendArm(power);
+        }
+        else if (currentPosition < MIN_EXTENSION && power < 0) {
+            //Do nothing
+        }
+        else if (currentPosition > MAX_EXTENSION && power > 0) {
+            //Do nothing
+        }
+        else {
+            extendArm(power);
+        }
     }
 }

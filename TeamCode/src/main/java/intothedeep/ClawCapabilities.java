@@ -2,8 +2,6 @@ package intothedeep;
 
 import com.qualcomm.robotcore.hardware.Servo;
 
-//Extension_Max = -6350, -6308
-
 public class ClawCapabilities {
     private final SnowballConfig c;
     private final Servo claw;
