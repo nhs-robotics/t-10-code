@@ -2,7 +2,9 @@ package intothedeep.auto;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-import t10.bootstrap.AbstractRobotConfiguration;
+import intothedeep.ArmCapabilities;
+import intothedeep.ClawCapabilities;
+import intothedeep.CraneCapabilities;
 import t10.bootstrap.AutonomousOpMode;
 import t10.localizer.odometry.OdometryLocalizer;
 import t10.motion.mecanum.MecanumDriver;
@@ -21,7 +23,11 @@ public abstract class EasyAuto extends AutonomousOpMode {
     public double idealY = 0;
     private final Alliance alliance;
     private double startingTile = 0;
-    private AbstractRobotConfiguration config;
+    private SnowballConfig config;
+    private ArmCapabilities arm;
+    private ClawCapabilities claw;
+    private CraneCapabilities crane;
+    //private UpdateAuto updateAuto;
 
     public EasyAuto(Alliance alliance) {
         this.alliance = alliance;
@@ -38,7 +44,12 @@ public abstract class EasyAuto extends AutonomousOpMode {
         this.driver = config.createMecanumDriver();
         this.odometry = config.createOdometry();
         this.navigator = new OdometryNavigation(odometry, driver);
+        this.arm = new ArmCapabilities(config);
+        this.claw = new ClawCapabilities(config);
+        this.crane = new CraneCapabilities(config);
+        //this.updateAuto = new UpdateAuto(arm, crane);
         setInitialPose(alliance, startingTile);
+        //this.updateAuto.start();
     }
 
     public void setInitialPose(double y, double x, double theta)
@@ -122,5 +133,54 @@ public abstract class EasyAuto extends AutonomousOpMode {
         angleCorrect();
         horizontalCorrect();
         verticalCorrect();
+    }
+
+    public void openClaw() {
+        claw.setPosition(true);
+    }
+
+    public void closeClaw() {
+        claw.setPosition(false);
+    }
+
+    public void setCraneBottom() {
+        crane.positionBottom();
+    }
+
+    public void setCraneLowBasket() {
+        crane.positionLowBasket();
+    }
+
+    public void setCraneHighBasket() {
+        crane.positionHighBasket();
+    }
+
+    public void stop() {
+        //this.updateAuto.stopNow();
+        super.stop();
+    }
+}
+
+class UpdateAuto extends Thread {
+    private final ArmCapabilities arm;
+    private final CraneCapabilities crane;
+    private boolean stop;
+
+    public UpdateAuto(ArmCapabilities arm, CraneCapabilities crane) {
+        this.arm = arm;
+        this.crane = crane;
+        this.stop = false;
+    }
+
+    @Override
+    public void run() {
+        while (!stop) {
+            arm.update();
+            crane.update();
+        }
+    }
+
+    public void stopNow() {
+        stop = true;
     }
 }
