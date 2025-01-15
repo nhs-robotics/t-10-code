@@ -2,9 +2,10 @@ package intothedeep.auto;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-import intothedeep.ArmCapabilities;
-import intothedeep.ClawCapabilities;
-import intothedeep.CraneCapabilities;
+import intothedeep.capabilities.ArmCapabilities;
+import intothedeep.capabilities.ClawCapabilities;
+import intothedeep.capabilities.CraneCapabilities;
+import intothedeep.capabilities.ArmExtensionCapabilities;
 import t10.bootstrap.AutonomousOpMode;
 import t10.localizer.odometry.OdometryLocalizer;
 import t10.motion.mecanum.MecanumDriver;
