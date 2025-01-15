@@ -2,13 +2,12 @@ package intothedeep.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-import intothedeep.ArmCapabilities;
-import intothedeep.ClawCapabilities;
-import intothedeep.CraneCapabilities;
+import intothedeep.capabilities.ArmCapabilities;
+import intothedeep.capabilities.ClawCapabilities;
+import intothedeep.capabilities.CraneCapabilities;
 import intothedeep.SnowballConfig;
 import t10.bootstrap.TeleOpOpMode;
 import t10.gamepad.GController;

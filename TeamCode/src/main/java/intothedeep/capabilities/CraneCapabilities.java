@@ -1,7 +1,6 @@
-package intothedeep;
+package intothedeep.capabilities;
 
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import t10.motion.hardware.PositionalMotor;
+import intothedeep.SnowballConfig;
 import t10.utils.PIDController;
 
 public class CraneCapabilities {

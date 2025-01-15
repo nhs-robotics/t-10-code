@@ -1,6 +1,8 @@
-package intothedeep;
+package intothedeep.capabilities;
 
 import com.qualcomm.robotcore.hardware.Servo;
+
+import intothedeep.SnowballConfig;
 
 public class ClawCapabilities {
     private static final double OPEN_POSITION = 0.05;
