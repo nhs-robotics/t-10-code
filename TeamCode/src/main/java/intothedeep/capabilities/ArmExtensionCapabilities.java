@@ -19,6 +19,8 @@ public class ArmExtensionCapabilities {
     private int targetPosition;
     private int position;
     private boolean isManuallyControlled;
+    public static final int MAX_EXTENSION = 0; //Fully Retracted
+    public static final int MIN_EXTENSION = -6330; //Fully Extended
 
     public ArmExtensionCapabilities(SnowballConfig config) {
         this.armExtension = config.armExtension;
@@ -34,5 +36,24 @@ public class ArmExtensionCapabilities {
 
             this.armExtension.motor.setPower(power);
         }
+
+        if (!this.isExtensionAllowed(this.armExtension.motor.getPower())) {
+            this.extend(0);
+        }
     }
+
+    private boolean isExtensionAllowed(double power) {
+        int currentPosition = armExtension.motor.getCurrentPosition();
+        boolean isOutsideBounds = (currentPosition < MIN_EXTENSION && power < 0) || (currentPosition > MAX_EXTENSION && power > 0);
+
+        return !isOutsideBounds;
+    }
+
+
+
+    public void extend(double power) {
+        if(isExtensionAllowed(power)) {
+        this.armExtension.setPower(power);
+    }
+        }
 }

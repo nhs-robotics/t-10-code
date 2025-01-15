@@ -1,5 +1,6 @@
-package intothedeep;
+package intothedeep.capabilities;
 
+import intothedeep.SnowballConfig;
 import t10.utils.PIDController;
 
 
@@ -17,8 +18,6 @@ public class ArmCapabilities {
     public static final int INSPECTION_TICKS = 775;
     public static final int MIN_ROTATION = -50; //TODO: find better value
     public static final int MAX_ROTATION = 788; //Fully Up
-    public static final int MAX_EXTENSION = 0; //Fully Retracted
-    public static final int MIN_EXTENSION = -6330; //Fully Extended
     private final SnowballConfig config;
     private final PIDController armRotationStabilizer;
     private int armRotationTarget;
@@ -60,13 +59,6 @@ public class ArmCapabilities {
             this.rotate(powerForRotationMotor);
         }
 
-        if (!this.isExtensionAllowed(this.config.armExtension.motor.getPower())) {
-            this.extend(0);
-        }
-    }
-
-    public void extend(double power) {
-        this.config.armExtension.setPower(power);
     }
 
     public void rotate(double power) {
@@ -88,12 +80,7 @@ public class ArmCapabilities {
         this.isRotationStabilizerEnabled = true;
     }
 
-    private boolean isExtensionAllowed(double power) {
-        int currentPosition = config.armExtension.motor.getCurrentPosition();
-        boolean isOutsideBounds = (currentPosition < MIN_EXTENSION && power < 0) || (currentPosition > MAX_EXTENSION && power > 0);
 
-        return !isOutsideBounds;
-    }
 
     private boolean isRotationOutsideBounds() {
         return this.armRotationPosition < MIN_ROTATION || this.armRotationPosition > MAX_ROTATION;
