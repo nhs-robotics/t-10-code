@@ -52,6 +52,8 @@ public class ArmExtensionCapabilities {
 
 
     public void extend(double power) {
+        if(isExtensionAllowed(power)) {
         this.armExtension.setPower(power);
     }
+        }
 }
