@@ -3,46 +3,26 @@ package intothedeep;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class ClawCapabilities {
-    private final SnowballConfig c;
+    private static final double OPEN_POSITION = 0.05;
+    private static final double CLOSED_POSITION = 0.55;
     private final Servo claw;
     private boolean isOpen;
-    private final double OPEN_POSITION = 0.05;
-    private final double CLOSED_POSITION = 0.55;
 
     public ClawCapabilities(SnowballConfig c) {
-        this.c = c;
-        this.claw = this.c.claw;
-        this.isOpen = false;
-    }
-
-    public void open() {
-        if (isOpen) return;
-        claw.setPosition(OPEN_POSITION);
-        isOpen = true;
-    }
-
-    public void close() {
-        if (!isOpen) return;
-        claw.setPosition(CLOSED_POSITION);
-        isOpen = false;
+        this.claw = c.claw;
     }
 
     public void setPosition(boolean open) {
-        if (open)
-            open();
-        else
-            close();
+        this.isOpen = open;
+
+        if (open) {
+            claw.setPosition(OPEN_POSITION);
+        } else {
+            claw.setPosition(CLOSED_POSITION);
+        }
     }
 
     public void toggle() {
-        setPosition(!isOpen);
-    }
-
-    public boolean isOpen() {
-        return isOpen;
-    }
-
-    public boolean isClosed() {
-        return !isOpen;
+        setPosition(!this.isOpen);
     }
 }

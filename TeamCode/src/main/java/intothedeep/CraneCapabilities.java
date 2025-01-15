@@ -1,89 +1,71 @@
 package intothedeep;
 
-import t10.motion.hardware.Motor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import t10.motion.hardware.PositionalMotor;
 import t10.utils.PIDController;
 
 public class CraneCapabilities {
+    public static final int CRANE_LOW_BASKET = 1800;
+    public static final int CRANE_HIGH_BASKET = 3450;
+    public static final int CRANE_DIFFERENCE_FAIL_SAFE = 500;
     private final SnowballConfig c;
-    private final PIDController armRotationStabilizer;
     private final PIDController craneStabilizer;
-    private final PositionalMotor liftLeft;
-    private final PositionalMotor liftRight;
-    private int armRotationTarget;
-    private int craneTarget;
-    private boolean runningCrane = false;
-    private boolean runningRotation = false;
-    private boolean shouldUpdatePositionalMotors = false;
-    private final int MAX_EXTENSION = 3450;
-    private final int MIN_EXTENSION = 0;
+    public int position;
+    private boolean isStabilizerEnabled;
 
     public CraneCapabilities(SnowballConfig c) {
         this.c = c;
-        this.armRotationStabilizer = new PIDController(0.05, 0, 0);
         this.craneStabilizer = new PIDController(0.01, 0, 0);
+    }
 
-        liftLeft = new PositionalMotor(this.c.liftLeft.motor, 0, Constants.TickCounts.CRANE_MAX, 0, craneStabilizer, 1);
-        liftRight = new PositionalMotor(this.c.liftRight.motor, 0, Constants.TickCounts.CRANE_MAX, 0, craneStabilizer, -1);
+    private void setPosition(int position) {
+        this.position = position;
+        this.isStabilizerEnabled = true;
     }
 
     public void positionBottom() {
-        this.liftLeft.setPosition(0);
-        this.liftRight.setPosition(0);
-        this.shouldUpdatePositionalMotors = true;
+        this.setPosition(0);
     }
 
     public void positionLowBasket() {
-        this.liftLeft.setPosition(Constants.TickCounts.CRANE_LOW_BASKET);
-        this.liftRight.setPosition(Constants.TickCounts.CRANE_LOW_BASKET);
-        this.shouldUpdatePositionalMotors = true;
+        this.setPosition(CRANE_LOW_BASKET);
     }
 
     public void positionHighBasket() {
-        this.liftLeft.setPosition(Constants.TickCounts.CRANE_HIGH_BASKET);
-        this.liftRight.setPosition(Constants.TickCounts.CRANE_HIGH_BASKET);
-        this.shouldUpdatePositionalMotors = true;
+        this.setPosition(CRANE_HIGH_BASKET);
     }
 
-    public void runCrane(double velocity, boolean ignoreBounds) {
-        setVelocitySafe(velocity * c.liftLeft.ticksPerRevolution, this.c.liftLeft, ignoreBounds);
-        setVelocitySafe(velocity * c.liftRight.ticksPerRevolution, this.c.liftRight, ignoreBounds);
-        if (velocity != 0) {
-            runningCrane = true;
+    public void runCrane(double power) {
+        if (power == 0) {
+            if (!this.isStabilizerEnabled) {
+                this.isStabilizerEnabled = true;
+                this.position = this.c.liftLeft.motor.getCurrentPosition();
+            }
+        } else {
+            this.isStabilizerEnabled = false;
+            this.c.liftLeft.setPower(power);
+            this.c.liftRight.setPower(power);
         }
     }
 
     public void update() {
         // Crane
-        if (shouldUpdatePositionalMotors) {
-            //updatePositionalMotors();
+        if (this.isStabilizerEnabled) {
+            double powerLeft = this.craneStabilizer.calculate(
+                    this.c.liftLeft.motor.getCurrentPosition(),
+                    this.position
+            );
+            this.c.liftLeft.setPower(powerLeft);
+
+            double powerRight = this.craneStabilizer.calculate(
+                    this.c.liftRight.motor.getCurrentPosition(),
+                    this.position
+            );
+            this.c.liftRight.setPower(powerRight);
         }
 
-        if (Math.abs(this.liftLeft.getPosition() - this.liftRight.getPosition()) >= Constants.TickCounts.CRANE_DIFFERENCE_FAIL_SAFE) {
+        if (Math.abs(this.c.liftLeft.motor.getCurrentPosition() - this.c.liftRight.motor.getCurrentPosition()) >= CRANE_DIFFERENCE_FAIL_SAFE) {
             throw new RuntimeException("Difference between left and right lifts is too high!! Stopping!");
         }
     }
-
-    public void updatePositionalMotors() {
-        this.liftLeft.update();
-        this.liftRight.update();
-    }
-
-    public void setVelocitySafe(double velocity, Motor motor, boolean ignoreBounds)
-    {
-        int currentPosition = motor.motor.getCurrentPosition();
-        if(ignoreBounds) {
-            motor.motor.setVelocity(velocity);
-        }
-        else if (currentPosition < MIN_EXTENSION && velocity < 0) {
-            //Do nothing
-        }
-        else if (currentPosition > MAX_EXTENSION && velocity > 0) {
-            //Do nothing
-        }
-        else {
-            motor.motor.setVelocity(velocity);
-        }
-    }
-
 }

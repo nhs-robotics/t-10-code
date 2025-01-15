@@ -56,12 +56,14 @@ public class SnowballConfig extends AbstractRobotConfiguration {
             ticksPerRevolution = Constants.TickCounts.MOVEMENT_MOTOR_TICK_COUNT)
     public Motor liftRight;
 
-    @Hardware(name = "LiftLeft", 
+    @Hardware(name = "LiftLeft",
             ticksPerRevolution = Constants.TickCounts.MOVEMENT_MOTOR_TICK_COUNT)
     public Motor liftLeft;
 
-    @Hardware(name = "ArmExtension",
-            ticksPerRevolution = Constants.TickCounts.MOVEMENT_MOTOR_TICK_COUNT)
+    @Hardware(
+            name = "ArmExtension",
+            ticksPerRevolution = Constants.TickCounts.MOVEMENT_MOTOR_TICK_COUNT
+    )
     public Motor armExtension;
 
     @Hardware(name = "ArmRotation",
@@ -73,7 +75,7 @@ public class SnowballConfig extends AbstractRobotConfiguration {
 
     @Hardware(name = "Grabber")
     public Servo claw;
-  
+
     public SnowballConfig(HardwareMap hardwareMap) {
         super(hardwareMap);
 

@@ -1,8 +1,8 @@
 package intothedeep.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
@@ -12,7 +12,6 @@ import intothedeep.CraneCapabilities;
 import intothedeep.SnowballConfig;
 import t10.bootstrap.TeleOpOpMode;
 import t10.gamepad.GController;
-import t10.localizer.Localizer;
 import t10.localizer.odometry.OdometryLocalizer;
 import t10.motion.mecanum.MecanumDriver;
 
@@ -25,34 +24,28 @@ public class CompetitionTeleOp extends TeleOpOpMode {
     protected GController g2;
     private MecanumDriver driver;
     private OdometryLocalizer odometry;
-    private ClawCapabilities clawCapabilities;
+    private ClawCapabilities claw;
 
     private Telemetry.Item x;
     private Telemetry.Item y;
     private Telemetry.Item r;
-    private Telemetry.Item diffMotor, extension, rotation, craneLeft, craneRight;
-    private boolean ignoreBounds = false, microMove = false;
+    private Telemetry.Item extension, rotation, craneLeft, craneRight;
 
     @Override
     public void initialize() {
         this.config = new SnowballConfig(this.hardwareMap);
         this.crane = new CraneCapabilities(this.config);
         this.arm = new ArmCapabilities(this.config);
-        this.clawCapabilities = new ClawCapabilities(this.config);
+        this.claw = new ClawCapabilities(this.config);
         this.g2 = new GController(this.gamepad2)
-                .dpadUp.onPress(() -> this.arm.extendSafe(1, ignoreBounds)).onRelease(() -> this.arm.extendSafe(0, ignoreBounds)).ok()
-                .dpadDown.onPress(() -> this.arm.extendSafe(-1, ignoreBounds)).onRelease(() -> this.arm.extendSafe(0, ignoreBounds)).ok()
-                .a.onPress(() -> this.clawCapabilities.toggle()).ok();
+                .dpadUp.onPress(() -> this.arm.extend(1)).onRelease(() -> this.arm.extend(0)).ok()
+                .dpadDown.onPress(() -> this.arm.extend(-1)).onRelease(() -> this.arm.extend(0)).ok()
+                .a.onPress(() -> this.claw.toggle()).ok()
+                .x.onPress(() -> this.crane.positionHighBasket()).ok();
         this.g1 = new GController(this.gamepad1)
-                .x.onToggleOn(() -> microMove = true).onToggleOff(() -> microMove = false).ok()
-                .a.onToggleOn(() -> ignoreBounds = true).onToggleOff(() -> ignoreBounds = false).ok();
+                .x.initialToggleState(true).ok();
         this.driver = this.config.createMecanumDriver();
         this.odometry = config.createOdometry();
-
-        this.config.liftLeft.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        this.config.liftRight.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        this.config.armRotation.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        this.config.armExtension.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         this.x = this.telemetry.addData("x_novel: ", "0");
         this.y = this.telemetry.addData("y_novel: ", "0");
@@ -66,32 +59,30 @@ public class CompetitionTeleOp extends TeleOpOpMode {
     @Override
     public void loop() {
         if (Math.abs(this.gamepad2.left_stick_y) < 0.1) {
-            this.arm.rotateSafe(0, ignoreBounds);
+            this.arm.rotate(0);
         } else {
-            this.arm.rotateSafe(this.gamepad2.left_stick_y, ignoreBounds);
+            this.arm.rotate(this.gamepad2.left_stick_y);
         }
 
         if (Math.abs(this.gamepad2.right_stick_y) < 0.1) {
-            this.crane.runCrane(0, ignoreBounds);
+            this.crane.runCrane(0);
         } else {
-            this.crane.runCrane(this.gamepad2.right_stick_y, ignoreBounds);
+            this.crane.runCrane(this.gamepad2.right_stick_y);
         }
 
         this.x.setValue(this.odometry.getFieldCentricPose().getX());
         this.y.setValue(this.odometry.getFieldCentricPose().getY());
         this.r.setValue(this.odometry.getFieldCentricPose().getHeading(AngleUnit.DEGREES));
-        this.extension.setValue(config.armExtension.motor.getCurrentPosition());
-        this.rotation.setValue(config.armRotation.motor.getCurrentPosition());
-        this.craneLeft.setValue(config.liftLeft.motor.getCurrentPosition());
-        this.craneRight.setValue(config.liftRight.motor.getCurrentPosition());
-        updateAll();
-    }
+//        this.extension.setValue(config.armExtension.motor.getCurrentPosition());
+//        this.rotation.setValue(config.armRotation.motor.getCurrentPosition());
+        this.extension.setValue(config.liftLeft.motor.getCurrentPosition());
+        this.rotation.setValue(crane.position);
+        this.craneLeft.setValue(config.liftLeft.motor.getPower());
+        this.craneRight.setValue(config.liftRight.motor.getPower());
 
-    private void updateAll()
-    {
-        telemetry.update();
-        odometry.update();
-        this.driver.useGamepad(this.gamepad1, 1);
+        this.telemetry.update();
+        this.odometry.update();
+        this.driver.useGamepad(this.gamepad1, this.g1.x.isToggled() ? 1 : 0.5);
         this.g2.update();
         this.g1.update();
         this.crane.update();

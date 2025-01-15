@@ -128,4 +128,14 @@ public class MathUtils {
     public static boolean epsilonEquals(double a, double b) {
         return Math.abs(a - b) < 1e-10;
     }
+
+    public static double clamp(int value, int min, int max) {
+        if (value > max) {
+            return max;
+        } else if (min > value) {
+            return min;
+        } else {
+            return value;
+        }
+    }
 }
