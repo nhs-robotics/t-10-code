@@ -17,8 +17,6 @@ public class ArmCapabilities {
     public static final int INSPECTION_TICKS = 775;
     public static final int MIN_ROTATION = -50; //TODO: find better value
     public static final int MAX_ROTATION = 788; //Fully Up
-    public static final int MAX_EXTENSION = 0; //Fully Retracted
-    public static final int MIN_EXTENSION = -6330; //Fully Extended
     private final SnowballConfig config;
     private final PIDController armRotationStabilizer;
     private int armRotationTarget;
@@ -28,24 +26,6 @@ public class ArmCapabilities {
     public ArmCapabilities(SnowballConfig configuration) {
         this.config = configuration;
         this.armRotationStabilizer = new PIDController(0.05, 0, 0);
-    }
-
-    public void calibrateRotation() {
-        int lastEncoder = Integer.MAX_VALUE;
-
-        while (!Thread.currentThread().isInterrupted()) {
-            this.config.armRotation.setPower(-0.5);
-
-            boolean didMove = Math.abs(lastEncoder - this.config.armRotation.motor.getCurrentPosition()) > 15;
-
-            if (!didMove) {
-                // The arm did not move and it has reached the floor. Therefore, it is now at the 0 position.
-                this.config.armRotation.setPower(0);
-                return;
-            }
-
-            lastEncoder = this.config.armRotation.motor.getCurrentPosition();
-        }
     }
 
     public void update() {
@@ -90,7 +70,7 @@ public class ArmCapabilities {
 
     private boolean isExtensionAllowed(double power) {
         int currentPosition = config.armExtension.motor.getCurrentPosition();
-        boolean isOutsideBounds = (currentPosition < MIN_EXTENSION && power < 0) || (currentPosition > MAX_EXTENSION && power > 0);
+        boolean isOutsideBounds = (currentPosition < 0 && power < 0) || (currentPosition > 0 && power > 0);
 
         return !isOutsideBounds;
     }

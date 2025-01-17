@@ -2,36 +2,42 @@ package intothedeep.capabilities;
 
 import intothedeep.SnowballConfig;
 import t10.motion.hardware.Motor;
+import t10.utils.PIDController;
 
 /**
  * <h1>Power > 0</h1>
- * <li>RETRACTS</li>
+ * <li>Rotate UPWARDS</li>
  * <li>Position (Ticks) INCREASES</li>
  *
  * <h1>Power < 0</h1>
- * <li>EXTENDS</li>
+ * <li>Rotate DOWNWARDS</li>
  * <li>Position (Ticks) DECREASES</li>
  */
-public class ArmExtensionCapabilities {
-    public static final int POSITION_FULLY_RETRACTED = 0;
-    public static final int POSITION_FULLY_EXTENDED = -6330;
+public class ArmRotationCapabilities {
+    public static final int POSITION_FULLY_DOWNWARDS = -50;
+    public static final int POSITION_INSPECTION = 725;
+    public static final int POSITION_FULLY_UPWARDS = 788;
     private static final int MAX_ERROR_ALLOWED = 25;
-    private final Motor armExtension;
+    private final Motor armRotation;
+    private final PIDController armRotationStabilizer;
     private int targetPosition;
     private int position;
     private boolean isManuallyControlled;
 
-    public ArmExtensionCapabilities(SnowballConfig config) {
-        this.armExtension = config.armExtension;
+    public ArmRotationCapabilities(SnowballConfig config) {
+        this.armRotation = config.armRotation;
         this.isManuallyControlled = true;
+        this.armRotationStabilizer = new PIDController(0.01, 0, 0);
     }
 
     public void update() {
-        this.position = this.armExtension.motor.getCurrentPosition();
+        this.position = this.armRotation.motor.getCurrentPosition();
 
         if (!this.isManuallyControlled) {
-            double error = this.targetPosition - this.position;
-            double power = error * 0.01;
+            double power = this.armRotationStabilizer.calculate(
+                    this.position,
+                    this.targetPosition
+            );
 
             this.setPower(power);
         }
@@ -62,18 +68,18 @@ public class ArmExtensionCapabilities {
     }
 
     private void setPower(double power) {
-//        if (power > 0 && this.position > POSITION_FULLY_RETRACTED) {
+//        if (power > 0 && this.position > POSITION_FULLY_UPWARDS) {
 //            // This would over-retract the motor. Stop.
-//            this.armExtension.setPower(0);
+//            this.armRotation.setPower(0);
 //            return;
 //        }
 //
-//        if (power < 0 && this.position < POSITION_FULLY_EXTENDED) {
+//        if (power < 0 && this.position < POSITION_FULLY_DOWNWARDS) {
 //            // This would over-extend the motor. Stop
-//            this.armExtension.setPower(0);
+//            this.armRotation.setPower(0);
 //            return;
 //        }
 
-        this.armExtension.setPower(power);
+        this.armRotation.setPower(power);
     }
 }

@@ -2,13 +2,12 @@ package intothedeep.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import intothedeep.ArmCapabilities;
-import intothedeep.ClawCapabilities;
-import intothedeep.CraneCapabilities;
+import intothedeep.capabilities.ClawCapabilities;
+import intothedeep.capabilities.CraneCapabilities;
 import intothedeep.SnowballConfig;
 import t10.bootstrap.TeleOpOpMode;
 import t10.gamepad.GController;
@@ -40,8 +39,8 @@ public class CompetitionTeleOp extends TeleOpOpMode {
         this.g2 = new GController(this.gamepad2)
                 .dpadUp.onPress(() -> this.arm.extend(1)).onRelease(() -> this.arm.extend(0)).ok()
                 .dpadDown.onPress(() -> this.arm.extend(-1)).onRelease(() -> this.arm.extend(0)).ok()
-                .a.onPress(() -> this.claw.toggle()).ok()
-                .x.onPress(() -> this.crane.positionHighBasket()).ok();
+                .a.onPress(() -> this.claw.toggle()).ok();
+//                .x.onPress(() -> this.crane.positionHighBasket()).ok();
         this.g1 = new GController(this.gamepad1)
                 .x.initialToggleState(true).ok();
         this.driver = this.config.createMecanumDriver();
@@ -64,11 +63,11 @@ public class CompetitionTeleOp extends TeleOpOpMode {
             this.arm.rotate(this.gamepad2.left_stick_y);
         }
 
-        if (Math.abs(this.gamepad2.right_stick_y) < 0.1) {
-            this.crane.runCrane(0);
-        } else {
-            this.crane.runCrane(this.gamepad2.right_stick_y);
-        }
+//        if (Math.abs(this.gamepad2.right_stick_y) < 0.1) {
+//            this.crane.runCrane(0);
+//        } else {
+//            this.crane.runCrane(this.gamepad2.right_stick_y);
+//        }
 
         this.x.setValue(this.odometry.getFieldCentricPose().getX());
         this.y.setValue(this.odometry.getFieldCentricPose().getY());
@@ -76,7 +75,7 @@ public class CompetitionTeleOp extends TeleOpOpMode {
 //        this.extension.setValue(config.armExtension.motor.getCurrentPosition());
 //        this.rotation.setValue(config.armRotation.motor.getCurrentPosition());
         this.extension.setValue(config.liftLeft.motor.getCurrentPosition());
-        this.rotation.setValue(crane.position);
+//        this.rotation.setValue(crane.position);
         this.craneLeft.setValue(config.liftLeft.motor.getPower());
         this.craneRight.setValue(config.liftRight.motor.getPower());
 

@@ -138,4 +138,8 @@ public class MathUtils {
             return value;
         }
     }
+
+    public static int average(int a, int b) {
+        return (a + b) / 2;
+    }
 }
