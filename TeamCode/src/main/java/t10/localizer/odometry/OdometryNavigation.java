@@ -23,54 +23,49 @@ public class OdometryNavigation {
     }
 
 
-
-
-    public void driveLateral(double distance)
-    {
+    public void driveLateral(double distance) {
         double initialX = odometry.getFieldCentricPose().getX();
         double finalY = odometry.getFieldCentricPose().getY() + distance;
-        while(Math.abs(finalY - odometry.getFieldCentricPose().getY()) > minError) {
-            driver.setVelocity(odometry.changeToRobotCenteredVelocity(new MovementVector(10 * Math.signum(distance), 0,0)));
+        while (Math.abs(finalY - odometry.getFieldCentricPose().getY()) > minError) {
+            driver.setVelocity(odometry.changeToRobotCenteredVelocity(new MovementVector(10 * Math.signum(distance), 0, 0)));
             this.odometry.update();
         }
-        driver.setVelocity(new MovementVector(0,0,0));
+        driver.setVelocity(new MovementVector(0, 0, 0));
     }
 
-    public void driveHorizontal(double distance)
-    {
+    public void driveHorizontal(double distance) {
         double initialY = odometry.getFieldCentricPose().getY();
         double initialX = odometry.getFieldCentricPose().getX();
         double finalX = initialX + distance;
-        while(Math.abs(finalX - odometry.getFieldCentricPose().getX()) > minError) {
-            driver.setVelocity(odometry.changeToRobotCenteredVelocity(new MovementVector(0, 10 * Math.signum(distance),0)));
+        while (Math.abs(finalX - odometry.getFieldCentricPose().getX()) > minError) {
+            driver.setVelocity(odometry.changeToRobotCenteredVelocity(new MovementVector(0, 10 * Math.signum(distance), 0)));
             this.odometry.update();
         }
-        driver.setVelocity(new MovementVector(0,0,0));
+        driver.setVelocity(new MovementVector(0, 0, 0));
     }
 
-    public void driveDiagonal(double distanceX, double distanceY)
-    {
+    public void driveDiagonal(double distanceX, double distanceY) {
         double initialY = odometry.getFieldCentricPose().getY();
         double initialX = odometry.getFieldCentricPose().getX();
         double finalX = initialX + distanceX;
         double finalY = initialY + distanceY;
-        while((Math.abs(finalX - odometry.getFieldCentricPose().getX()) > minError) || (Math.abs(finalY - odometry.getFieldCentricPose().getY()) > minError)) {
+        while ((Math.abs(finalX - odometry.getFieldCentricPose().getX()) > minError) || (Math.abs(finalY - odometry.getFieldCentricPose().getY()) > minError)) {
             double speedX, speedY;
             speedX = 10 * Math.signum(distanceX);
             speedY = 10 * Math.signum(distanceY);
-            driver.setVelocity(odometry.changeToRobotCenteredVelocity(new MovementVector(speedY, speedX,0)));
+            driver.setVelocity(odometry.changeToRobotCenteredVelocity(new MovementVector(speedY, speedX, 0)));
             this.odometry.update();
         }
         System.out.println("step 1 done");
-        while((Math.abs(finalX - odometry.getFieldCentricPose().getX()) > minError))
-        {
-            driveHorizontal(finalX - odometry.getFieldCentricPose().getX()); this.odometry.update();
+        while ((Math.abs(finalX - odometry.getFieldCentricPose().getX()) > minError)) {
+            driveHorizontal(finalX - odometry.getFieldCentricPose().getX());
+            this.odometry.update();
         }
-        while(Math.abs(finalY - odometry.getFieldCentricPose().getY()) > minError)
-        {
-            driveLateral(finalY - odometry.getFieldCentricPose().getY()); this.odometry.update();
+        while (Math.abs(finalY - odometry.getFieldCentricPose().getY()) > minError) {
+            driveLateral(finalY - odometry.getFieldCentricPose().getY());
+            this.odometry.update();
         }
-        driver.setVelocity(new MovementVector(0,0,0));
+        driver.setVelocity(new MovementVector(0, 0, 0));
     }
 
     public void turnAbsolute(double angle) {
@@ -93,30 +88,25 @@ public class OdometryNavigation {
         turnAbsolute(targetAngle);
     }
 
-    public void driveAbsolute(double targetX, double targetY)
-    {
+    public void driveAbsolute(double targetX, double targetY) {
         double distanceX = targetX - odometry.getFieldCentricPose().getX();
         double distanceY = targetY - odometry.getFieldCentricPose().getY();
-        while((Math.abs(targetX - odometry.getFieldCentricPose().getX()) > minError) || (Math.abs(targetY - odometry.getFieldCentricPose().getY()) > minError)) {
+        while ((Math.abs(targetX - odometry.getFieldCentricPose().getX()) > minError) || (Math.abs(targetY - odometry.getFieldCentricPose().getY()) > minError)) {
             double speedX, speedY;
-            if((Math.abs(targetX - odometry.getFieldCentricPose().getX()) > minError))
-            {
+            if ((Math.abs(targetX - odometry.getFieldCentricPose().getX()) > minError)) {
                 speedX = 10 * Math.signum(distanceX);
-            }
-            else {
+            } else {
                 speedX = targetX - odometry.getFieldCentricPose().getX();
             }
-            if((Math.abs(targetY - odometry.getFieldCentricPose().getY()) > minError))
-            {
+            if ((Math.abs(targetY - odometry.getFieldCentricPose().getY()) > minError)) {
                 speedY = 10 * Math.signum(distanceY);
-            }
-            else {
+            } else {
                 speedY = targetY - odometry.getFieldCentricPose().getY();
             }
-            driver.setVelocity(odometry.changeToRobotCenteredVelocity(new MovementVector(speedY, speedX,0)));
+            driver.setVelocity(odometry.changeToRobotCenteredVelocity(new MovementVector(speedY, speedX, 0)));
             this.odometry.update();
         }
-        driver.setVelocity(new MovementVector(0,0,0));
+        driver.setVelocity(new MovementVector(0, 0, 0));
     }
 
     /**
@@ -173,27 +163,25 @@ public class OdometryNavigation {
 
     public double findTurnSpeed(double currentAngle, double targetAngle) {
         double direction = 0;
-            if (Math.abs(targetAngle) == 180) {
-                targetAngle = 180 * Math.signum(currentAngle);
-            }
-            if (targetAngle < currentAngle - 180) {
-                    direction = 1;
-                } else if (targetAngle > currentAngle + 180) {
-                    direction = -1;
-                } else if (targetAngle < currentAngle) {
-                    direction = -1;
-                } else if (targetAngle > currentAngle) {
-                    direction = 1;
-                }
+        if (Math.abs(targetAngle) == 180) {
+            targetAngle = 180 * Math.signum(currentAngle);
+        }
+        if (targetAngle < currentAngle - 180) {
+            direction = 1;
+        } else if (targetAngle > currentAngle + 180) {
+            direction = -1;
+        } else if (targetAngle < currentAngle) {
+            direction = -1;
+        } else if (targetAngle > currentAngle) {
+            direction = 1;
+        }
 
-            if (Math.abs(targetAngle - currentAngle) < 5 * minAngleError) {
-                return direction * Math.abs(targetAngle - currentAngle);
-            }
-            else if(Math.abs(targetAngle - currentAngle) > 360 - 5*minAngleError) {
-                return direction * Math.abs(360 - (Math.abs(targetAngle - currentAngle)));
-            }
-            else {
-                return maxAngVelocity * direction;
-            }
+        if (Math.abs(targetAngle - currentAngle) < 5 * minAngleError) {
+            return direction * Math.abs(targetAngle - currentAngle);
+        } else if (Math.abs(targetAngle - currentAngle) > 360 - 5 * minAngleError) {
+            return direction * Math.abs(360 - (Math.abs(targetAngle - currentAngle)));
+        } else {
+            return maxAngVelocity * direction;
         }
     }
+}
