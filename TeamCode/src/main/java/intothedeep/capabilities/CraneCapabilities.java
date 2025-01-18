@@ -83,11 +83,15 @@ public class CraneCapabilities {
     }
 
     private void setPower(double power, int position, Motor motor) {
+        // If the power is less than 30%, then just stop the motor. This helps to conserve power
+        // because 30% power or less typically will not be able to lift the crane, and that
+        // power is therefore wasted.
         if (Math.abs(power) < 0.3 && power != 0) {
             motor.setPower(0);
             return;
         }
 
+        // TODO: re-implement bounds.
 //        if (power < 0 && position > POSITION_HIGH_BASKET) {
 //            // This would over-retract the motor. Stop.
 //            motor.setPower(0);

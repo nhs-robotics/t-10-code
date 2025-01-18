@@ -68,6 +68,7 @@ public class ArmRotationCapabilities {
     }
 
     private void setPower(double power) {
+        // TODO: re-implement bounds.
 //        if (power > 0 && this.position > POSITION_FULLY_UPWARDS) {
 //            // This would over-retract the motor. Stop.
 //            this.armRotation.setPower(0);

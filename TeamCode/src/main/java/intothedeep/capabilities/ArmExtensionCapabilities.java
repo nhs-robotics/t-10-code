@@ -62,6 +62,7 @@ public class ArmExtensionCapabilities {
     }
 
     private void setPower(double power) {
+        // TODO: re-implement bounds.
 //        if (power > 0 && this.position > POSITION_FULLY_RETRACTED) {
 //            // This would over-retract the motor. Stop.
 //            this.armExtension.setPower(0);
