@@ -31,7 +31,9 @@ public class GJoystick implements GInput, GAnalog<GJoystick> {
             this.lastX = currentX;
             this.lastY = currentY;
 
-            this.onMove.accept(currentX, currentY);
+            if (this.onMove != null) {
+                this.onMove.accept(currentX, currentY);
+            }
         }
     }
 

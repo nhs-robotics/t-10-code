@@ -8,11 +8,11 @@ import t10.geometry.MovementVector;
  * Wrapper class for driving a mecanum robot.
  */
 public class MecanumDriver {
-    private final Motor frontLeft;
-    private final Motor frontRight;
-    private final Motor backLeft;
-    private final Motor backRight;
-    private final MecanumCoefficientMatrix omniDriveCoefficients;
+    public final Motor frontLeft;
+    public final Motor frontRight;
+    public final Motor backLeft;
+    public final Motor backRight;
+    public final MecanumCoefficientMatrix omniDriveCoefficients;
 
     public MecanumDriver(
             Motor frontLeft,
