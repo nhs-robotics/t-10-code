@@ -22,10 +22,6 @@ public class CompetitionTeleOp extends TeleOpOpMode {
     private ClawCapabilities claw;
     private ArmExtensionCapabilities armExtension;
     private ArmRotationCapabilities armRotation;
-    private Telemetry.Item x;
-    private Telemetry.Item y;
-    private Telemetry.Item r;
-    private Telemetry.Item extend_length, rotation, craneLeft, craneRight;
 
     @Override
     public void initialize() {
@@ -52,18 +48,15 @@ public class CompetitionTeleOp extends TeleOpOpMode {
                 .rightJoystick.onMove((x, y) -> this.crane.setPowerManually(y)).ok()
                 .leftJoystick.onMove((x,  y) -> this.armRotation.setPowerManually(y)).ok()
                 .a.onPress(() -> this.claw.toggle()).ok();
-        this.x = this.telemetry.addData("x_novel: ", "0");
-        this.y = this.telemetry.addData("y_novel: ", "0");
-        this.r = this.telemetry.addData("r_novel: ", "0");
     }
 
     @Override
     public void loop() {
-        this.telemetry.update();
         this.driver.useGamepad(this.gamepad1, this.g1.x.isToggled() ? 1 : 0.5);
         this.g2.update();
         this.g1.update();
         this.crane.update();
+        this.telemetry.update();
         this.armExtension.update();
         this.armRotation.update();
     }
