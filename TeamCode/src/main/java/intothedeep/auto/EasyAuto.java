@@ -26,10 +26,11 @@ public abstract class EasyAuto extends AutonomousOpMode {
     private final Alliance alliance;
     private double startingTile = 0;
     private SnowballConfig config;
-    private ArmExtensionCapabilities armExtension;
-    private ArmRotationCapabilities armRotation;
-    private ClawCapabilities claw;
-    private CraneCapabilities crane;
+    public ArmExtensionCapabilities armExtension;
+    public ArmRotationCapabilities armRotation;
+    public ClawCapabilities claw;
+    public CraneCapabilities crane;
+    private CapabilitiesUpdateThread updater;
 
     public EasyAuto(Alliance alliance) {
         this.alliance = alliance;
@@ -49,11 +50,16 @@ public abstract class EasyAuto extends AutonomousOpMode {
         this.odometry = config.createOdometry();
         this.navigator = new OdometryNavigation(odometry, driver);
 
+
         // Capabilities
         this.armExtension = new ArmExtensionCapabilities(config);
         this.armRotation = new ArmRotationCapabilities(config);
         this.claw = new ClawCapabilities(config);
         this.crane = new CraneCapabilities(config);
+
+
+        this.updater = new CapabilitiesUpdateThread(this,armExtension,armRotation, crane);
+        updater.start();
 
         // Configure robot's initial state
         this.armRotation.setTargetPosition(ArmRotationCapabilities.POSITION_INSPECTION);
@@ -66,10 +72,6 @@ public abstract class EasyAuto extends AutonomousOpMode {
     // TODO: Test this out to see if it works. Otherwise, switch to threads.
     @Override
     public void loop() {
-        this.odometry.update();
-        this.armRotation.update();
-        this.armRotation.update();
-        this.crane.update();
     }
 
     public void setInitialPose(double y, double x, double theta) {
@@ -175,6 +177,10 @@ public abstract class EasyAuto extends AutonomousOpMode {
             }
         }
     }
+
+
+
+
 
     private static class CapabilitiesUpdateThread extends Thread {
         private final @NotNull EasyAuto easyAuto;

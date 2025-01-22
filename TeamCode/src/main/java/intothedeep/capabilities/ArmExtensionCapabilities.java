@@ -14,8 +14,8 @@ import t10.motion.hardware.Motor;
  */
 public class ArmExtensionCapabilities {
     public static final int POSITION_FULLY_RETRACTED = 0;
-    public static final int POSITION_FULLY_EXTENDED = -6330;
-    private static final int MAX_ERROR_ALLOWED = 25;
+    public static final int POSITION_FULLY_EXTENDED = -6000;
+    private static final int MAX_ERROR_ALLOWED = 100;
     private final Motor armExtension;
     private int targetPosition;
     private int position;
@@ -35,6 +35,10 @@ public class ArmExtensionCapabilities {
 
             this.setPower(power);
         }
+    }
+
+    public int getPosition() {
+        return position;
     }
 
     public void setTargetPosition(int targetPosition) {

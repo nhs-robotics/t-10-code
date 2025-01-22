@@ -10,6 +10,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import t10.bootstrap.TeleOpOpMode;
 import t10.gamepad.GController;
+import t10.geometry.Pose;
+import t10.localizer.odometry.OdometryLocalizer;
 import t10.motion.mecanum.MecanumDriver;
 
 @TeleOp
@@ -22,6 +24,8 @@ public class CompetitionTeleOp extends TeleOpOpMode {
     private ClawCapabilities claw;
     private ArmExtensionCapabilities armExtension;
     private ArmRotationCapabilities armRotation;
+    private Telemetry.Item horizontal,vertical, angle, extension;
+    private OdometryLocalizer odometry;
 
     @Override
     public void initialize() {
@@ -48,15 +52,27 @@ public class CompetitionTeleOp extends TeleOpOpMode {
                 .rightJoystick.onMove((x, y) -> this.crane.setPowerManually(y)).ok()
                 .leftJoystick.onMove((x,  y) -> this.armRotation.setPowerManually(y)).ok()
                 .a.onPress(() -> this.claw.toggle()).ok();
+        odometry = config.createOdometry();
+
+        this.vertical = telemetry.addData("y: ", 0);
+        this.horizontal = telemetry.addData("x: ", 0);
+        this.angle = telemetry.addData("angle: ", 0);
+        this.extension = telemetry.addData("extension: ", 0);
     }
 
     @Override
     public void loop() {
+        Pose pose = odometry.getFieldCentricPose();
+        vertical.setValue(pose.getY());
+        horizontal.setValue(pose.getX());
+        angle.setValue(pose.getHeading(AngleUnit.DEGREES));
+        extension.setValue(armExtension.getPosition());
         this.driver.useGamepad(this.gamepad1, this.g1.x.isToggled() ? 1 : 0.5);
         this.g2.update();
         this.g1.update();
         this.crane.update();
         this.telemetry.update();
+        this.odometry.update();
         this.armExtension.update();
         this.armRotation.update();
     }

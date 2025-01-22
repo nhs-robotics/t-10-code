@@ -41,13 +41,23 @@ public class CraneCapabilities {
                     this.targetPosition
             );
 
-            this.setPower(-powerLeft, this.positionLeft, this.liftLeft);
-
-            // Right
+            //Right
             double powerRight = this.stabilizerRight.calculate(
                     this.positionRight,
                     this.targetPosition
             );
+
+            if(targetPosition < 100) {
+                if(positionLeft < 100) {
+                    powerLeft = 0;
+                }
+
+                if(positionRight < 100) {
+                    powerRight = 0;
+                }
+            }
+
+            this.setPower(-powerLeft, this.positionLeft, this.liftLeft);
 
             this.setPower(-powerRight, this.positionRight, this.liftRight);
         }
