@@ -10,7 +10,7 @@ public class CraneCapabilities {
     public static final int POSITION_LOW_BASKET = 1800;
     public static final int POSITION_HIGH_BASKET = 3450;
     public static final int CRANE_DIFFERENCE_FAIL_SAFE = 760;
-    private static final int MAX_ERROR_ALLOWED = 25;
+    private static final int MAX_ERROR_ALLOWED = 30;
     private final Motor liftLeft;
     private final Motor liftRight;
     private final PIDController stabilizerLeft;

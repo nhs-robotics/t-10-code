@@ -31,29 +31,30 @@ public class CompetitionAuto extends EasyAuto {
             telemetry.update();
         }
 
-        crane.setTargetPosition(2010); //TODO: too high
+        crane.setTargetPosition(1500); //TODO: too high
         while(!crane.isAtTargetPosition()) {
             sleep(0.1);
             telemetry.clearAll();
-            telemetry.addLine("Waiting for extension");
+            telemetry.addLine("Waiting for crane");
             telemetry.addLine(Integer.toString(crane.getPositionLeft()));
             telemetry.update();
         }
 
-        verticalMovement(17);
+        verticalMovement(14);
 
-        crane.setTargetPosition(1152);
+        crane.setTargetPosition(652);
+        armExtension.setTargetPosition((int)Math.ceil(ArmExtensionCapabilities.POSITION_FULLY_EXTENDED * 0.65));
         while(!crane.isAtTargetPosition()) {
             sleep(0.1);
             telemetry.clearAll();
-            telemetry.addLine("Waiting for extension");
+            telemetry.addLine("Waiting for crane down");
             telemetry.addLine(Integer.toString(crane.getPositionLeft()));
             telemetry.update();
         }
         claw.setOpen(true);
         crane.setTargetPosition(CraneCapabilities.POSITION_BOTTOM);
         armExtension.setTargetPosition(ArmExtensionCapabilities.POSITION_FULLY_RETRACTED);
-        verticalMovement(-30);
+        verticalMovement(-20);
         horizontalMovement(48);
     }
 }
