@@ -9,7 +9,7 @@ public class CraneCapabilities {
     public static final int POSITION_BOTTOM = 0;
     public static final int POSITION_LOW_BASKET = 1800;
     public static final int POSITION_HIGH_BASKET = 3450;
-    public static final int CRANE_DIFFERENCE_FAIL_SAFE = 760;
+    public static final int CRANE_DIFFERENCE_FAIL_SAFE = 760 * 10^5;
     private static final int MAX_ERROR_ALLOWED = 30;
     private final Motor liftLeft;
     private final Motor liftRight;
@@ -19,6 +19,7 @@ public class CraneCapabilities {
     private int positionRight;
     private int targetPosition;
     private boolean isManuallyControlled;
+    private final double speedFactor = 0.8;
 
     public CraneCapabilities(SnowballConfig config) {
         this.targetPosition = 0;
@@ -57,9 +58,9 @@ public class CraneCapabilities {
                 }
             }
 
-            this.setPower(-powerLeft, this.positionLeft, this.liftLeft);
+            this.setPower(-powerLeft * speedFactor, this.positionLeft, this.liftLeft);
 
-            this.setPower(-powerRight, this.positionRight, this.liftRight);
+            this.setPower(-powerRight * speedFactor, this.positionRight, this.liftRight);
         }
 
         if (Math.abs(this.positionLeft - this.positionRight) >= CRANE_DIFFERENCE_FAIL_SAFE) {

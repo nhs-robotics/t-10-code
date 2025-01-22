@@ -33,7 +33,10 @@ public class ArmExtensionCapabilities {
             double error = this.targetPosition - this.position;
             double power = error * 0.01;
 
-            this.setPower(power);
+            if(Math.abs(power) > 0.2) {
+
+                this.setPower(power);
+            }
         }
     }
 

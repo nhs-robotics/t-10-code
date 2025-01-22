@@ -58,7 +58,7 @@ public abstract class EasyAuto extends AutonomousOpMode {
         this.crane = new CraneCapabilities(config);
 
 
-        this.updater = new CapabilitiesUpdateThread(this,armExtension,armRotation, crane);
+        this.updater = new CapabilitiesUpdateThread(this,armExtension,armRotation, crane, config);
         updater.start();
 
         // Configure robot's initial state
@@ -67,6 +67,7 @@ public abstract class EasyAuto extends AutonomousOpMode {
         this.crane.setTargetPosition(CraneCapabilities.POSITION_BOTTOM);
         this.claw.setOpen(false);  // Keep closed to grasp a block for auto
         this.setInitialPose(alliance, startingTile);
+        this.isDone = false;
     }
 
     // TODO: Test this out to see if it works. Otherwise, switch to threads.
@@ -187,12 +188,14 @@ public abstract class EasyAuto extends AutonomousOpMode {
         private @NotNull ArmExtensionCapabilities armExtension;
         private @NotNull ArmRotationCapabilities armRotation;
         private @NotNull CraneCapabilities crane;
+        private @NotNull SnowballConfig config;
 
-        public CapabilitiesUpdateThread(@NotNull EasyAuto easyAuto, @NotNull ArmExtensionCapabilities armExtension, @NotNull ArmRotationCapabilities armRotation, @NotNull CraneCapabilities crane) {
+        public CapabilitiesUpdateThread(@NotNull EasyAuto easyAuto, @NotNull ArmExtensionCapabilities armExtension, @NotNull ArmRotationCapabilities armRotation, @NotNull CraneCapabilities crane, @NotNull SnowballConfig config) {
             this.easyAuto = easyAuto;
             this.armExtension = armExtension;
             this.armRotation = armRotation;
             this.crane = crane;
+            this.config = config;
         }
 
         public void setArmExtension(@NotNull ArmExtensionCapabilities armExtension) {
@@ -214,6 +217,10 @@ public abstract class EasyAuto extends AutonomousOpMode {
                 this.armExtension.update();
                 this.crane.update();
             }
+            config.armRotation.setPower(0);
+            config.armExtension.setPower(0);
+            config.liftRight.setPower(0);
+            config.liftLeft.setPower(0);
         }
     }
 }
