@@ -47,10 +47,10 @@ public class CompetitionTeleOp extends TeleOpOpMode {
 
         // G2 controls the intake/outtake
         this.g2 = new GController(this.gamepad2)
-                .rightTrigger.whileDown(proportion -> this.armExtension.setPowerManually(proportion)).onRelease(() -> this.armExtension.setPowerManually(0)).ok()
-                .leftTrigger.whileDown(proportion -> this.armExtension.setPowerManually(-proportion)).onRelease(() -> this.armExtension.setPowerManually(0)).ok()
-                .rightJoystick.onMove((x, y) -> this.crane.setPowerManually(y)).ok()
-                .leftJoystick.onMove((x,  y) -> this.armRotation.setPowerManually(y)).ok()
+                .rightTrigger.whileDown(proportion -> this.armExtension.setPowerManually(-proportion)).onRelease(() -> this.armExtension.setPowerManually(0)).ok()
+                .leftTrigger.whileDown(proportion -> this.armExtension.setPowerManually(proportion)).onRelease(() -> this.armExtension.setPowerManually(0)).ok()
+                .rightJoystick.onMove((x, y) -> this.crane.setPowerManually(-y)).ok()
+                .leftJoystick.onMove((x,  y) -> this.armRotation.setPowerManually(-y)).ok()
                 .a.onPress(() -> this.claw.toggle()).ok();
         odometry = config.createOdometry();
 
