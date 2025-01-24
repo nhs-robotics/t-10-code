@@ -10,6 +10,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import t10.bootstrap.TeleOpOpMode;
 import t10.gamepad.GController;
+import t10.geometry.MovementVector;
 import t10.geometry.Pose;
 import t10.localizer.odometry.OdometryLocalizer;
 import t10.motion.mecanum.MecanumDriver;
@@ -26,6 +27,7 @@ public class CompetitionTeleOp extends TeleOpOpMode {
     private ArmRotationCapabilities armRotation;
     private Telemetry.Item horizontal,vertical, angle, extension;
     private OdometryLocalizer odometry;
+    double speed = 3;
 
     @Override
     public void initialize() {
@@ -48,9 +50,17 @@ public class CompetitionTeleOp extends TeleOpOpMode {
         // G2 controls the intake/outtake
         this.g2 = new GController(this.gamepad2)
                 .rightTrigger.whileDown(proportion -> this.armExtension.setPowerManually(-proportion)).onRelease(() -> this.armExtension.setPowerManually(0)).ok()
+                .rightBumper.onPress(() -> this.armExtension.setTargetPosition((int)(0.75 * ArmExtensionCapabilities.POSITION_FULLY_EXTENDED))).ok()
                 .leftTrigger.whileDown(proportion -> this.armExtension.setPowerManually(proportion)).onRelease(() -> this.armExtension.setPowerManually(0)).ok()
+                .leftBumper.onPress(() -> this.armExtension.setTargetPosition(0)).ok()
                 .rightJoystick.onMove((x, y) -> this.crane.setPowerManually(-y)).ok()
                 .leftJoystick.onMove((x,  y) -> this.armRotation.setPowerManually(-y)).ok()
+                .dpadUp.whileDown(() -> driver.setVelocity(new MovementVector(speed,0,0))).ok()
+                .dpadDown.whileDown(() -> driver.setVelocity(new MovementVector(-speed,0,0))).ok()
+                .dpadRight.whileDown(() -> driver.setVelocity(new MovementVector(0,speed,0))).ok()
+                .dpadLeft.whileDown(() -> driver.setVelocity(new MovementVector(0,-speed,0))).ok()
+                .b.onPress(() -> crane.setTargetPosition(CraneCapabilities.POSITION_HIGH_BASKET)).ok()
+                .x.onPress(() -> crane.setTargetPosition(CraneCapabilities.POSITION_BOTTOM)).ok()
                 .a.onPress(() -> this.claw.toggle()).ok();
         odometry = config.createOdometry();
 
@@ -67,7 +77,9 @@ public class CompetitionTeleOp extends TeleOpOpMode {
         horizontal.setValue(pose.getX());
         angle.setValue(pose.getHeading(AngleUnit.DEGREES));
         extension.setValue(armExtension.getPosition());
-        this.driver.useGamepad(this.gamepad1, this.g1.x.isToggled() ? 1 : 0.5);
+        if(!gamepad2.dpad_up && !gamepad2.dpad_down &&!gamepad2.dpad_right && !gamepad2.dpad_left) {
+            this.driver.useGamepad(this.gamepad1, this.g1.x.isToggled() ? 1 : 0.5);
+        }
         this.g2.update();
         this.g1.update();
         this.crane.update();
