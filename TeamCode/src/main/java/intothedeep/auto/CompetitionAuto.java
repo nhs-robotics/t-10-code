@@ -42,7 +42,7 @@ public class CompetitionAuto extends EasyAuto {
 
         verticalMovement(9);
 
-        crane.setTargetPosition(680); //652
+        crane.setTargetPosition(725); //652
         armExtension.setTargetPosition((int)Math.ceil(ArmExtensionCapabilities.POSITION_FULLY_EXTENDED * 0.45));
         while(!crane.isAtTargetPosition()) {
             sleep(0.1);
