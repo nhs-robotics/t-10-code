@@ -5,6 +5,7 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import t10.bootstrap.AbstractRobotConfiguration;
 import t10.bootstrap.Hardware;
@@ -55,19 +56,26 @@ public class SnowballConfig extends AbstractRobotConfiguration {
             ticksPerRevolution = Constants.TickCounts.MOVEMENT_MOTOR_TICK_COUNT)
     public Motor liftRight;
 
-    @Hardware(name = "LiftLeft", 
+    @Hardware(name = "LiftLeft",
             ticksPerRevolution = Constants.TickCounts.MOVEMENT_MOTOR_TICK_COUNT)
     public Motor liftLeft;
 
-    @Hardware(name = "ArmExtension")
+    @Hardware(
+            name = "ArmExtension",
+            ticksPerRevolution = Constants.TickCounts.MOVEMENT_MOTOR_TICK_COUNT
+    )
     public Motor armExtension;
 
-    @Hardware(name = "ArmRotation")
+    @Hardware(name = "ArmRotation",
+            ticksPerRevolution = Constants.TickCounts.MOVEMENT_MOTOR_TICK_COUNT)
     public Motor armRotation;
 
     @Hardware(name = "OctoQuad")
     public OctoQuad octoQuad;
-  
+
+    @Hardware(name = "Grabber")
+    public Servo claw;
+
     public SnowballConfig(HardwareMap hardwareMap) {
         super(hardwareMap);
 

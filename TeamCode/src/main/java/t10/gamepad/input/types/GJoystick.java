@@ -1,5 +1,6 @@
 package t10.gamepad.input.types;
 
+import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
 import t10.gamepad.GController;
@@ -7,9 +8,8 @@ import t10.gamepad.input.GAnalog;
 import t10.gamepad.input.GInput;
 
 public class GJoystick implements GInput, GAnalog<GJoystick> {
-
     private final GController controller;
-    private Runnable onMove;
+    private BiConsumer<Float, Float> onMove;
     private final Supplier<Float> xValueSupplier;
     private final Supplier<Float> yValueSupplier;
 
@@ -24,11 +24,15 @@ public class GJoystick implements GInput, GAnalog<GJoystick> {
 
     @Override
     public void update() {
-        if (xValueSupplier.get() != lastX || yValueSupplier.get() != lastY) {
-            lastX = xValueSupplier.get();
-            lastY = yValueSupplier.get();
-            if (onMove != null) {
-                onMove.run();
+        float currentX = this.xValueSupplier.get();
+        float currentY = this.yValueSupplier.get();
+
+        if (currentX != this.lastX || currentY != this.lastY) {
+            this.lastX = currentX;
+            this.lastY = currentY;
+
+            if (this.onMove != null) {
+                this.onMove.accept(currentX, currentY);
             }
         }
     }
@@ -39,16 +43,8 @@ public class GJoystick implements GInput, GAnalog<GJoystick> {
     }
 
     @Override
-    public GJoystick onMove(Runnable runnable) {
-        this.onMove = runnable;
+    public GJoystick onMove(BiConsumer<Float, Float> onMove) {
+        this.onMove = onMove;
         return this;
-    }
-
-    public float getX() {
-        return this.xValueSupplier.get();
-    }
-
-    public float getY() {
-        return this.yValueSupplier.get();
     }
 }

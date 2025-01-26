@@ -175,18 +175,18 @@ public class OdometryNavigation {
 
     public double findTurnSpeed(double currentAngle, double targetAngle) {
         double direction = 0;
-            if (Math.abs(targetAngle) == 180) {
-                targetAngle = 180 * Math.signum(currentAngle);
-            }
-            if (targetAngle < currentAngle - 180) {
-                    direction = 1;
-                } else if (targetAngle > currentAngle + 180) {
-                    direction = -1;
-                } else if (targetAngle < currentAngle) {
-                    direction = -1;
-                } else if (targetAngle > currentAngle) {
-                    direction = 1;
-                }
+        if (Math.abs(targetAngle) == 180) {
+            targetAngle = 180 * Math.signum(currentAngle);
+        }
+        if (targetAngle < currentAngle - 180) {
+            direction = 1;
+        } else if (targetAngle > currentAngle + 180) {
+            direction = -1;
+        } else if (targetAngle < currentAngle) {
+            direction = -1;
+        } else if (targetAngle > currentAngle) {
+            direction = 1;
+        }
 
             if (Math.abs(targetAngle - currentAngle) < 5 * MIN_ANGLE_ERROR) {
                 return direction * Math.abs(targetAngle - currentAngle);
