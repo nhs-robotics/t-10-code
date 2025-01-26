@@ -25,7 +25,7 @@ public class CompetitionTeleOp extends TeleOpOpMode {
     private ClawCapabilities claw;
     private ArmExtensionCapabilities armExtension;
     private ArmRotationCapabilities armRotation;
-    private Telemetry.Item horizontal,vertical, angle, extension;
+    private Telemetry.Item horizontal,vertical, angle, cranePos;
     private OdometryLocalizer odometry;
     double speed = 3;
 
@@ -60,14 +60,22 @@ public class CompetitionTeleOp extends TeleOpOpMode {
                 .dpadRight.whileDown(() -> driver.setVelocity(new MovementVector(0,speed,0))).ok()
                 .dpadLeft.whileDown(() -> driver.setVelocity(new MovementVector(0,-speed,0))).ok()
                 .b.onPress(() -> crane.setTargetPosition(CraneCapabilities.POSITION_HIGH_BASKET)).ok()
-                .x.onPress(() -> crane.setTargetPosition(CraneCapabilities.POSITION_BOTTOM)).ok()
-                .a.onPress(() -> this.claw.toggle()).ok();
+                .x.onPress(() -> {
+                    if (Math.abs(armExtension.getPosition() - 0) < ArmExtensionCapabilities.MAX_ERROR_ALLOWED) {
+                        crane.setTargetPosition(CraneCapabilities.POSITION_BOTTOM);
+                    }
+                }).ok()
+                .a.onPress(() -> this.claw.toggle()).ok()
+                .y.onPress(() -> {
+                    crane.setTargetPosition(CraneCapabilities.POSITION_HIGH_CHAMBER);
+                    armRotation.setTargetPosition(0);
+                }).ok();
         odometry = config.createOdometry();
 
         this.vertical = telemetry.addData("y: ", 0);
         this.horizontal = telemetry.addData("x: ", 0);
         this.angle = telemetry.addData("angle: ", 0);
-        this.extension = telemetry.addData("extension: ", 0);
+        this.cranePos = telemetry.addData("cranePos: ", 0);
     }
 
     @Override
@@ -76,9 +84,9 @@ public class CompetitionTeleOp extends TeleOpOpMode {
         vertical.setValue(pose.getY());
         horizontal.setValue(pose.getX());
         angle.setValue(pose.getHeading(AngleUnit.DEGREES));
-        extension.setValue(armExtension.getPosition());
+        cranePos.setValue(crane.getTargetPosition());
         if(!gamepad2.dpad_up && !gamepad2.dpad_down &&!gamepad2.dpad_right && !gamepad2.dpad_left) {
-            this.driver.useGamepad(this.gamepad1, this.g1.x.isToggled() ? 1 : 0.5);
+            this.driver.useGamepad(this.gamepad1, this.g1.x.isToggled() ? 1 : 0.25);
         }
         this.g2.update();
         this.g1.update();

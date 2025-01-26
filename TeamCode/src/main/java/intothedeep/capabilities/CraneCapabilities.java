@@ -10,6 +10,7 @@ public class CraneCapabilities {
     public static final int POSITION_LOW_BASKET = 1800;
     public static final int POSITION_HIGH_BASKET = 3450;
     public static final int CRANE_DIFFERENCE_FAIL_SAFE = 760 * 10^5;
+    public static final int POSITION_HIGH_CHAMBER = 2892;
     private static final int MAX_ERROR_ALLOWED = 30;
     private final Motor liftLeft;
     private final Motor liftRight;
@@ -48,18 +49,7 @@ public class CraneCapabilities {
                     this.targetPosition
             );
 
-            if(targetPosition < 100) {
-                if(positionLeft < 100) {
-                    powerLeft = 0;
-                }
-
-                if(positionRight < 100) {
-                    powerRight = 0;
-                }
-            }
-
             this.setPower(-powerLeft * speedFactor, this.positionLeft, this.liftLeft);
-
             this.setPower(-powerRight * speedFactor, this.positionRight, this.liftRight);
         }
 
@@ -110,7 +100,7 @@ public class CraneCapabilities {
         // If the power is less than 30%, then just stop the motor. This helps to conserve power
         // because 30% power or less typically will not be able to lift the crane, and that
         // power is therefore wasted.
-        if (Math.abs(power) < 0.3) {
+        if (Math.abs(power) < 0.2) {
             motor.setPower(0);
             return;
         }

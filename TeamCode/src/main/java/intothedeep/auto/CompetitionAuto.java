@@ -31,7 +31,7 @@ public class CompetitionAuto extends EasyAuto {
             telemetry.update();
         }
 
-        crane.setTargetPosition(1350); //TODO: too high
+        crane.setTargetPosition(1350);
         while(!crane.isAtTargetPosition()) {
             sleep(0.1);
             telemetry.clearAll();
@@ -42,7 +42,7 @@ public class CompetitionAuto extends EasyAuto {
 
         verticalMovement(9);
 
-        crane.setTargetPosition(680); //652
+        crane.setTargetPosition(720);
         armExtension.setTargetPosition((int)Math.ceil(ArmExtensionCapabilities.POSITION_FULLY_EXTENDED * 0.45));
         while(!crane.isAtTargetPosition()) {
             sleep(0.1);

@@ -15,7 +15,7 @@ import t10.motion.hardware.Motor;
 public class ArmExtensionCapabilities {
     public static final int POSITION_FULLY_RETRACTED = 0;
     public static final int POSITION_FULLY_EXTENDED = -6000;
-    private static final int MAX_ERROR_ALLOWED = 100;
+    public static final int MAX_ERROR_ALLOWED = 100;
     private final Motor armExtension;
     private int targetPosition;
     private int position;
@@ -32,11 +32,7 @@ public class ArmExtensionCapabilities {
         if (!this.isManuallyControlled) {
             double error = this.targetPosition - this.position;
             double power = error * 0.01;
-
-            if(Math.abs(power) > 0.2) {
-
-                this.setPower(power);
-            }
+            this.setPower(power);
         }
     }
 
@@ -69,6 +65,11 @@ public class ArmExtensionCapabilities {
     }
 
     private void setPower(double power) {
+        if (Math.abs(power) < 0.25) {
+            this.armExtension.setPower(0);
+            return;
+        }
+
         // TODO: re-implement bounds.
 //        if (power > 0 && this.position > POSITION_FULLY_RETRACTED) {
 //            // This would over-retract the motor. Stop.
