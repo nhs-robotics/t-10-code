@@ -23,17 +23,17 @@ public class MecanumCoefficientMatrix {
     public final MecanumCoefficientSet totals;
 
     /**
-     * The default vertical coefficient set.
+     * The default vertical coefficient set (FL, FR, BL, BR).
      */
     public final MecanumCoefficientSet vertical = new MecanumCoefficientSet(1, 1, 1, 1);
 
     /**
-     * The default horizontal coefficient set.
+     * The default horizontal coefficient set (FL, FR, BL, BR).
      */
     public final MecanumCoefficientSet horizontal = new MecanumCoefficientSet(1, -1, -1, 1);
 
     /**
-     * The default rotational coefficient set.
+     * The default rotational coefficient set (FL, FR, BL, BR).
      */
     public final MecanumCoefficientSet rotational = new MecanumCoefficientSet(1, -1, 1, -1);
 

@@ -16,13 +16,13 @@ public abstract class AutonomousOpMode extends BootstrappedOpMode {
         this.stop();
     }
 
-    // These methods shouldn't be used in Autonomous
+    // You shouldn't HAVE to override these methods unless you want to
     @Override
-    public final void init_loop() {
+    public void init_loop() {
     }
 
     @Override
-    public final void loop() {
+    public void loop() {
     }
 
     /**

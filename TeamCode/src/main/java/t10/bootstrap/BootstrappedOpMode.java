@@ -28,6 +28,7 @@ import java.io.IOException;
  */
 public abstract class BootstrappedOpMode extends OpMode {
     protected MetricsServer metrics;
+    public boolean isDone = false;
 
     /**
      * Sets {@link System#out} and {@link System#err} to an instance of {@link RobotDebugPrintStream}.
@@ -62,7 +63,7 @@ public abstract class BootstrappedOpMode extends OpMode {
      * @return True if the stop button has been pressed and the program should close.
      */
     public boolean isStopRequested() {
-        return Thread.currentThread().isInterrupted();
+        return Thread.currentThread().isInterrupted() || isDone;
     }
 
     @Override

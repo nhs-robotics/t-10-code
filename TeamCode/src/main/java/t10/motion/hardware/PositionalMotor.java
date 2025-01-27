@@ -35,7 +35,6 @@ public class PositionalMotor {
         this.maxBoundPosition = maxBoundPosition;
         this.initialPosition = initialPosition;
         this.pidController = pidController;
-        this.setPosition(initialPosition);
     }
 
     /**
@@ -45,18 +44,14 @@ public class PositionalMotor {
      * @param position The position in ticks to set the motor to, relative to the initialPosition.
      */
     public void setPosition(int position) {
-        if (position < this.minBoundPosition || position > this.maxBoundPosition) {
-            throw new IllegalArgumentException(
-                    String.format(
-                            "Position (%d) is outside bounds [%d, %d]",
-                            position,
-                            this.minBoundPosition,
-                            this.maxBoundPosition
-                    )
-            );
+        if (position < this.minBoundPosition) {
+            this.setPosition(this.minBoundPosition);
+        } else if (position > this.maxBoundPosition) {
+            this.setPosition(this.maxBoundPosition);
+        } else {
+            this.targetPosition = position - this.initialPosition;
         }
 
-        this.targetPosition = position - this.initialPosition;
     }
 
     /**

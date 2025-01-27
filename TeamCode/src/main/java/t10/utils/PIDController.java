@@ -39,8 +39,8 @@ public class PIDController {
                 kI * integral +
                 kD * derivative;
 
-        // Clamp power between 0 and 1
-        return Math.max(0, Math.min(1, power));
+        // Clamp power between -1 and 1
+        return Math.max(-1, Math.min(1, power));
     }
 
     // Optional: Method to reset the controller

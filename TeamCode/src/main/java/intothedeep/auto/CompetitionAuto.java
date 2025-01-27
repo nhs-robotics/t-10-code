@@ -1,56 +1,68 @@
 package intothedeep.auto;
 
+import android.os.SystemClock;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import intothedeep.SnowballConfig;
-import t10.bootstrap.AutonomousOpMode;
-import t10.geometry.MovementVector;
-import t10.motion.mecanum.MecanumDriver;
+import intothedeep.Constants;
+import intothedeep.capabilities.ArmExtensionCapabilities;
+import intothedeep.capabilities.ArmRotationCapabilities;
+import intothedeep.capabilities.CraneCapabilities;
+import t10.utils.Alliance;
 
 @Autonomous
-public class CompetitionAuto extends AutonomousOpMode {
-    private SnowballConfig config;
-    private MecanumDriver driver;
-
-    @Override
-    public void initialize() {
-        this.config = new SnowballConfig(this.hardwareMap);
-        this.driver = this.config.createMecanumDriver();
+public class CompetitionAuto extends EasyAuto {
+    public CompetitionAuto() {
+        super(null);
     }
 
     @Override
     public void run() {
-        this.driver.setVelocity(new MovementVector(0, 10, 0));
-        try {
-            Thread.sleep(2400);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+        verticalMovement(13);
+        telemetry.clearAll();
+        telemetry.addLine("Moved");
+        telemetry.update();
+        armExtension.setTargetPosition(ArmExtensionCapabilities.POSITION_FULLY_EXTENDED);
+        while(!armExtension.isAtTargetPosition()) {
+            sleep(0.1);
+            telemetry.clearAll();
+            telemetry.addLine("Waiting for extension");
+            telemetry.addLine(Integer.toString(armExtension.getPosition()));
+            telemetry.update();
         }
-        this.driver.setVelocity(new MovementVector(0, 0, 0));
 
-        // 2
-        this.driver.setVelocity(new MovementVector(10, 0, 0));
-        try {
-            Thread.sleep(4800);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+        crane.setTargetPosition(1350);
+        while(!crane.isAtTargetPosition()) {
+            sleep(0.1);
+            telemetry.clearAll();
+            telemetry.addLine("Waiting for crane");
+            telemetry.addLine(Integer.toString(crane.getPositionLeft()));
+            telemetry.update();
         }
-        this.driver.setVelocity(new MovementVector(0, 0, 0));
 
-        this.driver.setVelocity(new MovementVector(0, 10, 0));
-        try {
-            Thread.sleep(600);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        this.driver.setVelocity(new MovementVector(0, 0, 0));
+        verticalMovement(9);
 
-        this.driver.setVelocity(new MovementVector(-10, 0, 0));
-        try {
-            Thread.sleep(4800);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+        crane.setTargetPosition(720);
+        armExtension.setTargetPosition((int)Math.ceil(ArmExtensionCapabilities.POSITION_FULLY_EXTENDED * 0.45));
+        while(!crane.isAtTargetPosition()) {
+            sleep(0.1);
+            telemetry.clearAll();
+            telemetry.addLine("Waiting for crane down");
+            telemetry.addLine(Integer.toString(crane.getPositionLeft()));
+            telemetry.update();
         }
-        this.driver.setVelocity(new MovementVector(0, 0, 0));
+        claw.setOpen(true);
+        crane.setTargetPosition(CraneCapabilities.POSITION_BOTTOM);
+        armExtension.setTargetPosition(ArmExtensionCapabilities.POSITION_FULLY_RETRACTED);
+        verticalMovement(-16);
+        horizontalMovement(48);
+        armRotation.setTargetPosition(0);
+        while(!armRotation.isAtTargetPosition()) {
+            sleep(0.1);
+            telemetry.clearAll();
+            telemetry.addLine("Waiting for rotation down");
+            telemetry.update();
+        }
+        isDone = true;
     }
 }
