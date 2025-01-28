@@ -30,4 +30,11 @@ public class ClawCapabilities {
     public void toggle() {
         this.setOpen(!this.isOpen);
     }
+
+    public boolean isAtTargetPosition() {
+        double target = this.isOpen ? OPEN_POSITION : CLOSED_POSITION;
+        double maxError = 0.05;
+
+        return Math.abs(target - this.claw.getPosition()) < maxError;
+    }
 }

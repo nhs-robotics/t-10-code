@@ -47,24 +47,18 @@ dependencies {
     implementation project(':FtcRobotController')
 }
 
-// Set version
-String executeCommand(String... args) {
-    def os = new ByteArrayOutputStream();
+apply plugin: 'checkstyle'
 
-    exec {
-        commandLine = args
-        standardOutput = os
-    }
-
-    return os.toString().trim()
+checkstyle {
+    toolVersion '8.44'
+    configFile = file('$checkstyle.xml')
 }
 
-String getLatestGitHash() { return executeCommand('git', 'rev-parse', '--short', 'HEAD') }
-int getGitCommitCount() { return executeCommand('git', 'log', '--oneline').count("\n") }
-String getGitBranch() { return executeCommand('git', 'rev-parse', '--abbrev-ref', 'HEAD') }
-String getTime() { return System.currentTimeMillis().toString().substring(4, 10) }
-
-version "3.${getGitCommitCount()}, Build ${getTime()} (Commit ${getLatestGitHash()}@${getGitBranch()})"
+tasks.register('checkstyle', Checkstyle) {
+    configFile file('checkstyle.xml')
+    source 'src/main/java'
+    classpath = files()
+}
 
 android.applicationVariants.configureEach { v ->
     tasks.create("javadoc${v.name.capitalize()}", Javadoc) {

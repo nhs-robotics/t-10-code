@@ -1,31 +1,32 @@
 package t10.geometry;
 
-import android.annotation.SuppressLint;
-import androidx.annotation.NonNull;
-
-import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
-import org.jetbrains.annotations.NotNull;
-
 import java.io.Serializable;
 import java.util.Objects;
+
+import android.annotation.SuppressLint;
+import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.jetbrains.annotations.NotNull;
 
 public class MovementVector implements Serializable {
     protected double vertical;
     protected double horizontal;
     protected double rotation;
+    protected AngleUnit angleUnit;
 
-    public MovementVector(double vertical, double horizontal, double rotation) {
+    public MovementVector(double vertical, double horizontal, double rotation, AngleUnit angleUnit) {
         this.vertical = vertical;
         this.horizontal = horizontal;
         this.rotation = rotation;
+        this.angleUnit = angleUnit;
     }
 
-    public MovementVector(double[] v) {
-        this(v[0], v[1], v[2]);
+    public MovementVector(double[] v, AngleUnit angleUnit) {
+        this(v[0], v[1], v[2], angleUnit);
     }
 
-    public MovementVector(@NotNull Vector3D v) {
-        this(v.getX(), v.getY(), v.getZ());
+    public MovementVector(@NotNull Vector3D v, AngleUnit angleUnit) {
+        this(v.getX(), v.getY(), v.getZ(), angleUnit);
     }
 
     public double getVertical() {
@@ -40,6 +41,10 @@ public class MovementVector implements Serializable {
         return rotation;
     }
 
+    public AngleUnit getAngleUnit() {
+        return this.angleUnit;
+    }
+
     public void setVertical(double vertical) {
         this.vertical = vertical;
     }
@@ -48,15 +53,17 @@ public class MovementVector implements Serializable {
         this.horizontal = horizontal;
     }
 
-    public void setRotation(double rotation) {
+    public void setRotation(double rotation, AngleUnit angleUnit) {
         this.rotation = rotation;
+        this.angleUnit = angleUnit;
     }
 
     public MovementVector add(@NotNull MovementVector movementVector) {
         return new MovementVector(
                 this.vertical + movementVector.vertical,
                 this.horizontal + movementVector.horizontal,
-                this.rotation + movementVector.rotation
+                this.angleUnit.toDegrees(this.rotation) + movementVector.angleUnit.toDegrees(movementVector.rotation),
+                AngleUnit.DEGREES
         );
     }
 
@@ -64,7 +71,8 @@ public class MovementVector implements Serializable {
         return new MovementVector(
                 this.vertical - movementVector.vertical,
                 this.horizontal - movementVector.horizontal,
-                this.rotation - movementVector.rotation
+                this.angleUnit.toDegrees(this.rotation) - movementVector.angleUnit.toDegrees(movementVector.rotation),
+                AngleUnit.DEGREES
         );
     }
 
@@ -72,7 +80,8 @@ public class MovementVector implements Serializable {
         return new MovementVector(
                 this.vertical * magnitude,
                 this.horizontal * magnitude,
-                this.rotation * magnitude
+                this.rotation * magnitude,
+                this.angleUnit
         );
     }
 
@@ -87,7 +96,8 @@ public class MovementVector implements Serializable {
         return new MovementVector(
                 this.vertical / magnitude,
                 this.horizontal / magnitude,
-                this.rotation / magnitude
+                this.rotation / magnitude,
+                this.angleUnit
         );
     }
 

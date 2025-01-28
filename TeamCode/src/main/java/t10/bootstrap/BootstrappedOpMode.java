@@ -1,17 +1,11 @@
 package t10.bootstrap;
 
-import android.graphics.Bitmap;
+import java.io.IOException;
+
 import android.os.SystemClock;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.HardwareDevice;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import org.firstinspires.ftc.robotcore.external.function.Consumer;
-import org.firstinspires.ftc.robotcore.external.function.Continuation;
-import t10.metrics.MetricsServer;
-import t10.vision.Webcam;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import t10.metrics.MetricsServer;
 
 /**
  * <p>"Bootstrapping" is the preparing another program to initialize.
@@ -28,7 +22,6 @@ import java.io.IOException;
  */
 public abstract class BootstrappedOpMode extends OpMode {
     protected MetricsServer metrics;
-    public boolean isDone = false;
 
     /**
      * Sets {@link System#out} and {@link System#err} to an instance of {@link RobotDebugPrintStream}.
@@ -56,14 +49,6 @@ public abstract class BootstrappedOpMode extends OpMode {
      */
     public void sleep(double seconds) {
         SystemClock.sleep((long) (1000L * seconds));
-    }
-
-    /**
-     * Returns if the stop button has been pressed and the program should close.
-     * @return True if the stop button has been pressed and the program should close.
-     */
-    public boolean isStopRequested() {
-        return Thread.currentThread().isInterrupted() || isDone;
     }
 
     @Override

@@ -1,14 +1,14 @@
-package intothedeep.teleop.azazel;
-
-import intothedeep.Constants;
-import t10.bootstrap.TeleOpOpMode;
-import t10.gamepad.GController;
-import t10.motion.mecanum.MecanumDriver;
+package azazel;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import intothedeep.Constants;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+
+import t10.bootstrap.TeleOpOpMode;
+import t10.gamepad.GController;
+import t10.motion.mecanum.MecanumDriver;
 
 @TeleOp(name = "Azazel Tele-Op")
 public class AzazelTeleOp extends TeleOpOpMode {

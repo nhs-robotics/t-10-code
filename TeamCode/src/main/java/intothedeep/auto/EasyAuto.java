@@ -1,226 +1,111 @@
 package intothedeep.auto;
 
+import intothedeep.SnowballConfig;
+import intothedeep.auto.actions.ArmExtensionAction;
+import intothedeep.auto.actions.ArmRotationAction;
+import intothedeep.auto.actions.ClawAction;
+import intothedeep.auto.actions.CraneAction;
 import intothedeep.capabilities.ArmExtensionCapabilities;
 import intothedeep.capabilities.ArmRotationCapabilities;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-
 import intothedeep.capabilities.ClawCapabilities;
 import intothedeep.capabilities.CraneCapabilities;
-import org.jetbrains.annotations.NotNull;
+
+import t10.auto.AutoAction;
+import t10.auto.FollowPathAction;
+import t10.auto.MoveToAction;
+import t10.auto.SequentialAction;
+import t10.auto.SimultaneousAction;
 import t10.bootstrap.AutonomousOpMode;
+import t10.geometry.Pose;
+import t10.localizer.Localizer;
 import t10.localizer.odometry.OdometryLocalizer;
 import t10.motion.mecanum.MecanumDriver;
-
-import intothedeep.SnowballConfig;
-import t10.localizer.odometry.OdometryNavigation;
-import t10.geometry.Pose;
-import t10.utils.Alliance;
+import t10.motion.path.PurePursuitPathFollower;
 
 public abstract class EasyAuto extends AutonomousOpMode {
-    public MecanumDriver driver;
-    public OdometryLocalizer odometry;
-    public OdometryNavigation navigator;
-    public double idealAngle = 0;
-    public double idealX = 0;
-    public double idealY = 0;
-    private final Alliance alliance;
-    private double startingTile = 0;
-    private SnowballConfig config;
-    public ArmExtensionCapabilities armExtension;
-    public ArmRotationCapabilities armRotation;
-    public ClawCapabilities claw;
-    public CraneCapabilities crane;
-    private CapabilitiesUpdateThread updater;
+	private final Pose startPose;
+	public MecanumDriver driver;
+	public OdometryLocalizer odometry;
+	public SnowballConfig config;
+	public ArmExtensionCapabilities armExtension;
+	public ArmRotationCapabilities armRotation;
+	public ClawCapabilities claw;
+	public CraneCapabilities crane;
+	public Localizer localizer;
 
-    public EasyAuto(Alliance alliance) {
-        this.alliance = alliance;
-    }
+	public EasyAuto(Pose startPose) {
+		this.startPose = startPose;
+	}
 
-    public EasyAuto(Alliance alliance, double startingTile) {
-        this.alliance = alliance;
-        this.startingTile = startingTile;
-    }
+	@Override
+	public void initialize() {
+		this.config = new SnowballConfig(this.hardwareMap);
 
-    @Override
-    public void initialize() {
-        this.config = new SnowballConfig(this.hardwareMap);
+		// Driving & Localization
+		this.driver = config.createMecanumDriver();
+		this.odometry = config.createOdometry();
+		this.localizer = new Localizer(null, this.odometry, this.startPose);
 
-        // Driving & Localization
-        this.driver = config.createMecanumDriver();
-        this.odometry = config.createOdometry();
-        this.navigator = new OdometryNavigation(odometry, driver);
+		// Capabilities
+		this.armExtension = new ArmExtensionCapabilities(config);
+		this.armRotation = new ArmRotationCapabilities(config);
+		this.claw = new ClawCapabilities(config);
+		this.crane = new CraneCapabilities(config);
 
+		// Configure robot's initial state
+		this.armRotation.setTargetPosition(ArmRotationCapabilities.POSITION_INSPECTION);
+		this.armExtension.setTargetPosition(ArmExtensionCapabilities.POSITION_FULLY_RETRACTED);
+		this.crane.setTargetPosition(CraneCapabilities.POSITION_BOTTOM);
+		this.claw.setOpen(false);  // Keep closed to grasp a block for auto
+	}
 
-        // Capabilities
-        this.armExtension = new ArmExtensionCapabilities(config);
-        this.armRotation = new ArmRotationCapabilities(config);
-        this.claw = new ClawCapabilities(config);
-        this.crane = new CraneCapabilities(config);
+	@Override
+	public void loop() {
+		this.odometry.update();
+		this.armRotation.update();
+		this.armExtension.update();
+		this.crane.update();
+	}
 
+	@Override
+	public void stop() {
+		super.stop();
+		this.driver.halt();
+		this.config.armRotation.setPower(0);
+		this.config.armExtension.setPower(0);
+		this.config.liftRight.setPower(0);
+		this.config.liftLeft.setPower(0);
+	}
 
-        this.updater = new CapabilitiesUpdateThread(this,armExtension,armRotation, crane, config);
-        updater.start();
+	public MoveToAction moveTo(Pose destinationPose, double speed) {
+		return new MoveToAction(this.localizer, this.driver, destinationPose, speed);
+	}
 
-        // Configure robot's initial state
-        this.armRotation.setTargetPosition(ArmRotationCapabilities.POSITION_INSPECTION);
-        this.armExtension.setTargetPosition(ArmExtensionCapabilities.POSITION_FULLY_RETRACTED);
-        this.crane.setTargetPosition(CraneCapabilities.POSITION_BOTTOM);
-        this.claw.setOpen(false);  // Keep closed to grasp a block for auto
-        this.setInitialPose(alliance, startingTile);
-        this.isDone = false;
-    }
+	public ArmExtensionAction armExtension(int position) {
+		return new ArmExtensionAction(this.armExtension, position);
+	}
 
-    // TODO: Test this out to see if it works. Otherwise, switch to threads.
-    @Override
-    public void loop() {
-    }
+	public ArmRotationAction armRotation(int position) {
+		return new ArmRotationAction(this.armRotation, position);
+	}
 
-    public void setInitialPose(double y, double x, double theta) {
-        odometry.setFieldCentricPose(new Pose(y, x, 0, AngleUnit.DEGREES));
-        idealY = y;
-        idealX = x;
-        idealAngle = 0;
-        /*
-        TODO: Setting idealAngle to 0 is a terrible fix to ensure easyAuto motion is 'relative' to
-         the robot's starting position, because autoBuilder only generates relative motion, not
-         absolute motion. NEVER update easyAuto or autoBuilder to use AprilTagLocalizer, because
-         that would automatically adjust the robots absolute position to be the correct position &
-         orientation, as opposed to it's relative one. When we eventually fix the absolute vs.
-         relative issue, idealAngle should be set to -theta.
-         */
-    }
+	public CraneAction crane(int position) {
+		return new CraneAction(this.crane, position);
+	}
 
-    public void setInitialPose(Alliance alliance, double startingTile) {
-        double startingX = 0;
-        double startingY = 0;
-        double startingHeading = 0;
+	public ClawAction claw(boolean isOpen) {
+		return new ClawAction(this.claw, isOpen);
+	}
 
-        if (alliance != null) {
-            startingX = alliance == Alliance.RED ? 60 : -60;
-            startingY = (startingTile * 24 - 84) * (alliance == Alliance.RED ? 1 : -1);
-            startingHeading = alliance == Alliance.RED ? 90 : -90;
-        }
+	public SimultaneousAction simultaneously(AutoAction... actions) {
+		return new SimultaneousAction(actions);
+	}
 
-        setInitialPose(startingY, startingX, startingHeading);
-    }
+	public FollowPathAction followPath(PurePursuitPathFollower pathFollower) {
+		return new FollowPathAction(pathFollower, this.driver);
+	}
 
-    public void horizontalMovement(double distX) {
-        idealX += distX;
-        this.navigator.driveHorizontal(distX);
-    }
-
-    public void verticalMovement(double distY) {
-        idealY += distY;
-        this.navigator.driveLateral(distY);
-    }
-
-    public void diagonalMovement(double distX, double distY) {
-        idealX += distX;
-        idealY += distY;
-        this.navigator.driveDiagonal(distX, distY);
-    }
-
-    public void turnTo(double angle) {
-        this.navigator.turnAbsolute(angle);
-        idealAngle = angle;
-    }
-
-    public void turnRelative(double angle) {
-        this.navigator.turnRelative(angle);
-        idealAngle += angle;
-        if (idealAngle > 180) {
-            idealAngle -= 180;
-        }
-        if (idealAngle < -180) {
-            idealAngle += 180;
-        }
-    }
-
-    /**
-     * The below correction functions are currently untested. You have been warned.
-     * -Arlan
-     */
-    public void angleCorrect() {
-        turnTo(idealAngle);
-    }
-
-    public void horizontalCorrect() {
-        navigator.driveHorizontal(idealX - odometry.getFieldCentricPose().getX());
-    }
-
-    public void verticalCorrect() {
-        navigator.driveLateral(idealY - odometry.getFieldCentricPose().getY());
-    }
-
-    public void correctAll() {
-        angleCorrect();
-        horizontalCorrect();
-        verticalCorrect();
-    }
-
-    private static class LocalizationUpdateThread extends Thread {
-        private final @NotNull EasyAuto easyAuto;
-        private @NotNull OdometryLocalizer localizer;
-
-        public LocalizationUpdateThread(@NotNull EasyAuto easyAuto, @NotNull OdometryLocalizer localizer) {
-            this.easyAuto = easyAuto;
-            this.localizer = localizer;
-        }
-
-        public void setLocalizer(@NotNull OdometryLocalizer localizer) {
-            this.localizer = localizer;
-        }
-
-        @Override
-        public void run() {
-            while (!this.easyAuto.isStopRequested()) {
-                this.localizer.update();
-            }
-        }
-    }
-
-
-
-
-
-    private static class CapabilitiesUpdateThread extends Thread {
-        private final @NotNull EasyAuto easyAuto;
-        private @NotNull ArmExtensionCapabilities armExtension;
-        private @NotNull ArmRotationCapabilities armRotation;
-        private @NotNull CraneCapabilities crane;
-        private @NotNull SnowballConfig config;
-
-        public CapabilitiesUpdateThread(@NotNull EasyAuto easyAuto, @NotNull ArmExtensionCapabilities armExtension, @NotNull ArmRotationCapabilities armRotation, @NotNull CraneCapabilities crane, @NotNull SnowballConfig config) {
-            this.easyAuto = easyAuto;
-            this.armExtension = armExtension;
-            this.armRotation = armRotation;
-            this.crane = crane;
-            this.config = config;
-        }
-
-        public void setArmExtension(@NotNull ArmExtensionCapabilities armExtension) {
-            this.armExtension = armExtension;
-        }
-
-        public void setArmRotation(@NotNull ArmRotationCapabilities armRotation) {
-            this.armRotation = armRotation;
-        }
-
-        public void setCrane(@NotNull CraneCapabilities crane) {
-            this.crane = crane;
-        }
-
-        @Override
-        public void run() {
-            while (!this.easyAuto.isStopRequested()) {
-                this.armRotation.update();
-                this.armExtension.update();
-                this.crane.update();
-            }
-            config.armRotation.setPower(0);
-            config.armExtension.setPower(0);
-            config.liftRight.setPower(0);
-            config.liftLeft.setPower(0);
-        }
-    }
+	public SequentialAction sequentially(AutoAction... actions) {
+		return new SequentialAction(actions);
+	}
 }
