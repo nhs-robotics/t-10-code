@@ -1,5 +1,6 @@
 package t10.localizer.odometry;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import t10.geometry.MovementVector;
