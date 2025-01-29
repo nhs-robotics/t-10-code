@@ -10,7 +10,6 @@ import intothedeep.capabilities.ClawCapabilities;
 import intothedeep.capabilities.CraneCapabilities;
 import org.jetbrains.annotations.NotNull;
 
-import intothedeep.teleop.azazel.AzazelRobotConfiguration;
 import t10.bootstrap.AutonomousOpMode;
 import t10.localizer.odometry.OdometryLocalizer;
 import t10.motion.mecanum.MecanumDriver;
