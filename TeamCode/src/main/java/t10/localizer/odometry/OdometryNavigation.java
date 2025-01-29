@@ -1,5 +1,6 @@
 package t10.localizer.odometry;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import t10.motion.mecanum.MecanumDriver;
@@ -65,6 +66,30 @@ public class OdometryNavigation {
             driveLateral(finalY - odometry.getFieldCentricPose().getY());
             this.odometry.update();
         }
+        driver.setVelocity(new MovementVector(0, 0, 0));
+    }
+
+
+    //Test function
+    public void driveForwardWhileRotating(double distance, double angle, Telemetry telemetry) {
+        double finalY = odometry.getFieldCentricPose().getY() + distance;
+
+        while (Math.abs(finalY - odometry.getFieldCentricPose().getY()) > minError
+            || Math.abs(angle - odometry.getFieldCentricPose().getHeading(AngleUnit.DEGREES)) > minAngleError) {
+            driver.setVelocity(
+                     odometry.changeToRobotCenteredVelocity(new MovementVector(
+                    odometry.getFieldCentricPose().getY() < finalY ? 17 : -17,
+                    0,
+                    0)
+                     ).add(new MovementVector(0,0,odometry.getFieldCentricPose().getHeading(AngleUnit.DEGREES) < angle ? 5 : -5)));
+            odometry.update();
+            telemetry.clearAll();
+            telemetry.addLine("Posx: "+ odometry.getFieldCentricPose().getX());
+            telemetry.addLine("Posy: "+ odometry.getFieldCentricPose().getY());
+            telemetry.addLine("Post: "+ odometry.getFieldCentricPose().getHeading(AngleUnit.DEGREES));
+            telemetry.update();
+        }
+
         driver.setVelocity(new MovementVector(0, 0, 0));
     }
 
