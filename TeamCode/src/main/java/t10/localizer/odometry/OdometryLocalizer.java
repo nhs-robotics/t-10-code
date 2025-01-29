@@ -134,11 +134,11 @@ public class OdometryLocalizer {
 
     public MovementVector changeToRobotCenteredVelocity(MovementVector absoluteVelocity)
     {
-        return OdometryUtils.changeToRobotCenteredVelocity(absoluteVelocity, getFieldCentricPose());
+        return OdometryUtils.changeToRobotCenteredCoordinates(absoluteVelocity, getFieldCentricPose());
     }
 
     public MovementVector changeToRobotCenteredVelocity(double lateral, double horizontal)
     {
-        return OdometryUtils.changeToRobotCenteredVelocity(lateral, horizontal, getFieldCentricPose());
+        return OdometryUtils.changeToRobotCenteredCoordinates(lateral, horizontal, getFieldCentricPose().getHeading(AngleUnit.RADIANS));
     }
 }
