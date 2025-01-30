@@ -9,9 +9,8 @@ import t10.utils.MathUtils;
  * DISTANCE determines the direction; initial and end velocity should be properly signed, target velocity/acceleration/lookahead should be positive
  */
 public class TrapezoidalMotionProfile implements MotionProfile {
-    private final double accelerateEndDistance;
-    private final double cruiseEndDistance;
-    private final double initialVelocity;
+    private final double accelerateDistance;
+    private final double cruiseDistance;
     private final double firstAcceleration, secondAcceleration;
     private final double distance;
     private final double peakVelocity;
@@ -23,8 +22,9 @@ public class TrapezoidalMotionProfile implements MotionProfile {
     private double deltaDistMin = 0;
     public String state = "init";
 
+
+
     public TrapezoidalMotionProfile(
-            double initialVelocity,
             double maxSpeed,
             double endVelocity,
             double acceleration,
@@ -40,30 +40,25 @@ public class TrapezoidalMotionProfile implements MotionProfile {
             throw new IllegalArgumentException();
         }
         //check minimal viability
-        if(Math.abs(distance) < Math.abs(MathUtils.solveDisplacement(endVelocity,initialVelocity,acceleration * Math.signum(endVelocity - initialVelocity))))
+        if(Math.abs(distance) < Math.abs(MathUtils.solveDisplacement(endVelocity,0,acceleration * Math.signum(endVelocity))))
         {
             throw new RuntimeException("parameters have no solution - I need more space to accelerate");
         }
-        this.initialVelocity = initialVelocity;
         this.direction = Math.signum(distance);
         this.distance = distance;
-        if(Math.abs(initialVelocity) > maxSpeed && Math.signum(initialVelocity) == direction)
-        {
-            firstAcceleration = acceleration * direction * -1;
-        }
-        else {
-            firstAcceleration = acceleration * direction;
-        }
+
+        firstAcceleration = acceleration * direction;
+
         secondAcceleration = acceleration * direction * -1;
 
-        double fullAccelerationDistance = Math.abs(MathUtils.solveDisplacement(maxSpeed, initialVelocity, firstAcceleration)) * direction;
+        double fullAccelerationDistance = Math.abs(MathUtils.solveDisplacement(maxSpeed, 0, firstAcceleration)) * direction;
         double targetToEndVelocityDistance = Math.abs(MathUtils.solveDisplacement(endVelocity, maxSpeed, secondAcceleration)) * direction;
 
         if (Math.abs(fullAccelerationDistance + targetToEndVelocityDistance) < distance) {
             // WILL cruise.
             this.peakVelocity = maxSpeed * direction;
-            this.accelerateEndDistance = fullAccelerationDistance;
-            this.cruiseEndDistance = distance - fullAccelerationDistance - targetToEndVelocityDistance;
+            this.accelerateDistance = fullAccelerationDistance;
+            this.cruiseDistance = distance - fullAccelerationDistance - targetToEndVelocityDistance;
         } else {
             // Will NOT cruise.
 
@@ -76,17 +71,13 @@ public class TrapezoidalMotionProfile implements MotionProfile {
             // da + dd = distance (d)
             // (peakVelocity^2 - initialVelocity^2) / (2 * acceleration) + (endVelocity^2 - peakVelocity^2) / (2 * -acceleration) = d
             // Solve for peakVelocity:
-            this.peakVelocity = Math.sqrt((2 * this.distance * this.firstAcceleration + this.initialVelocity * this.initialVelocity + endVelocity * endVelocity) / 2) * direction;
-            this.accelerateEndDistance = MathUtils.solveDisplacement(peakVelocity, initialVelocity, firstAcceleration);
-            this.cruiseEndDistance = 0;
+            this.peakVelocity = Math.sqrt((2 * this.distance * this.firstAcceleration + endVelocity * endVelocity) / 2) * direction;
+            this.accelerateDistance = MathUtils.solveDisplacement(peakVelocity, 0, firstAcceleration);
+            this.cruiseDistance = 0;
         }
 
         this.endVelocity = endVelocity;
         this.lookAhead = lookAhead;
-        if(Math.signum(initialVelocity) != direction) {
-            changedDirection = false;
-        }
-        deltaDistMin = MathUtils.solveDisplacement(0,initialVelocity,firstAcceleration);
     }
 
 
@@ -95,42 +86,28 @@ public class TrapezoidalMotionProfile implements MotionProfile {
      */
     @Override
     public double getVelocity(double deltaDistance) {
-        if(!changedDirection)
-        {
-            deltaDistance += lookAhead * Math.signum(initialVelocity);
-        }
-        else {
-            deltaDistance += lookAhead * direction;
-        }
 
-        if (Math.abs(deltaDistance) < Math.abs(this.accelerateEndDistance) || Math.signum(deltaDistance * accelerateEndDistance) == -1) {
+        deltaDistance += lookAhead * direction;
+
+
+        if (Math.abs(deltaDistance) < Math.abs(this.accelerateDistance)) {
             state = "accelerating";
             // Acceleration phase
-            if(!changedDirection)
-            {
-                if(Math.abs(deltaDistance) < Math.abs(deltaDistMin) && Math.signum(deltaDistance * deltaDistMin) == 1)
-                {
-                    return MathUtils.solveVelocity(initialVelocity,firstAcceleration,deltaDistance) * direction * -1;
-                }
-                else {
-                    changedDirection = true;
-                    return MathUtils.solveVelocity(initialVelocity,firstAcceleration,deltaDistance) * direction;
-                }
-            }
-            else {
-                return MathUtils.solveSpeed(initialVelocity,firstAcceleration,deltaDistance) * direction;
-            }
-        } else if (Math.abs(deltaDistance) < Math.abs(this.cruiseEndDistance + accelerateEndDistance)) {
+
+            return MathUtils.solveSpeed(0, firstAcceleration, deltaDistance) * direction;
+
+        } else if (Math.abs(deltaDistance) < Math.abs(this.cruiseDistance + accelerateDistance)) {
             // Cruise phase
             state = "cruising";
             return this.peakVelocity;
         }
         else {
-            deltaDistance -= lookAhead * direction;
+            deltaDistance -= lookAhead * direction * ((Math.abs(distance) - Math.abs(deltaDistance - lookAhead * direction)) / Math.abs(distance - accelerateDistance - cruiseDistance));
+
             if (Math.abs(deltaDistance) < Math.abs(this.distance)) {
                 // Deceleration phase
                 state = "decelerating";
-                return MathUtils.solveVelocity(this.peakVelocity, secondAcceleration, deltaDistance - (accelerateEndDistance + cruiseEndDistance));
+                return MathUtils.solveVelocity(this.peakVelocity, secondAcceleration, deltaDistance - (accelerateDistance + cruiseDistance));
             } else {
                 // After the motion profile is complete
                 finished = true;
