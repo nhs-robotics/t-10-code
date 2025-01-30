@@ -25,7 +25,7 @@ public class Constants {
     }
 
     public static class TickCounts {
-        public static final double LIFT_MOTOR_TICK_COUNT = 5281.1;
+        public static final double LIFT_MOTOR_TICK_COUNT = ((((((1+(46d/17d))) * (1+(46d/17d))) * (1+(46d/17d))) * (1+(46d/17d))) * 28);
         public static final double MOVEMENT_MOTOR_TICK_COUNT = ((((1 + (46d / 17d))) * (1 + (46d / 11d))) * 28);  // This equation is pulled straight from https://www.gobilda.com/5203-series-yellow-jacket-planetary-gear-motor-19-2-1-ratio-24mm-length-8mm-rex-shaft-312-rpm-3-3-5v-encoder/
     }
 

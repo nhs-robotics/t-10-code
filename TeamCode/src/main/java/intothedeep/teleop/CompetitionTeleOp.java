@@ -65,7 +65,7 @@ public class CompetitionTeleOp extends TeleOpOpMode {
                         crane.setTargetPosition(CraneCapabilities.POSITION_BOTTOM);
                     }
                 }).ok()
-                .a.onPress(() -> this.claw.toggle()).ok()
+                .a.onPress(() -> this.claw.toggleClaw()).ok()
                 .y.onPress(() -> {
                     crane.setTargetPosition(CraneCapabilities.POSITION_HIGH_CHAMBER);
                     armRotation.setTargetPosition(0);

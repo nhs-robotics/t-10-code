@@ -1,14 +1,9 @@
 package intothedeep.auto;
 
-import android.os.SystemClock;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import intothedeep.Constants;
 import intothedeep.capabilities.ArmExtensionCapabilities;
-import intothedeep.capabilities.ArmRotationCapabilities;
 import intothedeep.capabilities.CraneCapabilities;
-import t10.utils.Alliance;
 
 @Autonomous
 public class CompetitionAuto extends EasyAuto {
@@ -51,7 +46,7 @@ public class CompetitionAuto extends EasyAuto {
             telemetry.addLine(Integer.toString(crane.getPositionLeft()));
             telemetry.update();
         }
-        claw.setOpen(true);
+        claw.openClaw();
         crane.setTargetPosition(CraneCapabilities.POSITION_BOTTOM);
         armExtension.setTargetPosition(ArmExtensionCapabilities.POSITION_FULLY_RETRACTED);
         verticalMovement(-16);

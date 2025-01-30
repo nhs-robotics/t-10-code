@@ -65,7 +65,7 @@ public abstract class EasyAuto extends AutonomousOpMode {
         this.armRotation.setTargetPosition(ArmRotationCapabilities.POSITION_INSPECTION);
         this.armExtension.setTargetPosition(ArmExtensionCapabilities.POSITION_FULLY_RETRACTED);
         this.crane.setTargetPosition(CraneCapabilities.POSITION_BOTTOM);
-        this.claw.setOpen(false);  // Keep closed to grasp a block for auto
+        this.claw.closeClaw();  // Keep closed to grasp a block for auto
         this.setInitialPose(alliance, startingTile);
         this.isDone = false;
     }

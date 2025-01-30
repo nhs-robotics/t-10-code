@@ -83,4 +83,9 @@ public class ArmRotationCapabilities {
 
         this.armRotation.setPower(power);
     }
+
+    public int getPosition() {
+        return armRotation.motor.getCurrentPosition();
+
+    }
 }
