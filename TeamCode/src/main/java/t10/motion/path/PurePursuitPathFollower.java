@@ -5,7 +5,6 @@ import static t10.utils.MathUtils.isPointOnLine;
 import java.util.Arrays;
 import java.util.LinkedList;
 
-import android.media.UnsupportedSchemeException;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import t10.geometry.MovementVector;
@@ -28,7 +27,7 @@ public class PurePursuitPathFollower {
 	public final Point[] path;
 
 	/**
-	 * The {@link Localizer<Pose>} that this path follower is using to determine its position.
+	 * The {@link Localizer} that this path follower is using to determine its position.
 	 */
 	public final Localizer<Pose> localizer;
 

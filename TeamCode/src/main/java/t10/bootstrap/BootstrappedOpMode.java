@@ -2,7 +2,6 @@ package t10.bootstrap;
 
 import java.io.IOException;
 
-import android.os.SystemClock;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import t10.metrics.MetricsServer;

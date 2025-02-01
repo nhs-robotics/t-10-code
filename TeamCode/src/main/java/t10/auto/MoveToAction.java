@@ -7,7 +7,6 @@ import t10.geometry.Pose;
 import t10.localizer.Localizer;
 import t10.motion.mecanum.MecanumDriver;
 import t10.utils.MathUtils;
-import t10.utils.OdometryUtils;
 
 public class MoveToAction implements AutoAction {
 	/**
@@ -60,8 +59,8 @@ public class MoveToAction implements AutoAction {
 		);
 
 		this.driver.setVelocityFieldCentric(
-			currentPose,
-			vector
+				currentPose,
+				vector
 		);
 	}
 

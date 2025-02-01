@@ -1,7 +1,6 @@
 package t10.motion.mecanum;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
-
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import t10.geometry.MovementVector;
