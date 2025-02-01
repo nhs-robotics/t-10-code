@@ -53,5 +53,5 @@ jobs:
     - name: Upload Checkstyle Results
       uses: actions/upload-artifact@v4
       with:
-        name: Test Results
+        name: Checkstyle Results
         path: /home/runner/work/t-10-code/t-10-code/TeamCode/build/reports/checkstyle/checkstyle.html
