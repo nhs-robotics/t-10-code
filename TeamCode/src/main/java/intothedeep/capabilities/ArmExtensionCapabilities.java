@@ -2,6 +2,7 @@ package intothedeep.capabilities;
 
 import intothedeep.SnowballConfig;
 
+import t10.Loop;
 import t10.motion.hardware.Motor;
 
 /**
@@ -14,7 +15,7 @@ import t10.motion.hardware.Motor;
  * <li>EXTENDS</li>
  * <li>Position (Ticks) DECREASES</li>
  */
-public class ArmExtensionCapabilities {
+public class ArmExtensionCapabilities implements Loop {
 	public static final int POSITION_FULLY_RETRACTED = 0;
 	public static final int POSITION_FULLY_EXTENDED = -6000;
 	public static final int MAX_ERROR_ALLOWED = 100;
@@ -28,7 +29,8 @@ public class ArmExtensionCapabilities {
 		this.isManuallyControlled = true;
 	}
 
-	public void update() {
+	@Override
+	public void loop() {
 		this.position = this.armExtension.motor.getCurrentPosition();
 
 		if (!this.isManuallyControlled) {

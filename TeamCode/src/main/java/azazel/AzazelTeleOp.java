@@ -50,7 +50,7 @@ public class AzazelTeleOp extends TeleOpOpMode {
         this.capabilities.rotateContainer(positions[position]);
         this.telemetryItem.setValue(this.c.linearSlideRight.motor.getCurrentPosition());
         this.capabilities.update();
-        this.gamepadController.update();
+        this.gamepadController.loop();
         this.driver.useGamepad(this.gamepad1, this.gamepadController.x.isToggled() ? 0.1 : 0.05);
 
         YawPitchRollAngles angles = this.c.imu.getRobotYawPitchRollAngles();

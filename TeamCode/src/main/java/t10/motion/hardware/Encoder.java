@@ -1,13 +1,13 @@
 package t10.motion.hardware;
 
-public abstract class AbstractEncoder {
+public interface Encoder {
 	/**
 	 * @return The current position of the motor in ticks.
 	 */
-	public abstract int getCurrentTicks();
+	int getCurrentTicks();
 
 	/**
 	 * @return The current position of the motor in inches.
 	 */
-	public abstract double getCurrentInches();
+	double getCurrentInches();
 }

@@ -1,4 +1,4 @@
-package t10.localizer.odometry;
+package t10.localizer;
 
 /**
  * A coefficient set used for odometry.

@@ -19,19 +19,17 @@ public class MoveToAction implements AutoAction {
 	 * The maximum amount of error allowed in rotation in degrees. Current recommended is 2 degrees.
 	 */
 	private static final double MAX_ERROR_ROTATION = 2;
-	private final Localizer localizer;
+	private final Localizer<Pose> localizer;
 	private final MecanumDriver driver;
 	private final Pose destinationPose;
-	private final double speed;
 
 	/**
 	 * Moves the robot from its current pose to a new `destinationPose`.
 	 */
-	public MoveToAction(Localizer localizer, MecanumDriver driver, Pose destinationPose, double speed) {
+	public MoveToAction(Localizer<Pose> localizer, MecanumDriver driver, Pose destinationPose) {
 		this.localizer = localizer;
 		this.driver = driver;
 		this.destinationPose = destinationPose;
-		this.speed = speed;
 	}
 
 	@Override
@@ -40,30 +38,45 @@ public class MoveToAction implements AutoAction {
 
 	@Override
 	public void loop() {
-		Pose difference = this.destinationPose.subtract(this.localizer.getFieldCentricPose());
+		Pose currentPose = this.localizer.getFieldCentric();
 
-		MovementVector desiredMovement = new MovementVector(
-				MathUtils.clamp(difference.getY(), -this.speed, this.speed),
-				MathUtils.clamp(difference.getX(), -this.speed, this.speed),
-				MathUtils.clamp(difference.getHeading(AngleUnit.DEGREES), -50, 50),
-				AngleUnit.DEGREES
+		double dy = this.destinationPose.getY() - currentPose.getY();
+		double dx = this.destinationPose.getX() - currentPose.getX();
+		double dh = MathUtils.angleDifference(
+				currentPose.getHeading(AngleUnit.RADIANS),
+				this.destinationPose.getHeading(AngleUnit.RADIANS),
+				AngleUnit.RADIANS
 		);
 
-		MovementVector robotCentricMovementVector = OdometryUtils.changeToRobotCenteredVelocity(
-				desiredMovement,
-				this.localizer.getFieldCentricPose()
+		double vx = 30 / (1 + Math.pow(0.1 * Math.E, dy)) - 15;
+		double vy = 30 / (1 + Math.pow(0.1 * Math.E, dx)) - 15;
+		double vh = 70 / (1 + Math.pow(1.5 * Math.E, -dh)) - 35;
+
+		MovementVector vector = new MovementVector(
+				vx,
+				vy,
+				vh,
+				AngleUnit.RADIANS
 		);
 
-		this.driver.setVelocity(robotCentricMovementVector);
+		this.driver.setVelocityFieldCentric(
+			currentPose,
+			vector
+		);
 	}
 
 	@Override
 	public boolean isComplete() {
-		Pose fieldCentricPose = this.localizer.getFieldCentricPose();
+		Pose fieldCentricPose = this.localizer.getFieldCentric();
 
 		boolean isDistanceComplete = fieldCentricPose.distanceTo(this.destinationPose) < MAX_ERROR_DISTANCE;
 		boolean isRotationComplete = Math.abs(this.destinationPose.getHeading(AngleUnit.DEGREES) - fieldCentricPose.getHeading(AngleUnit.DEGREES)) < MAX_ERROR_ROTATION;
+		boolean isComplete = isDistanceComplete && isRotationComplete;
 
-		return isDistanceComplete && isRotationComplete;
+		if (isComplete) {
+			this.driver.halt();
+		}
+
+		return isComplete;
 	}
 }

@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import t10.localizer.odometry.OdometryLocalizer;
+import t10.localizer.Localizer;
 import t10.motion.hardware.Motor;
 import t10.motion.hardware.MotorEncoder;
 import t10.motion.mecanum.MecanumDriver;
@@ -74,5 +74,5 @@ public abstract class AbstractRobotConfiguration {
 
 	public abstract MecanumDriver createMecanumDriver();
 
-	public abstract OdometryLocalizer createOdometry();
+	public abstract Localizer<?> createLocalizer();
 }

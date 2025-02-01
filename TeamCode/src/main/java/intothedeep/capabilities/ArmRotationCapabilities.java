@@ -2,6 +2,7 @@ package intothedeep.capabilities;
 
 import intothedeep.SnowballConfig;
 
+import t10.Loop;
 import t10.motion.hardware.Motor;
 import t10.utils.PIDController;
 
@@ -16,7 +17,7 @@ import t10.utils.PIDController;
  * <li>Rotate DOWNWARDS</li>
  * <li>Position (Ticks) DECREASES</li>
  */
-public class ArmRotationCapabilities {
+public class ArmRotationCapabilities implements Loop {
 	public static final int POSITION_FULLY_DOWNWARDS = -50;
 	public static final int POSITION_INSPECTION = 725;
 	public static final int POSITION_FULLY_UPWARDS = 788;
@@ -33,7 +34,8 @@ public class ArmRotationCapabilities {
 		this.armRotationStabilizer = new PIDController(0.01, 0, 0);
 	}
 
-	public void update() {
+	@Override
+	public void loop() {
 		this.position = this.armRotation.motor.getCurrentPosition();
 
 		if (!this.isManuallyControlled) {

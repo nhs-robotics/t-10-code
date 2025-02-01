@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 /**
  * A wrapper for an encoder, typically an odometry wheel.
  */
-public class MotorEncoder extends AbstractEncoder {
+public class MotorEncoder implements Encoder {
 	private final DcMotor encoder;
 	private final double ticksPerRevolution;
 	private final double encoderDiameterIn;

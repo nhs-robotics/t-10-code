@@ -1,16 +1,15 @@
 package intothedeep;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.digitalchickenlabs.OctoQuad;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import t10.bootstrap.AbstractRobotConfiguration;
 import t10.bootstrap.Hardware;
-import t10.localizer.odometry.OdometryCoefficientSet;
-import t10.localizer.odometry.OdometryLocalizer;
+import t10.localizer.OdometryCoefficientSet;
+import t10.localizer.OdometryIMULocalizer;
 import t10.motion.hardware.Motor;
 import t10.motion.hardware.OctoQuadEncoder;
 import t10.motion.mecanum.MecanumDriver;
@@ -49,7 +48,7 @@ public class SnowballConfig extends AbstractRobotConfiguration {
 	public Motor br;
 
 	@Hardware(name = "imu")
-	public IMU imu;
+	public BNO055IMU imu;
 
 	@Hardware(
 			name = "LiftRight",
@@ -84,12 +83,8 @@ public class SnowballConfig extends AbstractRobotConfiguration {
 	public SnowballConfig(HardwareMap hardwareMap) {
 		super(hardwareMap);
 
-		this.imu.initialize(
-				new IMU.Parameters(new RevHubOrientationOnRobot(
-						RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
-						RevHubOrientationOnRobot.UsbFacingDirection.UP
-				))
-		);
+		BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+		this.imu.initialize(parameters);
 	}
 
 	@Override
@@ -103,15 +98,17 @@ public class SnowballConfig extends AbstractRobotConfiguration {
 		);
 	}
 
-	public OdometryLocalizer createOdometry() {
-		return new OdometryLocalizer(
+	@Override
+	public OdometryIMULocalizer createLocalizer() {
+		return new OdometryIMULocalizer(
 				new OdometryCoefficientSet(1, 1, -1),
 				// 4-6-5 is right-left-perpendicular
 				new OctoQuadEncoder(octoQuad, 4, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
 				new OctoQuadEncoder(octoQuad, 6, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
 				new OctoQuadEncoder(octoQuad, 5, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
 				11.5,
-				-6.5
+				-6.5,
+				this.imu
 		);
 	}
 }

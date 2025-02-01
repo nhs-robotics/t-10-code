@@ -3,6 +3,7 @@ package t10.gamepad;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import intothedeep.Constants;
 
+import t10.Loop;
 import t10.gamepad.input.types.GButton;
 import t10.gamepad.input.types.GJoystick;
 import t10.gamepad.input.types.GTrigger;
@@ -10,7 +11,7 @@ import t10.gamepad.input.types.GTrigger;
 /**
  * Declarative gamepad input framework.
  */
-public class GController {
+public class GController implements Loop {
 	// Gamepad buttons
 	public final GButton x;
 	public final GButton y;
@@ -65,31 +66,28 @@ public class GController {
 		this.rightTrigger = new GTrigger(this, () -> gamepad.right_trigger);
 	}
 
-	/**
-	 * Updates the underlying state of the gamepad.
-	 * IMPORTANT: Call this method in loop.
-	 */
-	public void update() {
-		this.x.update();
-		this.y.update();
-		this.a.update();
-		this.b.update();
+	@Override
+	public void loop() {
+		this.x.loop();
+		this.y.loop();
+		this.a.loop();
+		this.b.loop();
 
-		this.leftBumper.update();
-		this.rightBumper.update();
+		this.leftBumper.loop();
+		this.rightBumper.loop();
 
-		this.dpadUp.update();
-		this.dpadDown.update();
-		this.dpadLeft.update();
-		this.dpadRight.update();
+		this.dpadUp.loop();
+		this.dpadDown.loop();
+		this.dpadLeft.loop();
+		this.dpadRight.loop();
 
-		this.leftJoystickButton.update();
-		this.rightJoystickButton.update();
+		this.leftJoystickButton.loop();
+		this.rightJoystickButton.loop();
 
-		this.leftJoystick.update();
-		this.rightJoystick.update();
+		this.leftJoystick.loop();
+		this.rightJoystick.loop();
 
-		this.leftTrigger.update();
-		this.rightTrigger.update();
+		this.leftTrigger.loop();
+		this.rightTrigger.loop();
 	}
 }

@@ -5,6 +5,7 @@ import static t10.utils.MathUtils.isPointOnLine;
 import java.util.Arrays;
 import java.util.LinkedList;
 
+import android.media.UnsupportedSchemeException;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import t10.geometry.MovementVector;
@@ -27,9 +28,9 @@ public class PurePursuitPathFollower {
 	public final Point[] path;
 
 	/**
-	 * The {@link Localizer} that this path follower is using to determine its position.
+	 * The {@link Localizer<Pose>} that this path follower is using to determine its position.
 	 */
-	public final Localizer localizer;
+	public final Localizer<Pose> localizer;
 
 	/**
 	 * This is the distance in inches of how far ahead on the path the robot will aim towards.
@@ -44,7 +45,7 @@ public class PurePursuitPathFollower {
 	/**
 	 * The angle that the robot was last looking.
 	 */
-	private double lastAngle;
+	private double lastTurningAngle;
 
 	/**
 	 * Creates a path follower to follow the path specified in {@code path}.
@@ -54,7 +55,7 @@ public class PurePursuitPathFollower {
 	 * @param lookaheadDistance The distance, in inches, the robot will aim towards on the path.
 	 * @param speed             The speed the robot will attempt to follow the path at.
 	 */
-	public PurePursuitPathFollower(Point[] path, Localizer localizer, double lookaheadDistance, double speed) {
+	public PurePursuitPathFollower(Point[] path, Localizer<Pose> localizer, double lookaheadDistance, double speed) {
 		if (path.length < 2) {
 			throw new IllegalArgumentException("path must contain at least two points (a start and an end)");
 		}
@@ -72,13 +73,22 @@ public class PurePursuitPathFollower {
 	 * @return True if the path has been fully followed, false if following is still in progress.
 	 */
 	public boolean follow(MecanumDriver mecanumDriver) throws IllegalStateException {
-		Pose currentPose = this.localizer.getFieldCentricPose();
+		Pose currentPose = this.localizer.getFieldCentric();
 		Point lookaheadPoint = getLookaheadPoint(
 				currentPose,
 				this.lookaheadDistance
 		);
 
 		if (lookaheadPoint == null) throw new IllegalStateException("No Lookahead Point Found");
+
+		Point cornerCheckingPoint = getLookaheadPoint(
+				currentPose,
+				this.speed / 2
+		);
+
+		if (cornerCheckingPoint == null) {
+			cornerCheckingPoint = lookaheadPoint;
+		}
 
 		if (currentPose.distanceTo(lookaheadPoint) < FOLLOWER_STOP_DISTANCE) {
 			mecanumDriver.halt();
@@ -88,7 +98,8 @@ public class PurePursuitPathFollower {
 		moveTowardsPosition(
 				mecanumDriver,
 				currentPose,
-				lookaheadPoint
+				lookaheadPoint,
+				cornerCheckingPoint
 		);
 
 		return false;
@@ -106,7 +117,7 @@ public class PurePursuitPathFollower {
 			Point p2 = this.path[i + 1];
 
 			if (isPointOnLine(p1, p2, targetPoint)) {
-				distanceTraveled += p1.distanceTo(this.localizer.getFieldCentricPose());
+				distanceTraveled += p1.distanceTo(this.localizer.getFieldCentric());
 				break;
 			} else {
 				distanceTraveled += p1.distanceTo(p2);
@@ -119,21 +130,29 @@ public class PurePursuitPathFollower {
 	/**
 	 * Moves the robot towards the next position on the path.
 	 *
-	 * @param mecanumDriver The mecanum driver that this robot uses to drive.
-	 * @param currentPose   The current location of this robot on the field.
-	 * @param targetPoint   The lookahead point that the robot is aiming towards.
+	 * @param mecanumDriver       The mecanum driver that this robot uses to drive.
+	 * @param currentPose         The current location of this robot on the field.
+	 * @param targetPoint         The lookahead point that the robot is aiming towards.
+	 * @param cornerCheckingPoint This point is used to calculate the angle that the robot will be turning around to slow down around corners.
 	 */
-	private void moveTowardsPosition(MecanumDriver mecanumDriver, Pose currentPose, Point targetPoint) {
+	private void moveTowardsPosition(MecanumDriver mecanumDriver, Pose currentPose, Point targetPoint, Point cornerCheckingPoint) {
 		// The distance between the robot's current location and its target position.
 		double dx = targetPoint.getX() - currentPose.getX();
 		double dy = targetPoint.getY() - currentPose.getY();
 
 		// The angle between the robot's current location and its target position
-		double angle = Math.atan2(dy, dx);
+		double targetAngle = Math.atan2(dy, dx);
+
+		// The distance between the robot's current location and its target position.
+		double dxCorner = cornerCheckingPoint.getX() - currentPose.getX();
+		double dyCorner = cornerCheckingPoint.getY() - currentPose.getY();
+
+		// The angle between the robot's current location and its target position
+		double turningAngle = Math.atan2(dyCorner, dxCorner);
 
 		// The difference between the robots current angle and its last angle. This is used to slow the robot when it
 		// goes around corners
-		double angleDifference = MathUtils.angleDifference(angle, this.lastAngle, AngleUnit.RADIANS);
+		double turningAngleDifference = MathUtils.angleDifference(turningAngle, this.lastTurningAngle, AngleUnit.RADIANS);
 
 		// Determines the velocity as a scalar
 		double velocity = Math.max(
@@ -143,15 +162,15 @@ public class PurePursuitPathFollower {
 				//  |                |                                         |--slows the robot when it approaches its
 				//  |                |                                         |  destination
 				//  |                |                                         |
-				this.speed * (0.75 - angleDifference) * (currentPose.distanceTo(targetPoint) / this.lookaheadDistance)
+				this.speed * (0.75 - turningAngleDifference) * (currentPose.distanceTo(targetPoint) / this.lookaheadDistance)
 		);
 
 		// Sets the velocity as a vector so that the robot moves in the correct direction
 		mecanumDriver.setVelocity(
 				OdometryUtils.changeToRobotCenteredVelocity(
 						new MovementVector(
-								Math.sin(angle) * velocity,
-								Math.cos(angle) * velocity,
+								Math.sin(targetAngle) * velocity,
+								Math.cos(targetAngle) * velocity,
 								0,
 								AngleUnit.DEGREES
 						),
@@ -160,7 +179,7 @@ public class PurePursuitPathFollower {
 		);
 
 		// Update the last angle to determine the angle difference on the next call
-		this.lastAngle = angle;
+		this.lastTurningAngle = turningAngle;
 	}
 
 	private double signumWithSpecialCase(double n) {
@@ -249,7 +268,7 @@ public class PurePursuitPathFollower {
 	public static class Builder {
 		private final LinkedList<Point> path;
 		private double lookaheadDistance;
-		private Localizer localizer;
+		private Localizer<Pose> localizer;
 		private double speed;
 
 		public Builder() {
@@ -311,7 +330,7 @@ public class PurePursuitPathFollower {
 			return this;
 		}
 
-		public Builder setLocalizer(Localizer localizer) {
+		public Builder setLocalizer(Localizer<Pose> localizer) {
 			this.localizer = localizer;
 			return this;
 		}

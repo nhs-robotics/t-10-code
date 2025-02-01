@@ -41,16 +41,6 @@ public abstract class BootstrappedOpMode extends OpMode {
         this.metrics.start();
     }
 
-    /**
-     * Waits a desired number of seconds.
-     * <strong>{@link Thread#sleep(long)} does not work, use this instead!</strong>
-     *
-     * @param seconds Number of seconds to wait
-     */
-    public void sleep(double seconds) {
-        SystemClock.sleep((long) (1000L * seconds));
-    }
-
     @Override
     public void init() {
         this.configureSystemOut();

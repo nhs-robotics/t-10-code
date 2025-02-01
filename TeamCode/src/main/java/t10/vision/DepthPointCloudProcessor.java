@@ -15,23 +15,22 @@ import org.opencv.imgproc.Imgproc;
 import t10.ai.DepthEstimator;
 import t10.geometry.Point3;
 import t10.geometry.Pose;
-import t10.localizer.DepthPointCloudTransformer;
 import t10.localizer.Localizer;
 
 /**
  * Unstable. Untested API.
  */
 public class DepthPointCloudProcessor implements VisionProcessor, AutoCloseable {
-	private final Localizer localizer;
+	private final Localizer<Pose> localizer;
 	private final DistanceSensor distanceSensor;
 	private final int pixelX;
 	private final int pixelY;
 	private DepthEstimator depthEstimator;
-	private DepthPointCloudTransformer pointCloudTransformer;
+	private DepthEstimator.DepthPointCloudTransformer pointCloudTransformer;
 	private Mat resized;
 	private List<Point3> pointCloud;
 
-	public DepthPointCloudProcessor(Localizer localizer, DistanceSensor distanceSensor, int pixelX, int pixelY) {
+	public DepthPointCloudProcessor(Localizer<Pose> localizer, DistanceSensor distanceSensor, int pixelX, int pixelY) {
 		this.localizer = localizer;
 		this.distanceSensor = distanceSensor;
 		this.pixelX = pixelX;
@@ -51,7 +50,7 @@ public class DepthPointCloudProcessor implements VisionProcessor, AutoCloseable 
 	public void init(int width, int height, CameraCalibration cameraCalibration) {
 		try {
 			this.resized = new Mat();
-			this.pointCloudTransformer = new DepthPointCloudTransformer(
+			this.pointCloudTransformer = new DepthEstimator.DepthPointCloudTransformer(
 					cameraCalibration.focalLengthX,
 					cameraCalibration.focalLengthY,
 					cameraCalibration.principalPointX,
@@ -69,7 +68,7 @@ public class DepthPointCloudProcessor implements VisionProcessor, AutoCloseable 
 		Imgproc.resize(mat, this.resized, new Size(mat.width() / 4d, mat.height() / 4d));
 
 		try {
-			Pose absolutePose = this.localizer.getFieldCentricPose();
+			Pose absolutePose = this.localizer.getFieldCentric();
 			float[][] depthMatrix = this.depthEstimator.run(this.resized);
 
 			this.pointCloudTransformer.transformToAbsoluteDepth(

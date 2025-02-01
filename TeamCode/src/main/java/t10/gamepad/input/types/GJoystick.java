@@ -23,7 +23,7 @@ public class GJoystick implements GInput, GAnalog<GJoystick> {
 	}
 
 	@Override
-	public void update() {
+	public void loop() {
 		float currentX = this.xValueSupplier.get();
 		float currentY = this.yValueSupplier.get();
 

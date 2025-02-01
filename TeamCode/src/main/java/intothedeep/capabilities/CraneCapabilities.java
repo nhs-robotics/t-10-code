@@ -2,11 +2,12 @@ package intothedeep.capabilities;
 
 import intothedeep.SnowballConfig;
 
+import t10.Loop;
 import t10.motion.hardware.Motor;
 import t10.utils.MathUtils;
 import t10.utils.PIDController;
 
-public class CraneCapabilities {
+public class CraneCapabilities implements Loop {
 	public static final int POSITION_BOTTOM = 0;
 	public static final int POSITION_LOW_BASKET = 1800;
 	public static final int POSITION_HIGH_BASKET = 3450;
@@ -31,7 +32,8 @@ public class CraneCapabilities {
 		this.stabilizerRight = new PIDController(0.01, 0, 0);
 	}
 
-	public void update() {
+	@Override
+	public void loop() {
 		this.positionLeft = this.liftLeft.motor.getCurrentPosition();
 		this.positionRight = this.liftRight.motor.getCurrentPosition();
 

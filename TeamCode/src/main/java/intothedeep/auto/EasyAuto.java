@@ -15,23 +15,22 @@ import t10.auto.FollowPathAction;
 import t10.auto.MoveToAction;
 import t10.auto.SequentialAction;
 import t10.auto.SimultaneousAction;
+import t10.auto.SleepAction;
 import t10.bootstrap.AutonomousOpMode;
 import t10.geometry.Pose;
 import t10.localizer.Localizer;
-import t10.localizer.odometry.OdometryLocalizer;
 import t10.motion.mecanum.MecanumDriver;
 import t10.motion.path.PurePursuitPathFollower;
 
 public abstract class EasyAuto extends AutonomousOpMode {
 	private final Pose startPose;
 	public MecanumDriver driver;
-	public OdometryLocalizer odometry;
 	public SnowballConfig config;
 	public ArmExtensionCapabilities armExtension;
 	public ArmRotationCapabilities armRotation;
 	public ClawCapabilities claw;
 	public CraneCapabilities crane;
-	public Localizer localizer;
+	public Localizer<Pose> localizer;
 
 	public EasyAuto(Pose startPose) {
 		this.startPose = startPose;
@@ -42,9 +41,8 @@ public abstract class EasyAuto extends AutonomousOpMode {
 		this.config = new SnowballConfig(this.hardwareMap);
 
 		// Driving & Localization
-		this.driver = config.createMecanumDriver();
-		this.odometry = config.createOdometry();
-		this.localizer = new Localizer(null, this.odometry, this.startPose);
+		this.driver = this.config.createMecanumDriver();
+		this.localizer = this.config.createLocalizer();
 
 		// Capabilities
 		this.armExtension = new ArmExtensionCapabilities(config);
@@ -61,10 +59,10 @@ public abstract class EasyAuto extends AutonomousOpMode {
 
 	@Override
 	public void loop() {
-		this.odometry.update();
-		this.armRotation.update();
-		this.armExtension.update();
-		this.crane.update();
+		this.localizer.loop();
+		this.armRotation.loop();
+		this.armExtension.loop();
+		this.crane.loop();
 	}
 
 	@Override
@@ -77,8 +75,8 @@ public abstract class EasyAuto extends AutonomousOpMode {
 		this.config.liftLeft.setPower(0);
 	}
 
-	public MoveToAction moveTo(Pose destinationPose, double speed) {
-		return new MoveToAction(this.localizer, this.driver, destinationPose, speed);
+	public MoveToAction moveTo(Pose destinationPose) {
+		return new MoveToAction(this.localizer, this.driver, destinationPose);
 	}
 
 	public ArmExtensionAction armExtension(int position) {
@@ -107,5 +105,9 @@ public abstract class EasyAuto extends AutonomousOpMode {
 
 	public SequentialAction sequentially(AutoAction... actions) {
 		return new SequentialAction(actions);
+	}
+
+	public SleepAction sleep(long ms) {
+		return new SleepAction(ms);
 	}
 }

@@ -7,22 +7,22 @@ public class MecanumCoefficientSet {
 	/**
 	 * Coefficient for the front left motor.
 	 */
-	public final double frontLeft;
+	public double frontLeft;
 
 	/**
 	 * Coefficient for the front right motor.
 	 */
-	public final double frontRight;
+	public double frontRight;
 
 	/**
 	 * Coefficient for the back left motor.
 	 */
-	public final double backLeft;
+	public double backLeft;
 
 	/**
 	 * Coefficient for the back right motor.
 	 */
-	public final double backRight;
+	public double backRight;
 
 	/**
 	 * Coefficients for each respective motor.

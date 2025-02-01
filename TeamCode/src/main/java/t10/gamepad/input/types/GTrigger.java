@@ -22,7 +22,7 @@ public class GTrigger implements GInput, GOnPress<GTrigger>, GOnRelease<GTrigger
 	}
 
 	@Override
-	public void update() {
+	public void loop() {
 		float value = this.valueGetter.get();
 
 		if (this.onPress != null && value != 0 && this.lastValue == 0) {

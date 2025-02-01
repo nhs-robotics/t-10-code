@@ -2,7 +2,7 @@ package t10.motion.hardware;
 
 import com.qualcomm.hardware.digitalchickenlabs.OctoQuad;
 
-public class OctoQuadEncoder extends AbstractEncoder {
+public class OctoQuadEncoder implements Encoder {
 	private final OctoQuad octoQuad;
 	private final int channel;
 	private final double ticksPerRevolution;

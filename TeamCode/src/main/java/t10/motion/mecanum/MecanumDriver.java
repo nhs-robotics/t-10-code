@@ -2,7 +2,10 @@ package t10.motion.mecanum;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+
 import t10.geometry.MovementVector;
+import t10.geometry.Pose;
 import t10.motion.hardware.Motor;
 
 /**
@@ -49,6 +52,21 @@ public class MecanumDriver {
 		this.frontRight.setVelocity(frontRight);
 		this.backLeft.setVelocity(backLeft);
 		this.backRight.setVelocity(backRight);
+	}
+
+	public void setVelocityFieldCentric(Pose currentPose, MovementVector vector) {
+		double theta = currentPose.getHeading(AngleUnit.RADIANS);
+		double forwardRelative = vector.getVertical() * Math.cos(theta) + vector.getHorizontal() * Math.sin(theta);
+		double rightwardRelative = -vector.getVertical() * Math.sin(theta) + vector.getHorizontal() * Math.cos(theta);
+
+		this.setVelocity(
+				new MovementVector(
+						forwardRelative,
+						rightwardRelative,
+						vector.getRotation(),
+						vector.getAngleUnit()
+				)
+		);
 	}
 
 	public void halt() {

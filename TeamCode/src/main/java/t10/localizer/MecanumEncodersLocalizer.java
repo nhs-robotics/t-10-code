@@ -1,28 +1,30 @@
-package t10.localizer.mecanum;
+package t10.localizer;
 
 import intothedeep.Constants;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import t10.geometry.Pose;
 import t10.motion.hardware.MotorEncoder;
+import t10.motion.mecanum.MecanumCoefficientMatrix;
 import t10.motion.mecanum.MecanumDriver;
 
 /**
- * Unstable API. Untested.A localizer for a mecanum drivetrain.
+ * A localizer for a mecanum drivetrain. Not recommended, but it works to an extent.
  */
-// TODO: Might need to apply coefficients
-public class MecanumEncodersLocalizer {
+public class MecanumEncodersLocalizer implements Localizer<Pose> {
 	private final MotorEncoder fr;
 	private final MotorEncoder br;
 	private final MotorEncoder fl;
 	private final MotorEncoder bl;
+	private final MecanumCoefficientMatrix coefficients;
 	private double lastFrInches;
 	private double lastBrInches;
 	private double lastFlInches;
 	private double lastBlInches;
-	private Pose currentPose;
+	private Pose fieldCentricPose;
 
 	public MecanumEncodersLocalizer(MecanumDriver driver) {
+		this.coefficients = driver.omniDriveCoefficients;
 		this.fr = driver.frontRight.encoder;
 		this.br = driver.backRight.encoder;
 		this.fl = driver.frontLeft.encoder;
@@ -31,19 +33,20 @@ public class MecanumEncodersLocalizer {
 		this.lastBrInches = this.br.getCurrentInches();
 		this.lastFlInches = this.fl.getCurrentInches();
 		this.lastBlInches = this.bl.getCurrentInches();
-		resetPose();
+		this.setFieldCentric(new Pose(0, 0, 0, AngleUnit.DEGREES));
 	}
 
-	public void update() {
+	@Override
+	public void loop() {
 		// Calculate change in encoder ticks
-		double frInches = this.fr.getCurrentInches();
-		double brInches = this.br.getCurrentInches();
-		double flInches = this.fl.getCurrentInches();
-		double blInches = this.bl.getCurrentInches();
-		double deltaFr = frInches - lastFrInches;
-		double deltaBr = brInches - lastBrInches;
-		double deltaFl = flInches - lastFlInches;
-		double deltaBl = blInches - lastBlInches;
+		double frInches = this.fr.getCurrentInches() * this.coefficients.totals.frontRight;
+		double brInches = this.br.getCurrentInches() * this.coefficients.totals.backRight;
+		double flInches = this.fl.getCurrentInches() * this.coefficients.totals.frontLeft;
+		double blInches = this.bl.getCurrentInches() * this.coefficients.totals.backLeft;
+		double deltaFr = frInches - this.lastFrInches;
+		double deltaBr = brInches - this.lastBrInches;
+		double deltaFl = flInches - this.lastFlInches;
+		double deltaBl = blInches - this.lastBlInches;
 
 		// Calculate robot moveTo components
 		double deltaForward = (deltaFl + deltaFr + deltaBl + deltaBr) / 4.0;
@@ -51,13 +54,13 @@ public class MecanumEncodersLocalizer {
 		double deltaRotation = (deltaFl - deltaFr + deltaBl - deltaBr) / (4.0 * Constants.Robot.ROBOT_WIDTH_IN);
 
 		// Convert to global coordinates based on current heading
-		double currentHeading = currentPose.getHeading(AngleUnit.RADIANS);
+		double currentHeading = this.fieldCentricPose.getHeading(AngleUnit.RADIANS) + deltaRotation;
 		double deltaX = deltaRight * Math.cos(currentHeading) - deltaForward * Math.sin(currentHeading);
 		double deltaY = deltaForward * Math.cos(currentHeading) + deltaRight * Math.sin(currentHeading);
 
 		// Update pose
 		Pose deltaPose = new Pose(deltaY, deltaX, deltaRotation, AngleUnit.RADIANS);
-		this.currentPose = this.currentPose.add(deltaPose);
+		this.fieldCentricPose = this.fieldCentricPose.add(deltaPose);
 
 		// Update last tick values
 		this.lastFrInches = frInches;
@@ -66,11 +69,17 @@ public class MecanumEncodersLocalizer {
 		this.lastBlInches = blInches;
 	}
 
-	public void resetPose() {
-		this.currentPose = new Pose(0, 0, 0, AngleUnit.RADIANS);
+	@Override
+	public Pose getFieldCentric() {
+		return this.fieldCentricPose;
 	}
 
-	public Pose getCurrentPose() {
-		return currentPose;
+	@Override
+	public void setFieldCentric(Pose pose) {
+		this.fieldCentricPose = pose;
+		this.lastFrInches = this.fr.getCurrentInches();
+		this.lastBrInches = this.br.getCurrentInches();
+		this.lastFlInches = this.fl.getCurrentInches();
+		this.lastBlInches = this.bl.getCurrentInches();
 	}
 }

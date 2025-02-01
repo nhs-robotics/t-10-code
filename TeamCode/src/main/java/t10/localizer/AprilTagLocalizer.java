@@ -1,4 +1,4 @@
-package t10.localizer.apriltag;
+package t10.localizer;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -15,13 +15,14 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import t10.geometry.Point;
 import t10.utils.MathUtils;
 
-public class AprilTagLocalizer {
+public class AprilTagLocalizer implements Localizer<Point> {
 	public final AprilTagProcessor aprilTagProcessor;
 
 	/**
 	 * Only April Tags closer than this distance to the robot will be considered.
 	 */
 	private final double distanceRejectThresholdIn;
+	private Point fieldCentricPoint;
 
 	public AprilTagLocalizer(double fx, double fy, double px, double py) {
 		this(AprilTagProcessor.TagFamily.TAG_36h11, true, fx, fy, px, py, 18);
@@ -45,11 +46,12 @@ public class AprilTagLocalizer {
 				.build();
 	}
 
-	public Point getFieldLocation() {
+	@Override
+	public void loop() {
 		ArrayList<AprilTagDetection> detections = this.aprilTagProcessor.getDetections();
 
 		if (detections.isEmpty()) {
-			return null;
+			return;
 		}
 
 		List<Double> x = new LinkedList<>();
@@ -73,12 +75,21 @@ public class AprilTagLocalizer {
 		}
 
 		if (weights.isEmpty()) {
-			return null;
+			return;
 		}
 
 		double fcPositionX = MathUtils.weightedAverage(x, weights);
 		double fcPositionY = MathUtils.weightedAverage(y, weights);
 
-		return new Point(fcPositionX, fcPositionY);
+		this.fieldCentricPoint = new Point(fcPositionX, fcPositionY);
+	}
+
+	@Override
+	public void setFieldCentric(Point point) {
+	}
+
+	@Override
+	public Point getFieldCentric() {
+		return this.fieldCentricPoint;
 	}
 }

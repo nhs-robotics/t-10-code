@@ -13,7 +13,7 @@ import t10.bootstrap.TeleOpOpMode;
 import t10.gamepad.GController;
 import t10.geometry.MovementVector;
 import t10.geometry.Pose;
-import t10.localizer.odometry.OdometryLocalizer;
+import t10.localizer.Localizer;
 import t10.motion.mecanum.MecanumDriver;
 
 @TeleOp
@@ -27,7 +27,7 @@ public class CompetitionTeleOp extends TeleOpOpMode {
 	private ArmExtensionCapabilities armExtension;
 	private ArmRotationCapabilities armRotation;
 	private Telemetry.Item horizontal, vertical, angle, cranePos;
-	private OdometryLocalizer odometry;
+	private Localizer<Pose> localizer;
 	double speed = 3;
 
 	@Override
@@ -42,6 +42,7 @@ public class CompetitionTeleOp extends TeleOpOpMode {
 
 		// Driving
 		this.driver = this.config.createMecanumDriver();
+		this.localizer = this.config.createLocalizer();
 
 		// Gamepad
 		// G1 controls the robot's moveTo.
@@ -71,7 +72,6 @@ public class CompetitionTeleOp extends TeleOpOpMode {
 					crane.setTargetPosition(CraneCapabilities.POSITION_HIGH_CHAMBER);
 					armRotation.setTargetPosition(0);
 				}).ok();
-		odometry = config.createOdometry();
 
 		this.vertical = telemetry.addData("y: ", 0);
 		this.horizontal = telemetry.addData("x: ", 0);
@@ -81,7 +81,7 @@ public class CompetitionTeleOp extends TeleOpOpMode {
 
 	@Override
 	public void loop() {
-		Pose pose = odometry.getFieldCentricPose();
+		Pose pose = this.localizer.getFieldCentric();
 		vertical.setValue(pose.getY());
 		horizontal.setValue(pose.getX());
 		angle.setValue(pose.getHeading(AngleUnit.DEGREES));
@@ -91,12 +91,12 @@ public class CompetitionTeleOp extends TeleOpOpMode {
 			this.driver.useGamepad(this.gamepad1, this.g1.x.isToggled() ? 1 : 0.25);
 		}
 
-		this.g2.update();
-		this.g1.update();
-		this.crane.update();
+		this.g1.loop();
+		this.g2.loop();
+		this.crane.loop();
 		this.telemetry.update();
-		this.odometry.update();
-		this.armExtension.update();
-		this.armRotation.update();
+		this.localizer.loop();
+		this.armExtension.loop();
+		this.armRotation.loop();
 	}
 }

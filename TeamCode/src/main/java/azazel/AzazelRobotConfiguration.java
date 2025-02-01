@@ -9,8 +9,8 @@ import intothedeep.Constants;
 
 import t10.bootstrap.AbstractRobotConfiguration;
 import t10.bootstrap.Hardware;
-import t10.localizer.odometry.OdometryCoefficientSet;
-import t10.localizer.odometry.OdometryLocalizer;
+import t10.localizer.OdometryCoefficientSet;
+import t10.localizer.OdometryLocalizer;
 import t10.motion.hardware.Motor;
 import t10.motion.mecanum.MecanumDriver;
 import t10.vision.Webcam;
@@ -85,7 +85,7 @@ public class AzazelRobotConfiguration extends AbstractRobotConfiguration {
 	}
 
 	@Override
-	public OdometryLocalizer createOdometry() {
+	public OdometryLocalizer createLocalizer() {
 		return new OdometryLocalizer(
 				OdometryCoefficientSet.DEFAULT,
 				spinningIntake.encoder,

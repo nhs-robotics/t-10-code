@@ -15,6 +15,7 @@ import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 
+import t10.Loop;
 import t10.bootstrap.BootstrappedOpMode;
 import t10.geometry.Point;
 import t10.geometry.Pose;
@@ -24,10 +25,9 @@ import t10.metrics.packet.MetricsPacket;
 import t10.metrics.packet.MetricsUpdatePacket;
 import t10.vision.Webcam;
 
-public class MetricsServer extends WebSocketServer {
+public class MetricsServer extends WebSocketServer implements Loop {
 	private final BootstrappedOpMode opMode;
 	private final List<Field> metricFields;
-	private final Timer timer;
 	private Webcam webcam;
 
 	public MetricsServer(BootstrappedOpMode opMode) {
@@ -41,29 +41,33 @@ public class MetricsServer extends WebSocketServer {
 			}
 		}
 
-		this.timer = new Timer(false);
 		this.setReuseAddr(true);
 		this.setTcpNoDelay(true);
 	}
 
+	@Override
 	public void onOpen(WebSocket conn, ClientHandshake handshake) {
 		conn.send(new MetricsNewConnectionPacket(this.opMode).toString());
 	}
 
+	@Override
 	public void onClose(WebSocket conn, int code, String reason, boolean remote) {
 	}
 
+	@Override
 	public void onMessage(WebSocket conn, String message) {
 	}
 
+	@Override
 	public void onError(WebSocket conn, Exception ex) {
 	}
 
-	public void sendPacket(MetricsPacket packet) {
-		this.broadcast(packet.toString());
+	@Override
+	public void onStart() {
 	}
 
-	public void broadcastMetricUpdates() {
+	@Override
+	public void loop() {
 		if (this.webcam != null) {
 			webcam.visionPortal.getFrameBitmap(Continuation.createTrivial(bitmap -> {
 				if (MetricsServer.this.getConnections().isEmpty()) {
@@ -122,21 +126,8 @@ public class MetricsServer extends WebSocketServer {
 		}
 	}
 
-	@Override
-	public void onStart() {
-		this.timer.schedule(new TimerTask() {
-			@Override
-			public void run() {
-				broadcastMetricUpdates();
-			}
-		}, 0, 100);
-	}
-
-	@Override
-	public void stop(int timeout) throws InterruptedException {
-		this.timer.cancel();
-		this.timer.purge();
-		super.stop(timeout);
+	public void sendPacket(MetricsPacket packet) {
+		this.broadcast(packet.toString());
 	}
 
 	public void streamWebcam(Webcam webcam) {

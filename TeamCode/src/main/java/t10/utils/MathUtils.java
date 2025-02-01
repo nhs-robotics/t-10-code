@@ -153,4 +153,12 @@ public class MathUtils {
 	public static int average(int a, int b) {
 		return (a + b) / 2;
 	}
+
+	public static double mapAngle360(float angleRadians) {
+		if (angleRadians < 0) {
+			return 2 * Math.PI + angleRadians;
+		} else {
+			return angleRadians;
+		}
+	}
 }

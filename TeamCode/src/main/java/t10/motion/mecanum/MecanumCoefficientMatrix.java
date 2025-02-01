@@ -20,22 +20,22 @@ public class MecanumCoefficientMatrix {
 	/**
 	 * The total coefficient set that is primarily used to adjust coefficients.
 	 */
-	public final MecanumCoefficientSet totals;
+	public MecanumCoefficientSet totals;
 
 	/**
 	 * The default vertical coefficient set (FL, FR, BL, BR).
 	 */
-	public final MecanumCoefficientSet vertical = new MecanumCoefficientSet(1, 1, 1, 1);
+	public MecanumCoefficientSet vertical = new MecanumCoefficientSet(1, 1, 1, 1);
 
 	/**
 	 * The default horizontal coefficient set (FL, FR, BL, BR).
 	 */
-	public final MecanumCoefficientSet horizontal = new MecanumCoefficientSet(1, -1, -1, 1);
+	public MecanumCoefficientSet horizontal = new MecanumCoefficientSet(1, -1, -1, 1);
 
 	/**
 	 * The default rotational coefficient set (FL, FR, BL, BR).
 	 */
-	public final MecanumCoefficientSet rotational = new MecanumCoefficientSet(1, -1, 1, -1);
+	public MecanumCoefficientSet rotational = new MecanumCoefficientSet(1, -1, 1, -1);
 
 	/**
 	 * Creates a new coefficient matrix.

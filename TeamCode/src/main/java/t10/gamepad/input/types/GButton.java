@@ -24,7 +24,7 @@ public class GButton implements GInput, GOnPress<GButton>, GOnRelease<GButton>, 
 	}
 
 	@Override
-	public void update() {
+	public void loop() {
 		boolean isDown = this.isDown.get();
 
 		if (this.onPress != null && isDown && !this.wasDownLast) {

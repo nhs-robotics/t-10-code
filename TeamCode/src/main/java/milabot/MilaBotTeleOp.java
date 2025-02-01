@@ -11,7 +11,8 @@ import t10.bootstrap.AbstractRobotConfiguration;
 import t10.bootstrap.Hardware;
 import t10.bootstrap.TeleOpOpMode;
 import t10.gamepad.GController;
-import t10.localizer.odometry.OdometryLocalizer;
+import t10.geometry.Pose;
+import t10.localizer.Localizer;
 import t10.motion.hardware.Motor;
 import t10.motion.mecanum.MecanumCoefficientMatrix;
 import t10.motion.mecanum.MecanumDriver;
@@ -62,7 +63,7 @@ public class MilaBotTeleOp extends TeleOpOpMode {
 		this.driver.useGamepad(this.gamepad1, this.gamepad.rightBumper.isToggled() ? 0.5 : 1);
 		this.smallArm.setValue(this.config.smallArm.motor.getCurrentPosition());
 		this.bigArm.setValue(this.config.bigArm.motor.getCurrentPosition());
-		this.gamepad.update();
+		this.gamepad.loop();
 		this.telemetry.update();
 
 		if (this.isBigArmExtended) {
@@ -228,7 +229,7 @@ public class MilaBotTeleOp extends TeleOpOpMode {
 		}
 
 		@Override
-		public OdometryLocalizer createOdometry() {
+		public Localizer<Pose> createLocalizer() {
 			return null;
 		}
 	}

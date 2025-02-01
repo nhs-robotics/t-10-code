@@ -38,4 +38,11 @@ public class Point {
 
         return Math.sqrt(dx * dx + dy * dy);
     }
+
+	public Point subtract(Point p) {
+		return new Point(
+				p.x - this.x,
+				p.y - this.y
+		);
+	}
 }
