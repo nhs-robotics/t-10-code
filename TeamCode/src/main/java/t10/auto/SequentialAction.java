@@ -15,6 +15,11 @@ public class SequentialAction implements AutoAction {
 	public SequentialAction(AutoAction... actionSequence) {
 		this.actionSequence = Arrays.asList(actionSequence);
 	}
+	
+	public SequentialAction add(AutoAction... autoActions) {
+		this.actionSequence.addAll(Arrays.asList(autoActions));
+		return this;
+	}
 
 	@Override
 	public void init() {

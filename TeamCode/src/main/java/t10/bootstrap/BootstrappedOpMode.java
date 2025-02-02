@@ -1,59 +1,47 @@
 package t10.bootstrap;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import t10.metrics.MetricsServer;
 
-/**
- * <p>"Bootstrapping" is the preparing another program to initialize.
- * This OpMode allows RoboCore to initialize. Upon initialization of RoboCore,
- * - {@link System#out} and {@link System#err} become available</p>
- *
- * <p><strong>IMPORTANT!</strong> When extending this class and overriding {@link BootstrappedOpMode#init()},
- * make sure that {@code super.init()} is called!</p>
- *
- * @author youngermax
- * @see OpMode
- * @see System#out
- * @see System#err
- */
 public abstract class BootstrappedOpMode extends OpMode {
-    protected MetricsServer metrics;
+	private static BootstrappedOpMode instance;
+	protected MetricsServer metrics;
+	protected ExecutorService multithreadingService;
+	protected volatile boolean isRunning;
 
-    /**
-     * Sets {@link System#out} and {@link System#err} to an instance of {@link RobotDebugPrintStream}.
-     * This allows {@link System#out} and {@link System#err} to be used for printing debug messages.
-     *
-     * @author youngermax
-     * @see System#out
-     * @see System#err
-     */
-    private void configureSystemOut() {
-        System.setOut(new RobotDebugPrintStream(this.telemetry));
-        System.setErr(new RobotDebugPrintStream(this.telemetry));
-    }
+	@Override
+	public void init() {
+		instance = this;
+		this.isRunning = true;
+		this.metrics = new MetricsServer(this);
+		this.metrics.start();
+		this.multithreadingService = Executors.newCachedThreadPool();
+		this.multithreadingService.execute(() -> {
+			while (this.isRunning) {
+				this.metrics.loop();
+			}
 
-    private void configureMetrics() {
-        this.metrics = new MetricsServer(this);
-        this.metrics.start();
-    }
+			try {
+				this.metrics.stop();
+			} catch (IOException | InterruptedException e) {
+				throw new RuntimeException(e);
+			}
+		});
+	}
 
-    @Override
-    public void init() {
-        this.configureSystemOut();
-        this.configureMetrics();
-    }
+	@Override
+	public void stop() {
+		super.stop();
+		this.isRunning = false;
+		this.multithreadingService.shutdown();
+	}
 
-    @Override
-    public void stop() {
-        super.stop();
-
-        try {
-            this.metrics.stop();
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
+	public static BootstrappedOpMode getInstance() {
+		return instance;
+	}
 }

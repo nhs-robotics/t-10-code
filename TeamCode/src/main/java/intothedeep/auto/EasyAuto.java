@@ -10,6 +10,8 @@ import intothedeep.capabilities.ArmRotationCapabilities;
 import intothedeep.capabilities.ClawCapabilities;
 import intothedeep.capabilities.CraneCapabilities;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 import t10.auto.AutoAction;
 import t10.auto.FollowPathAction;
 import t10.auto.MoveToAction;
@@ -21,6 +23,8 @@ import t10.geometry.Pose;
 import t10.localizer.Localizer;
 import t10.motion.mecanum.MecanumDriver;
 import t10.motion.path.PurePursuitPathFollower;
+
+import java.util.ArrayList;
 
 public abstract class EasyAuto extends AutonomousOpMode {
 	private final Pose startPose;
@@ -37,12 +41,15 @@ public abstract class EasyAuto extends AutonomousOpMode {
 	}
 
 	@Override
-	public void initialize() {
+	public void init() {
+		super.init();
+
 		this.config = new SnowballConfig(this.hardwareMap);
 
 		// Driving & Localization
 		this.driver = this.config.createMecanumDriver();
 		this.localizer = this.config.createLocalizer();
+		this.localizer.setFieldCentric(this.startPose);
 
 		// Capabilities
 		this.armExtension = new ArmExtensionCapabilities(config);
@@ -55,14 +62,25 @@ public abstract class EasyAuto extends AutonomousOpMode {
 		this.armExtension.setTargetPosition(ArmExtensionCapabilities.POSITION_FULLY_RETRACTED);
 		this.crane.setTargetPosition(CraneCapabilities.POSITION_BOTTOM);
 		this.claw.setOpen(false);  // Keep closed to grasp a block for auto
+
+		this.multithreadingService.execute(() -> {
+			while (this.isRunning) {
+				this.localizer.loop();
+			}
+		});
+
+		this.multithreadingService.execute(() -> {
+			while (this.isRunning) {
+				this.armRotation.loop();
+				this.armExtension.loop();
+				this.crane.loop();
+			}
+		});
 	}
 
 	@Override
 	public void loop() {
-		this.localizer.loop();
-		this.armRotation.loop();
-		this.armExtension.loop();
-		this.crane.loop();
+		this.telemetry.update();
 	}
 
 	@Override

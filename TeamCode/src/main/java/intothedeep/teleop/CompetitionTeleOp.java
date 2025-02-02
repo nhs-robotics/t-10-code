@@ -31,7 +31,9 @@ public class CompetitionTeleOp extends TeleOpOpMode {
 	double speed = 3;
 
 	@Override
-	public void initialize() {
+	public void init() {
+		super.init();
+
 		this.config = new SnowballConfig(this.hardwareMap);
 
 		// Robot Capabilities

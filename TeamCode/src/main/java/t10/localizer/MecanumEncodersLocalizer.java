@@ -56,7 +56,7 @@ public class MecanumEncodersLocalizer implements Localizer<Pose> {
 		// Convert to global coordinates based on current heading
 		double currentHeading = this.fieldCentricPose.getHeading(AngleUnit.RADIANS) + deltaRotation;
 		double deltaX = deltaRight * Math.cos(currentHeading) - deltaForward * Math.sin(currentHeading);
-		double deltaY = deltaForward * Math.cos(currentHeading) + deltaRight * Math.sin(currentHeading);
+		double deltaY = deltaRight * Math.sin(currentHeading) + deltaForward * Math.cos(currentHeading);
 
 		// Update pose
 		Pose deltaPose = new Pose(deltaY, deltaX, deltaRotation, AngleUnit.RADIANS);

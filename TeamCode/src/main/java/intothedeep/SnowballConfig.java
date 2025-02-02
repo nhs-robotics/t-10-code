@@ -84,6 +84,11 @@ public class SnowballConfig extends AbstractRobotConfiguration {
 		super(hardwareMap);
 
 		BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+		parameters.accelRange = BNO055IMU.AccelRange.G2;
+		parameters.accelBandwidth = BNO055IMU.AccelBandwidth.HZ125;
+		parameters.gyroRange = BNO055IMU.GyroRange.DPS2000;
+		parameters.gyroBandwidth = BNO055IMU.GyroBandwidth.HZ230;
+		parameters.calibrationDataFile = "BNO055IMUCalibration.json";
 		this.imu.initialize(parameters);
 	}
 

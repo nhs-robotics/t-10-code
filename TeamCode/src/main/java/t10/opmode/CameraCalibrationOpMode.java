@@ -49,7 +49,9 @@ public class CameraCalibrationOpMode extends AutonomousOpMode {
 	}
 
 	@Override
-	public void initialize() {
+	public void init() {
+		super.init();
+
 		this.webcams = this.hardwareMap.getAll(WebcamName.class);
 		this.gamepadController = new GController(this.gamepad1)
 				.rightBumper.onPress(() -> {
@@ -79,6 +81,11 @@ public class CameraCalibrationOpMode extends AutonomousOpMode {
 		this.imagePoints = new ArrayList<>();
 		this.objectPoints = new ArrayList<>();
 		this.updateCamera();
+	}
+
+	@Override
+	public void loop() {
+
 	}
 
 	// Create the 3D points for the checkerboard pattern
@@ -261,9 +268,5 @@ public class CameraCalibrationOpMode extends AutonomousOpMode {
 				}
 			}
 		});
-	}
-
-	@Override
-	public void run() {
 	}
 }

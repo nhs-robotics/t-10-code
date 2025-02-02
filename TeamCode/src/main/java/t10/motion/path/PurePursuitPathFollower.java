@@ -12,6 +12,10 @@ import t10.geometry.Point;
 import t10.geometry.Pose;
 import t10.localizer.Localizer;
 import t10.motion.mecanum.MecanumDriver;
+import t10.motion.profile.ConstantMotionProfile;
+import t10.motion.profile.IMotionProfile;
+import t10.motion.profile.MotionProfile;
+import t10.motion.profile.TrapezoidalMotionProfile;
 import t10.utils.MathUtils;
 import t10.utils.OdometryUtils;
 

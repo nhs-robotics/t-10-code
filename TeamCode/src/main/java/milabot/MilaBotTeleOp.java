@@ -31,7 +31,9 @@ public class MilaBotTeleOp extends TeleOpOpMode {
 	private boolean isSmallArmExtended;
 
 	@Override
-	public void initialize() {
+	public void init() {
+		super.init();
+
 		this.config = new Config(this.hardwareMap);
 		this.driver = this.config.createMecanumDriver();
 		this.gamepad = new GController(this.gamepad1)

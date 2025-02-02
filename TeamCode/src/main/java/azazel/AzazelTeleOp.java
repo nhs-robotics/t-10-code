@@ -21,7 +21,9 @@ public class AzazelTeleOp extends TeleOpOpMode {
     private static final double[] positions = {0.95, -0.748, -1};
 
     @Override
-    public void initialize() {
+    public void init() {
+		super.init();
+
         this.c = new AzazelRobotConfiguration(this.hardwareMap);
         this.capabilities = new AzazelRobotCapabilities(c);
         this.driver = new MecanumDriver(c.fl, c.fr, c.bl, c.br, Constants.Coefficients.KEVIN_COEFFICIENTS);
