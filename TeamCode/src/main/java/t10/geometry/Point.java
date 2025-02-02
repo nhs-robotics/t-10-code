@@ -1,7 +1,7 @@
 package t10.geometry;
 
 /**
- * Represents a point (x, y)
+ * Represents a point (x, y).
  */
 public class Point {
     protected double x;
@@ -29,7 +29,7 @@ public class Point {
     }
 
     /**
-     * @param point The other point to find the distance between
+     * @param point The other point to find the distance between.
      * @return The Euclidean distance between this point and {@code point}.
      */
     public double distanceTo(Point point) {
@@ -38,4 +38,11 @@ public class Point {
 
         return Math.sqrt(dx * dx + dy * dy);
     }
+
+	public Point subtract(Point p) {
+		return new Point(
+				p.x - this.x,
+				p.y - this.y
+		);
+	}
 }
