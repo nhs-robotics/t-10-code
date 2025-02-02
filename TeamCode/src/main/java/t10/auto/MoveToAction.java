@@ -69,13 +69,13 @@ public class MoveToAction implements AutoAction {
 				AngleUnit.RADIANS
 		);
 
-		double vx = this.movementSpeed / (1 + Math.pow(0.1 * Math.E, dy)) - (this.movementSpeed / 2);
 		double vy = this.movementSpeed / (1 + Math.pow(0.1 * Math.E, dx)) - (this.movementSpeed / 2);
+		double vx = this.movementSpeed / (1 + Math.pow(0.1 * Math.E, dy)) - (this.movementSpeed / 2);
 		double vh = this.rotationalSpeed / (1 + Math.pow(1.5 * Math.E, -dh)) - (this.rotationalSpeed / 2);
 
 		MovementVector vector = new MovementVector(
-				vx,
 				vy,
+				vx,
 				vh,
 				AngleUnit.RADIANS
 		);
@@ -101,3 +101,5 @@ public class MoveToAction implements AutoAction {
 		return isComplete;
 	}
 }
+
+
