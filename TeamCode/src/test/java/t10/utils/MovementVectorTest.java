@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,11 +13,11 @@ import t10.geometry.MovementVector;
 
 public class MovementVectorTest {
 
-    private MovementVector vector = new MovementVector(3, -5, 93);
+    private MovementVector vector = new MovementVector(3, -5, 93, AngleUnit.DEGREES);
 
     @BeforeEach
     void resetVector() {
-        vector = new MovementVector(3, -5, 93);
+        vector = new MovementVector(3, -5, 93, AngleUnit.DEGREES);
     }
 
     @Test
@@ -30,7 +31,7 @@ public class MovementVectorTest {
     @Test
     @DisplayName("constructor(double[])")
     void constructorAndGetters2() {
-        vector = new MovementVector(new double[] {3, -5, 93});
+        vector = new MovementVector(new double[] {3, -5, 93}, AngleUnit.DEGREES);
         assertEquals(3, vector.getVertical());
         assertEquals(-5, vector.getHorizontal());
         assertEquals(93, vector.getRotation());
@@ -40,7 +41,7 @@ public class MovementVectorTest {
     @DisplayName("constructor(Vector3D)")
     void constructorAndGetters3() {
         Vector3D v = new Vector3D(3, -5, 93);
-        vector = new MovementVector(v);
+        vector = new MovementVector(v, AngleUnit.DEGREES);
         assertEquals(3, vector.getVertical());
         assertEquals(-5, vector.getHorizontal());
         assertEquals(93, vector.getRotation());
@@ -49,7 +50,7 @@ public class MovementVectorTest {
     @Test
     @DisplayName("add(MovementVector)")
     void add() {
-        MovementVector newVector = vector.add(new MovementVector(-5, 8, -3));
+        MovementVector newVector = vector.add(new MovementVector(-5, 8, -3, AngleUnit.DEGREES));
         assertEquals(-2, newVector.getVertical());
         assertEquals(3, newVector.getHorizontal());
         assertEquals(90, newVector.getRotation());
@@ -58,7 +59,7 @@ public class MovementVectorTest {
     @Test
     @DisplayName("subtract(MovementVector)")
     void subtract() {
-        MovementVector newVector = vector.subtract(new MovementVector(-5, 8, -3));
+        MovementVector newVector = vector.subtract(new MovementVector(-5, 8, -3, AngleUnit.DEGREES));
         assertEquals(8, newVector.getVertical());
         assertEquals(-13, newVector.getHorizontal());
         assertEquals(96, newVector.getRotation());
@@ -90,8 +91,8 @@ public class MovementVectorTest {
     @Test
     @DisplayName("equals(Object)")
     void equals() {
-        assertFalse(vector.equals(new MovementVector(3, 5, 93)));
-        assertTrue(vector.equals(new MovementVector(3, -5, 93)));
+        assertFalse(vector.equals(new MovementVector(3, 5, 93, AngleUnit.DEGREES)));
+        assertTrue(vector.equals(new MovementVector(3, -5, 93, AngleUnit.DEGREES)));
         assertTrue(vector.equals(vector));
         assertFalse(vector.equals("Not a MovementVector"));
     }

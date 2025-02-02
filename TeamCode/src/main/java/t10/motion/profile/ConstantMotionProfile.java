@@ -1,14 +1,10 @@
 package t10.motion.profile;
 
-public class ConstantMotionProfile implements MotionProfile {
-    private final double velocity;
+import t10.geometry.MovementVector;
 
-    public ConstantMotionProfile(double velocity) {
-        this.velocity = velocity;
-    }
-
-    @Override
-    public double getVelocity(double position) {
-        return this.velocity;
-    }
+public class ConstantMotionProfile implements IMotionProfile {
+	@Override
+	public MovementVector calculate(MovementVector initialVelocity, MovementVector maxVelocity, MovementVector endVelocity, MovementVector maxAcceleration, double distanceTraveled, double totalDistance) {
+		return maxVelocity;
+	}
 }

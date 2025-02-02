@@ -68,7 +68,7 @@ public class PoseTest {
     @Test
     @DisplayName("fromMovementVector(Pose)")
     void fromMovementVector() {
-        Pose newPose = Pose.fromMovementVector(new MovementVector(3, -5, 90));
+        Pose newPose = Pose.fromMovementVector(new MovementVector(3, -5, 90, AngleUnit.DEGREES));
         assertEquals(3, newPose.getY());
         assertEquals(-5, newPose.getX());
         assertEquals(90, newPose.getHeading(AngleUnit.DEGREES));

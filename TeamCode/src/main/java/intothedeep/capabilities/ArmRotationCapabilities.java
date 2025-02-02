@@ -1,10 +1,15 @@
 package intothedeep.capabilities;
 
 import intothedeep.SnowballConfig;
+
+import t10.Loop;
+import t10.auto.AutoAction;
 import t10.motion.hardware.Motor;
 import t10.utils.PIDController;
 
 /**
+ * Capabilities for rotating the arm.
+ *
  * <h1>Power > 0</h1>
  * <li>Rotate UPWARDS</li>
  * <li>Position (Ticks) INCREASES</li>
@@ -13,79 +18,91 @@ import t10.utils.PIDController;
  * <li>Rotate DOWNWARDS</li>
  * <li>Position (Ticks) DECREASES</li>
  */
-public class ArmRotationCapabilities {
-    public static final int POSITION_FULLY_DOWNWARDS = -50;
-    public static final int POSITION_INSPECTION = 725;
-    public static final int POSITION_FULLY_UPWARDS = 788;
-    private static final int MAX_ERROR_ALLOWED = 25;
-    private final Motor armRotation;
-    private final PIDController armRotationStabilizer;
-    private int targetPosition;
-    private int position;
-    private boolean isManuallyControlled;
+public class ArmRotationCapabilities implements Loop {
+	public static final int POSITION_FULLY_DOWNWARDS = -50;
+	public static final int POSITION_INSPECTION = 725;
+	public static final int POSITION_FULLY_UPWARDS = 788;
+	private static final int MAX_ERROR_ALLOWED = 25;
+	private final Motor armRotation;
+	private final PIDController armRotationStabilizer;
+	private int targetPosition;
+	private int position;
+	private boolean isManuallyControlled;
 
-    public ArmRotationCapabilities(SnowballConfig config) {
-        this.armRotation = config.armRotation;
-        this.isManuallyControlled = true;
-        this.armRotationStabilizer = new PIDController(0.01, 0, 0);
-    }
+	public ArmRotationCapabilities(SnowballConfig config) {
+		this.armRotation = config.armRotation;
+		this.isManuallyControlled = true;
+		this.armRotationStabilizer = new PIDController(0.01, 0, 0);
+	}
 
-    public void update() {
-        this.position = this.armRotation.motor.getCurrentPosition();
+	@Override
+	public void loop() {
+		this.position = this.armRotation.motor.getCurrentPosition();
 
-        if (!this.isManuallyControlled) {
-            double power = this.armRotationStabilizer.calculate(
-                    this.position,
-                    this.targetPosition
-            );
+		if (!this.isManuallyControlled) {
+			double power = this.armRotationStabilizer.calculate(
+					this.position,
+					this.targetPosition
+			);
 
-            this.setPower(power);
-        }
-    }
+			this.setPower(power);
+		}
+	}
 
-    public void setTargetPosition(int targetPosition) {
-        this.targetPosition = targetPosition;
-        this.isManuallyControlled = false;
-    }
+	public void setTargetPosition(int targetPosition) {
+		this.targetPosition = targetPosition;
+		this.isManuallyControlled = false;
+	}
 
-    public void setPowerManually(double power) {
-        if (power == 0) {
-            if (this.isManuallyControlled) {
-                this.targetPosition = this.position;
-                this.isManuallyControlled = false;
-                this.setPower(0);
-            }
+	public void setPowerManually(double power) {
+		if (power == 0) {
+			if (this.isManuallyControlled) {
+				this.targetPosition = this.position;
+				this.isManuallyControlled = false;
+				this.setPower(0);
+			}
 
-            return;
-        }
+			return;
+		}
 
-        this.isManuallyControlled = true;
-        this.setPower(power);
-    }
+		this.isManuallyControlled = true;
+		this.setPower(power);
+	}
 
-    public boolean isAtTargetPosition() {
-        return Math.abs(this.targetPosition - this.position) < MAX_ERROR_ALLOWED;
-    }
+	public boolean isAtTargetPosition() {
+		return Math.abs(this.targetPosition - this.position) < MAX_ERROR_ALLOWED;
+	}
 
-    private void setPower(double power) {
-        // TODO: re-implement bounds.
-//        if (power > 0 && this.position > POSITION_FULLY_UPWARDS) {
-//            // This would over-retract the motor. Stop.
-//            this.armRotation.setPower(0);
-//            return;
-//        }
-//
-//        if (power < 0 && this.position < POSITION_FULLY_DOWNWARDS) {
-//            // This would over-extend the motor. Stop
-//            this.armRotation.setPower(0);
-//            return;
-//        }
-
-        this.armRotation.setPower(power);
-    }
+	private void setPower(double power) {
+		// TODO: re-implement bounds, if necessary.
+		this.armRotation.setPower(power);
+	}
 
     public int getPosition() {
-        return armRotation.motor.getCurrentPosition();
-
+        return this.armRotation.motor.getCurrentPosition();
     }
+
+	public static class ArmRotationAction implements AutoAction {
+		private final ArmRotationCapabilities armRotationCapabilities;
+		private final int position;
+
+		public ArmRotationAction(ArmRotationCapabilities armRotationCapabilities, int position) {
+			this.armRotationCapabilities = armRotationCapabilities;
+			this.position = position;
+		}
+
+		@Override
+		public void init() {
+			this.armRotationCapabilities.setTargetPosition(this.position);
+		}
+
+		@Override
+		public void loop() {
+		}
+
+		@Override
+		public boolean isComplete() {
+			return this.armRotationCapabilities.isAtTargetPosition();
+		}
+	}
 }

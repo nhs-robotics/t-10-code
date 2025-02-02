@@ -1,63 +1,59 @@
 package intothedeep.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-import intothedeep.capabilities.ArmExtensionCapabilities;
-import intothedeep.capabilities.CraneCapabilities;
+import t10.auto.SequentialAction;
+import t10.geometry.Pose;
+import t10.metrics.Metric;
 
 @Autonomous
 public class CompetitionAuto extends EasyAuto {
-    public CompetitionAuto() {
-        super(null);
-    }
+	private SequentialAction autoSequence;
+	private Telemetry.Item x, y, rot;
 
-    @Override
-    public void run() {
-        verticalMovement(13);
-        telemetry.clearAll();
-        telemetry.addLine("Moved");
-        telemetry.update();
-        armExtension.setTargetPosition(ArmExtensionCapabilities.POSITION_FULLY_EXTENDED);
-        while(!armExtension.isAtTargetPosition()) {
-            sleep(0.1);
-            telemetry.clearAll();
-            telemetry.addLine("Waiting for extension");
-            telemetry.addLine(Integer.toString(armExtension.getPosition()));
-            telemetry.update();
-        }
+	@Metric
+	public Pose pose;
 
-        crane.setTargetPosition(1350);
-        while(!crane.isAtTargetPosition()) {
-            sleep(0.1);
-            telemetry.clearAll();
-            telemetry.addLine("Waiting for crane");
-            telemetry.addLine(Integer.toString(crane.getPositionLeft()));
-            telemetry.update();
-        }
+	public CompetitionAuto() {
+		super(new Pose(0, 0, 0, AngleUnit.DEGREES));
+	}
 
-        verticalMovement(9);
+	@Override
+	public void init() {
+		super.init();
 
-        crane.setTargetPosition(720);
-        armExtension.setTargetPosition((int)Math.ceil(ArmExtensionCapabilities.POSITION_FULLY_EXTENDED * 0.45));
-        while(!crane.isAtTargetPosition()) {
-            sleep(0.1);
-            telemetry.clearAll();
-            telemetry.addLine("Waiting for crane down");
-            telemetry.addLine(Integer.toString(crane.getPositionLeft()));
-            telemetry.update();
-        }
-        claw.openClaw();
-        crane.setTargetPosition(CraneCapabilities.POSITION_BOTTOM);
-        armExtension.setTargetPosition(ArmExtensionCapabilities.POSITION_FULLY_RETRACTED);
-        verticalMovement(-16);
-        horizontalMovement(48);
-        armRotation.setTargetPosition(0);
-        while(!armRotation.isAtTargetPosition()) {
-            sleep(0.1);
-            telemetry.clearAll();
-            telemetry.addLine("Waiting for rotation down");
-            telemetry.update();
-        }
-        isDone = true;
-    }
+		this.x = this.telemetry.addData("x", 0);
+		this.y = this.telemetry.addData("y", 0);
+		this.rot = this.telemetry.addData("r", 0);
+
+		this.autoSequence = sequentially(
+				moveTo(new Pose(36, 0, 180, AngleUnit.DEGREES)),
+				moveTo(new Pose(36, 12, 0, AngleUnit.DEGREES)),
+				moveTo(new Pose(0, 12, 0, AngleUnit.DEGREES)),
+				moveTo(new Pose(36, 12, 0, AngleUnit.DEGREES)),
+				moveTo(new Pose(36, 24, 0, AngleUnit.DEGREES)),
+				moveTo(new Pose(0, 24, 0, AngleUnit.DEGREES)),
+				moveTo(new Pose(36, 24, 0, AngleUnit.DEGREES)),
+				moveTo(new Pose(36, 36, 0, AngleUnit.DEGREES)),
+				moveTo(new Pose(0, 36, 0, AngleUnit.DEGREES)),
+				moveTo(new Pose(0, 0, 0, AngleUnit.DEGREES))
+		);
+	}
+
+	@Override
+	public void loop() {
+		super.loop();
+
+		Pose fieldCentricPose = this.localizer.getFieldCentric();
+		this.pose = fieldCentricPose;
+		this.x.setValue(fieldCentricPose.getX());
+		this.y.setValue(fieldCentricPose.getY());
+		this.rot.setValue(fieldCentricPose.getHeading(AngleUnit.DEGREES));
+
+		if (this.autoSequence != null) {
+			this.autoSequence.loop();
+		}
+	}
 }

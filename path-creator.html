@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>FTC Path Planner</title>
+    <style>
+        body {
+            background: black;
+            color: white;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+        }
+
+        #canvasContainer {
+            aspect-ratio: 1;
+            max-height: 100vh;
+            max-width: 100vh;
+            position: relative;
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        #sidebar {
+            background: #333;
+            width: 300px;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        #codeOutput {
+            background: #222;
+            color: white;
+            width: 100%;
+            height: 200px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="canvasContainer">
+        <canvas id="fieldCanvas"></canvas>
+        <canvas id="pathCanvas"></canvas>
+    </div>
+    <div id="sidebar">
+        <h3>Path Planner</h3>
+        <div>
+            <label>Lookahead Distance (inches):</label>
+            <input type="number" id="lookaheadDistance" value="12.5" min="1" max="50" step="0.5">
+        </div>
+        <button onclick="clearPath()">Clear Path</button>
+        <textarea id="codeOutput" readonly></textarea>
+    </div>
+
+    <script>
+        const fieldCanvas = document.getElementById('fieldCanvas');
+        const pathCanvas = document.getElementById('pathCanvas');
+        const codeOutput = document.getElementById('codeOutput');
+        const lookaheadInput = document.getElementById('lookaheadDistance');
+
+        const fieldImage = new Image();
+        fieldImage.src = 'https://preview.redd.it/into-the-deep-meepmeep-custom-field-images-printer-friendly-v0-51s4ufraignd1.png?width=4096&format=png&auto=webp&s=b0abfe0869e935fc9c775283f05bf11a07b6f226';
+
+        let points = [];
+        const FIELD_SIZE = 144; // 12 feet in inches
+
+        const MathUtils = {
+            angleDifference: function (angle1, angle2) {
+                let diff = angle1 - angle2;
+                while (diff > Math.PI) diff -= 2 * Math.PI;
+                while (diff < -Math.PI) diff += 2 * Math.PI;
+                return diff;
+            }
+        };
+
+        function resizeCanvases() {
+            const container = document.getElementById('canvasContainer');
+            const size = Math.min(container.clientWidth, container.clientHeight);
+
+            fieldCanvas.width = size;
+            fieldCanvas.height = size;
+            pathCanvas.width = size;
+            pathCanvas.height = size;
+
+            drawField();
+            drawPath();
+        }
+
+        window.addEventListener('resize', resizeCanvases);
+        resizeCanvases();
+
+        fieldImage.onload = () => {
+            drawField();
+        };
+
+        function drawField() {
+            const ctx = fieldCanvas.getContext('2d');
+            ctx.save();
+
+            // Translate to center, rotate, then translate back
+            ctx.translate(fieldCanvas.width / 2, fieldCanvas.height / 2);
+            ctx.rotate(-Math.PI / 2); // 90 degrees counterclockwise
+            ctx.translate(-fieldCanvas.width / 2, -fieldCanvas.height / 2);
+
+            // Draw the image
+            ctx.drawImage(fieldImage, 0, 0, fieldCanvas.width, fieldCanvas.height);
+
+            ctx.restore();
+        }
+
+        function screenToField(x, y) {
+            const scale = fieldCanvas.width / FIELD_SIZE;
+            // For 90 degree rotation: x becomes y, y becomes -x
+            return {
+                x: -(y - fieldCanvas.height / 2) / scale,
+                y: (x - fieldCanvas.width / 2) / scale
+            };
+        }
+
+        function fieldToScreen(x, y) {
+            const scale = fieldCanvas.width / FIELD_SIZE;
+            // For 90 degree rotation: x becomes -y, y becomes x
+            return {
+                x: y * scale + fieldCanvas.width / 2,
+                y: -x * scale + fieldCanvas.height / 2
+            };
+        }
+
+        function distance(p1, p2) {
+            return Math.sqrt((p2.x - p1.x) ** 2 + (p2.y - p1.y) ** 2);
+        }
+
+        function getLookaheadPoint(robotPos, r) {
+            let lookahead = null;
+            const x = robotPos.x;
+            const y = robotPos.y;
+
+            // Iterate through all pairs of points
+            for (let i = 0; i < points.length - 1; i++) {
+                const segmentStart = points[i];
+                const segmentEnd = points[i + 1];
+
+                // Translate segment to origin
+                const p1 = {
+                    x: segmentStart.x - x,
+                    y: segmentStart.y - y
+                };
+                const p2 = {
+                    x: segmentEnd.x - x,
+                    y: segmentEnd.y - y
+                };
+
+                // Calculate intersection
+                const dx = p2.x - p1.x;
+                const dy = p2.y - p1.y;
+                const d = Math.sqrt(dx * dx + dy * dy);
+                const D = p1.x * p2.y - p2.x * p1.y;
+
+                // Check discriminant
+                const discriminant = r * r * d * d - D * D;
+                if (discriminant < 0 || (p1.x === p2.x && p1.y === p2.y)) continue;
+
+                function signumWithSpecialCase(n) {
+                    return (n === 0) ? 1 : Math.sign(n);
+                }
+
+                // Calculate intersection points
+                const x1 = (D * dy + signumWithSpecialCase(dy) * dx * Math.sqrt(discriminant)) / (d * d);
+                const x2 = (D * dy - signumWithSpecialCase(dy) * dx * Math.sqrt(discriminant)) / (d * d);
+                const y1 = (-D * dx + Math.abs(dy) * Math.sqrt(discriminant)) / (d * d);
+                const y2 = (-D * dx - Math.abs(dy) * Math.sqrt(discriminant)) / (d * d);
+
+                // Check if intersections are within segment
+                const validIntersection1 =
+                    (Math.min(p1.x, p2.x) < x1 && x1 < Math.max(p1.x, p2.x)) ||
+                    (Math.min(p1.y, p2.y) < y1 && y1 < Math.max(p1.y, p2.y));
+                const validIntersection2 =
+                    (Math.min(p1.x, p2.x) < x2 && x2 < Math.max(p1.x, p2.x)) ||
+                    (Math.min(p1.y, p2.y) < y2 && y2 < Math.max(p1.y, p2.y));
+
+                if (validIntersection1 || validIntersection2) lookahead = null;
+
+                if (validIntersection1) {
+                    lookahead = { x: x1 + x, y: y1 + y };
+                }
+
+                if (validIntersection2) {
+                    if (lookahead === null ||
+                        Math.abs(x1 - p2.x) > Math.abs(x2 - p2.x) ||
+                        Math.abs(y1 - p2.y) > Math.abs(y2 - p2.y)) {
+                        lookahead = { x: x2 + x, y: y2 + y };
+                    }
+                }
+            }
+
+            // Special case for last point
+            const lastPoint = points[points.length - 1];
+            const distanceToEnd = Math.sqrt(
+                (lastPoint.x - x) * (lastPoint.x - x) +
+                (lastPoint.y - y) * (lastPoint.y - y)
+            );
+
+            if (distanceToEnd <= r) {
+                return lastPoint;
+            }
+
+            return lookahead;
+        }
+
+        function findPurePursuitTarget(robotPos, lookahead) {
+            for (let i = 0; i < points.length - 1; i++) {
+                const start = points[i];
+                const end = points[i + 1];
+
+                const intersections = findCircleLineIntersection(robotPos, lookahead, start, end);
+                if (intersections) {
+                    // Return the intersection point that's furthest along the path
+                    return intersections[intersections.length - 1];
+                }
+            }
+
+            // If no intersection found, return the last point
+            return points[points.length - 1];
+        }
+
+        function drawPath() {
+            const ctx = pathCanvas.getContext('2d');
+            ctx.clearRect(0, 0, pathCanvas.width, pathCanvas.height);
+
+            // Draw straight line path
+            if (points.length > 1) {
+                ctx.beginPath();
+                const start = fieldToScreen(points[0].x, points[0].y);
+                ctx.moveTo(start.x, start.y);
+
+                for (let i = 1; i < points.length; i++) {
+                    const point = fieldToScreen(points[i].x, points[i].y);
+                    ctx.lineTo(point.x, point.y);
+                }
+
+                ctx.strokeStyle = 'blue';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Draw Pure Pursuit path
+                if (points.length >= 2) {
+                    drawPurePursuitPath();
+                }
+            }
+
+            // Draw points
+            points.forEach(point => {
+                const screenPoint = fieldToScreen(point.x, point.y);
+                ctx.beginPath();
+                ctx.arc(screenPoint.x, screenPoint.y, 5, 0, Math.PI * 2);
+                ctx.fillStyle = 'red';
+                ctx.fill();
+            });
+
+            updateCode();
+        }
+
+        function drawPurePursuitPath() {
+            const ctx = pathCanvas.getContext('2d');
+            const lookahead = parseFloat(lookaheadInput.value);
+
+            // Start at the beginning
+            let currentPose = {
+                x: points[0].x,
+                y: points[0].y,
+                heading: 0
+            };
+
+            let lastAngle = 0;
+            const STOP_DISTANCE = 0.5;
+
+            ctx.beginPath();
+            const screenStart = fieldToScreen(currentPose.x, currentPose.y);
+            ctx.moveTo(screenStart.x, screenStart.y);
+
+            // Simulate robot movement
+            for (let i = 0; i < 1000; i++) { // Maximum iterations to prevent infinite loops
+                // Get lookahead point
+                const targetPoint = getLookaheadPoint(currentPose, lookahead);
+                if (!targetPoint) break;
+
+                // Check if we're close enough to the end
+                if (distance(currentPose, points[points.length - 1]) < STOP_DISTANCE) {
+                    break;
+                }
+
+                // Calculate movement towards target (similar to moveTowardsPosition in Java)
+                const dx = targetPoint.x - currentPose.x;
+                const dy = targetPoint.y - currentPose.y;
+                const angle = Math.atan2(dy, dx);
+
+                // Calculate angle difference for velocity scaling
+                const angleDifference = Math.abs(MathUtils.angleDifference(angle, lastAngle));
+
+                // Calculate velocity (similar to Java implementation)
+                const baseSpeed = 25; // matches the default speed in your code
+                const velocity = Math.max(
+                    baseSpeed / 10,
+                    baseSpeed * (0.75 - angleDifference) * (distance(currentPose, targetPoint) / lookahead)
+                );
+
+                // Move the robot a small step in the calculated direction
+                const stepSize = 0.5; // Small step size for smooth simulation
+                currentPose.x += Math.cos(angle) * stepSize;
+                currentPose.y += Math.sin(angle) * stepSize;
+
+                // Draw the new position
+                const screenPos = fieldToScreen(currentPose.x, currentPose.y);
+                ctx.lineTo(screenPos.x, screenPos.y);
+
+                lastAngle = angle;
+            }
+
+            ctx.strokeStyle = 'green';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+
+        function updateCode() {
+            let code = 'PurePursuitPathFollower pathFollower = new PurePursuitPathFollower.Builder()\n';
+            points.forEach(point => {
+                code += `\t.addPoint(${point.y.toFixed(2)}, ${point.x.toFixed(2)})\n`;
+            });
+            code += '\t.setSpeed(25)\n';
+            code += `\t.setLookaheadDistance(${lookaheadInput.value})\n`;
+            code += '\t.build();';
+
+            codeOutput.value = code;
+        }
+
+        function clearPath() {
+            points = [];
+            drawPath();
+        }
+
+        pathCanvas.addEventListener('click', (e) => {
+            const rect = pathCanvas.getBoundingClientRect();
+            const scaleX = pathCanvas.width / rect.width;    // relationship bitmap vs. element for X
+            const scaleY = pathCanvas.height / rect.height;  // relationship bitmap vs. element for Y
+
+            const x = (e.clientX - rect.left) * scaleX;
+            const y = (e.clientY - rect.top) * scaleY;
+
+            const fieldCoords = screenToField(x, y);
+            points.push(fieldCoords);
+
+            drawPath();
+        });
+
+        lookaheadInput.addEventListener('input', drawPath);
+    </script>
+</body>
+
+</html>

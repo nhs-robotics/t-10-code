@@ -9,9 +9,7 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [ "main" ]
   pull_request:
-    branches: [ "main" ]
 
 jobs:
   event_file:
@@ -23,8 +21,8 @@ jobs:
         with:
           name: Event File
           path: ${{ github.event_path }}
-  build:
 
+  build:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -42,8 +40,8 @@ jobs:
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v4
 
-    - name: Build with Gradle Wrapper
-      run: ./gradlew test
+    - name: Test and Check Styling
+      run: ./gradlew test checkstyle
       continue-on-error: true
 
     - name: Upload Test Results
@@ -52,3 +50,8 @@ jobs:
         name: Test Results
         path: /home/runner/work/t-10-code/t-10-code/TeamCode/build/test-junit-xml/*.xml
 
+    - name: Upload Checkstyle Results
+      uses: actions/upload-artifact@v4
+      with:
+        name: Checkstyle Results
+        path: /home/runner/work/t-10-code/t-10-code/TeamCode/build/reports/checkstyle/checkstyle.html

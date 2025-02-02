@@ -4,32 +4,22 @@ import intothedeep.Constants;
 import intothedeep.SnowballConfig;
 import t10.motion.hardware.Motor;
 
+import t10.auto.AutoAction;
+
 public class ClawCapabilities {
-    private static final double CLAW_OPEN_POSITION = 0.05;
-    private static final double CLAW_CLOSED_POSITION = 0.55;
-
-    private static final double TWIST_FORWARD_POSITION = 0.0; // TODO CONFIRM
-    private static final double TWIST_SIDEWAYS_POSITION = 0.5; // TODO CONFIRM
-    private static final double TWIST_BACKWARD_POSITION = 1.0; // TODO CONFIRM
-    private static final double TWIST_INITIALIZED_POSITION = -1.0; // TODO SET
-
-    private static final double ROTATE_UPWARD_POSITION = 0.0; // TODO CONFIRM
-    private static final double ROTATE_FORWARD_POSITION = 0.5; // TODO CONFIRM
-    private static final double ROTATE_DOWNWARD_POSITION = 1.0; // TODO CONFIRM
-    private static final double ROTATE_INITIALIZED_POSITION = -1.0; // TODO SET
+	static final double SERVO_MAX_ERROR = 0.05;
+    static final double CLAW_OPEN_POSITION = 0.05;
+    static final double CLAW_CLOSED_POSITION = 0.55;
 
     private final SnowballConfig config;
-
     private boolean isOpen;
-    private double twist;
-    private double rotation;
-    private TargetRotation targetRotation;
+    private ClawPreset clawPreset;
 
     public ClawCapabilities(SnowballConfig c) {
         this.config = c;
     }
 
-    private void setOpen(boolean open) {
+    public void setOpen(boolean open) {
         this.isOpen = open;
 
         if (open) {
@@ -39,110 +29,65 @@ public class ClawCapabilities {
         }
     }
 
-    private void setTwist(double twist) {
-        this.twist = twist;
-        this.config.twistServo.setPosition(twist);
-    }
+	public boolean isOpen() {
+		return this.isOpen;
+	}
 
-    private void setRotationRelative(double rotation) {
-        this.rotation = rotation;
-        this.config.leftRotateServo.setPosition(rotation);
-        this.config.rightRotateServo.setPosition(1 - rotation); // Servos are oriented opposite to each other.
-        this.targetRotation = null;
-    }
+	public void toggleClaw() {
+		this.setOpen(!this.isOpen);
+	}
+
+	public void setPreset(ClawPreset preset) {
+		this.clawPreset = preset;
+		this.config.clawTwist.setPosition(preset.servoTwistPosition);
+		this.config.clawRotate.setPosition(preset.servoRotatePosition);
+	}
 
     private void setRotationAbsolute(double targetAngleClaw, Motor arm) {
-        double currentAngleArm = arm.motor.getCurrentPosition() / Constants.TickCounts.LIFT_MOTOR_TICK_COUNT;
-        currentAngleArm *= 4;
+		// TODO: Help reimplement this
+        // double currentAngleArm = arm.motor.getCurrentPosition() / Constants.TickCounts.LIFT_MOTOR_TICK_COUNT;
+        // currentAngleArm *= 4;
         // Linear interpolation between upward position and forward position, determined by correcting angle.
-        double newClawRotation = (targetAngleClaw - currentAngleArm) * (ROTATE_UPWARD_POSITION - ROTATE_FORWARD_POSITION) + ROTATE_FORWARD_POSITION;
-        setRotationRelative(newClawRotation);
-    }
-
-    public boolean isOpen() {
-        return this.isOpen;
-    }
-
-    public double getTwist() {
-        return this.twist;
-    }
-
-    public double getRotation() {
-        return this.rotation;
-    }
-
-    public void openClaw() {
-        setOpen(true);
-    }
-
-    public void closeClaw() {
-        setOpen(false);
-    }
-
-    public void toggleClaw() {
-        this.setOpen(!this.isOpen);
-    }
-
-    public void twistForward() {
-        setTwist(TWIST_FORWARD_POSITION);
-    }
-
-    public void twistSideways() {
-        setTwist(TWIST_SIDEWAYS_POSITION);
-    }
-
-    public void twistBackward() {
-        setTwist(TWIST_BACKWARD_POSITION);
-    }
-
-    public void rotateRelativeUpward() {
-        setRotationRelative(ROTATE_UPWARD_POSITION);
-    }
-
-    public void rotateRelativeForward() {
-        setRotationRelative(ROTATE_FORWARD_POSITION);
-    }
-
-    public void rotateRelativeDownward() {
-        setRotationRelative(ROTATE_DOWNWARD_POSITION);
-    }
-
-    public void rotateAbsoluteDownward(Motor arm) {
-        setRotationAbsolute(-1, arm);
-        this.targetRotation = TargetRotation.DOWNWARD;
-    }
-
-    public void rotateAbsoluteForward(Motor arm) {
-        setRotationAbsolute(0, arm);
-        this.targetRotation = TargetRotation.FORWARD;
+        // double newClawRotation = (targetAngleClaw - currentAngleArm) * (ROTATE_UPWARD_POSITION - ROTATE_FORWARD_POSITION) + ROTATE_FORWARD_POSITION;
+        // setRotationRelative(newClawRotation);
     }
 
     public void initializePosition() {
-        openClaw();
-        setTwist(TWIST_INITIALIZED_POSITION);
-        setRotationRelative(ROTATE_INITIALIZED_POSITION);
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException ignored) {
-            // Do nothing.
-        } finally {
-            closeClaw();
-        }
+        this.setOpen(false);
+		this.setPreset(ClawPreset.PLACE_SPECIMEN);
     }
 
-    public void update() {
-        switch (this.targetRotation) {
-            case FORWARD:
-                rotateAbsoluteForward(config.armRotation);
-                break;
-            case DOWNWARD:
-                rotateAbsoluteDownward(config.armRotation);
-                break;
+	public boolean isAtTargetPosition() {
+		double gripTarget = this.isOpen ? CLAW_OPEN_POSITION : CLAW_CLOSED_POSITION;
+		double rotateTarget = this.clawPreset.servoRotatePosition;
+		double twistTarget = this.clawPreset.servoTwistPosition;
+
+		return Math.abs(gripTarget - this.config.clawGrip.getPosition()) < SERVO_MAX_ERROR &&
+				Math.abs(rotateTarget - this.config.clawRotate.getPosition()) < SERVO_MAX_ERROR &&
+				Math.abs(twistTarget - this.config.clawTwist.getPosition()) < SERVO_MAX_ERROR;
+	}
+
+    public static class ClawAction implements AutoAction {
+        private final ClawCapabilities clawCapabilities;
+        private final boolean isOpen;
+
+        public ClawAction(ClawCapabilities clawCapabilities, boolean isOpen) {
+            this.clawCapabilities = clawCapabilities;
+            this.isOpen = isOpen;
+        }
+
+        @Override
+        public void init() {
+            this.clawCapabilities.setOpen(this.isOpen);
+        }
+
+        @Override
+        public void loop() {
+        }
+
+        @Override
+        public boolean isComplete() {
+            return this.clawCapabilities.isAtTargetPosition();
         }
     }
-}
-
-enum TargetRotation {
-    FORWARD,
-    DOWNWARD
 }

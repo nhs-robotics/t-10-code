@@ -1,17 +1,17 @@
-package intothedeep.teleop.azazel;
-
-import intothedeep.Constants;
-import t10.bootstrap.TeleOpOpMode;
-import t10.gamepad.GController;
-import t10.motion.mecanum.MecanumDriver;
+package azazel;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import intothedeep.Constants;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
+import t10.bootstrap.BootstrappedOpMode;
+import t10.gamepad.GController;
+import t10.motion.mecanum.MecanumDriver;
+
 @TeleOp(name = "Azazel Tele-Op")
-public class AzazelTeleOp extends TeleOpOpMode {
+public class AzazelTeleOp extends BootstrappedOpMode {
     private AzazelRobotCapabilities capabilities;
     private MecanumDriver driver;
     private GController gamepadController;
@@ -21,7 +21,9 @@ public class AzazelTeleOp extends TeleOpOpMode {
     private static final double[] positions = {0.95, -0.748, -1};
 
     @Override
-    public void initialize() {
+    public void init() {
+		super.init();
+
         this.c = new AzazelRobotConfiguration(this.hardwareMap);
         this.capabilities = new AzazelRobotCapabilities(c);
         this.driver = new MecanumDriver(c.fl, c.fr, c.bl, c.br, Constants.Coefficients.KEVIN_COEFFICIENTS);
@@ -50,7 +52,7 @@ public class AzazelTeleOp extends TeleOpOpMode {
         this.capabilities.rotateContainer(positions[position]);
         this.telemetryItem.setValue(this.c.linearSlideRight.motor.getCurrentPosition());
         this.capabilities.update();
-        this.gamepadController.update();
+        this.gamepadController.loop();
         this.driver.useGamepad(this.gamepad1, this.gamepadController.x.isToggled() ? 0.1 : 0.05);
 
         YawPitchRollAngles angles = this.c.imu.getRobotYawPitchRollAngles();
