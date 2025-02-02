@@ -19,11 +19,13 @@ public class SimultaneousAction implements AutoAction {
     }
 
     public SimultaneousAction add(AutoAction action) {
-        for (AutoAction a : this.actions) {
-            if (a.getClass().getName().equals(action.getClass().getName())) {
-                throw new IllegalArgumentException("You can't add multiple of the same type of Action to SimultaneousAction.");
-            }
-        }
+		if (!action.getClass().equals(SequentialAction.class)) {
+			for (AutoAction a : this.actions) {
+				if (a.getClass().getName().equals(action.getClass().getName())) {
+					throw new IllegalArgumentException("You can't add multiple of the same type of Action to SimultaneousAction.");
+				}
+			}
+		}
 
         this.actions.add(action);
 
