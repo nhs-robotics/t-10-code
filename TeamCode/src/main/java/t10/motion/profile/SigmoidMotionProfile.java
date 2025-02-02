@@ -1,22 +1,33 @@
 package t10.motion.profile;
 
-import t10.geometry.MovementVector;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+
+
+import t10.geometry.*;
+import t10.utils.MathUtils;
 
 public class SigmoidMotionProfile implements IMotionProfile {
 	// TODO: ensure that all MovementVectors have same angle unit, currently the could mix (bad)
 	@Override
-	public MovementVector calculate(MovementVector initialVelocity, MovementVector maxVelocity, MovementVector endVelocity, MovementVector maxAcceleration, double distanceTraveled, double totalDistance) {
-		final double slowdownCoefficient = 0.5 * Math.E;  // This will really start pumping the brakes at about 10in out from destination
-		double remainingDistance = totalDistance - distanceTraveled;
+	public MovementVector calculate(MovementVector initialVelocity, MovementVector maxVelocity, MovementVector endVelocity, MovementVector maxAcceleration, Pose initialPose, Pose currentPose, Pose finalPose, double lookAhead) {
+		final double slowdownCoefficient = 0.1 * Math.E;
+		double deltaX = finalPose.getX() - currentPose.getX();
+		double deltaY = finalPose.getY() - currentPose.getY();
+		double deltaH = MathUtils.angleDifference(
+				currentPose.getHeading(AngleUnit.RADIANS),
+				finalPose.getHeading(AngleUnit.RADIANS),
+				AngleUnit.RADIANS);
+
+		double remainingDistance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
 
 		double mvx = maxVelocity.getHorizontal();
 		double mvy = maxVelocity.getVertical();
-		double mvr = maxVelocity.getRotation();
+		double mvh = maxVelocity.getRotation();
 
-		double vx = (2 * mvx) / (1 + Math.pow(slowdownCoefficient, -remainingDistance)) - mvx + endVelocity.getHorizontal();
-		double vy = (2 * mvy) / (1 + Math.pow(slowdownCoefficient, -remainingDistance)) - mvy + endVelocity.getVertical();
-		double vh = (2 * mvr) / (1 + Math.pow(slowdownCoefficient, -remainingDistance)) - mvr + endVelocity.getRotation();
+		double vx = (mvx) / (1 + Math.pow(slowdownCoefficient, deltaX)) - (mvx / 2);
+		double vy = (mvy) / (1 + Math.pow(slowdownCoefficient, deltaY)) - (mvy / 2);
+		double vh = (mvh) / (1 + Math.pow(slowdownCoefficient, deltaH)) - (mvh / 2);
 
-		return new MovementVector(vx, vy, vh, maxVelocity.getAngleUnit());
+		return new MovementVector(vy, vx, vh, maxVelocity.getAngleUnit());
 	}
 }

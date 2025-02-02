@@ -1,5 +1,9 @@
 package t10.motion.profile;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+
+import t10.geometry.MovementVector;
+import t10.geometry.Pose;
 import t10.utils.MathUtils;
 
 /**
@@ -8,27 +12,53 @@ import t10.utils.MathUtils;
  * <p>
  * DISTANCE determines the direction; initial and end velocity should be properly signed, target velocity/acceleration/lookahead should be positive
  */
-public class TrapezoidalMotionProfile implements MotionProfile {
-	private final double accelerateEndDistance;
-	private final double cruiseEndDistance;
-	private final double initialVelocity;
-	private final double firstAcceleration, secondAcceleration;
-	private final double distance;
-	private final double peakVelocity;
-	private final double endVelocity;
-	private final double lookAhead;
-	private final double direction;
+public class TrapezoidalMotionProfile implements IMotionProfile {
+	private boolean initialized = false;
+	private TrapMotionInLine veloX, veloY;
+	MovementVector initialVelocity;
+	MovementVector maxVelocity;
+	MovementVector endVelocity;
+	MovementVector maxAcceleration;
+	Pose initialPose;
+	Pose currentPose;
+	Pose finalPose;
+	double lookAhead;
+
+
+	@Override
+	public MovementVector calculate(MovementVector initialVelocity, MovementVector maxVelocity, MovementVector endVelocity, MovementVector maxAcceleration, Pose initialPose, Pose currentPose, Pose finalPose, double lookAhead) {
+		veloX = new TrapMotionInLine(initialVelocity.getHorizontal(),maxVelocity.getHorizontal(),endVelocity.getHorizontal(),maxAcceleration.getHorizontal(),initialPose.getX(),finalPose.getX(),lookAhead);
+		veloY = new TrapMotionInLine(initialVelocity.getVertical(),maxVelocity.getVertical(),endVelocity.getVertical(),maxAcceleration.getVertical(),initialPose.getY(),finalPose.getY(),lookAhead);
+
+		return null;
+	}
+
+	private boolean testParameters(MovementVector initialVelocity, MovementVector maxVelocity, MovementVector endVelocity, MovementVector maxAcceleration, Pose initialPose, Pose finalPose, double lookAhead) {
+		if ()
+	}
+}
+
+class TrapMotionInLine {
+	private double accelerateEndDistance;
+	private double cruiseEndDistance;
+	private double initialVelocity;
+	private double firstAcceleration, secondAcceleration;
+	private double distance;
+	private double peakVelocity;
+	private double lookAhead;
+	private double direction;
 	private boolean finished = false;
 	public boolean changedDirection = true;
 	private double deltaDistMin = 0;
 	public String state = "init";
 
-	public TrapezoidalMotionProfile(
+	 public TrapMotionInLine(
 			double initialVelocity,
 			double maxSpeed,
 			double endVelocity,
 			double acceleration,
-			double distance,
+			double start,
+			double end,
 			double lookAhead
 	) {
 		// Validate inputs
@@ -81,8 +111,6 @@ public class TrapezoidalMotionProfile implements MotionProfile {
 			this.accelerateEndDistance = MathUtils.solveDisplacement(peakVelocity, initialVelocity, firstAcceleration);
 			this.cruiseEndDistance = 0;
 		}
-
-		this.endVelocity = endVelocity;
 		this.lookAhead = lookAhead;
 		if (Math.signum(initialVelocity) != direction) {
 			changedDirection = false;
@@ -94,7 +122,6 @@ public class TrapezoidalMotionProfile implements MotionProfile {
 	/**
 	 * @param deltaDistance Should be signed - doesn't matter which way is positive, as long as you stick to it
 	 */
-	@Override
 	public double getVelocity(double deltaDistance) {
 		if (!changedDirection) {
 			deltaDistance += lookAhead * Math.signum(initialVelocity);

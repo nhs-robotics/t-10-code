@@ -1,6 +1,7 @@
 package t10.motion.profile;
 
 import t10.geometry.MovementVector;
+import t10.geometry.Pose;
 
 @FunctionalInterface
 public interface IMotionProfile {
@@ -9,7 +10,9 @@ public interface IMotionProfile {
 			MovementVector maxVelocity,
 			MovementVector endVelocity,
 			MovementVector maxAcceleration,
-			double distanceTraveled,
-			double totalDistance
+			Pose initialPose,
+			Pose currentPose,
+			Pose finalPose,
+			double lookahead
 	);
 }
