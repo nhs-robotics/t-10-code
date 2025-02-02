@@ -3,6 +3,7 @@ package intothedeep.capabilities;
 import intothedeep.SnowballConfig;
 
 import t10.Loop;
+import t10.auto.AutoAction;
 import t10.motion.hardware.Motor;
 import t10.utils.PIDController;
 
@@ -75,5 +76,29 @@ public class ArmRotationCapabilities implements Loop {
 	private void setPower(double power) {
 		// TODO: re-implement bounds, if necessary.
 		this.armRotation.setPower(power);
+	}
+
+	public static class ArmRotationAction implements AutoAction {
+		private final ArmRotationCapabilities armRotationCapabilities;
+		private final int position;
+
+		public ArmRotationAction(ArmRotationCapabilities armRotationCapabilities, int position) {
+			this.armRotationCapabilities = armRotationCapabilities;
+			this.position = position;
+		}
+
+		@Override
+		public void init() {
+			this.armRotationCapabilities.setTargetPosition(this.position);
+		}
+
+		@Override
+		public void loop() {
+		}
+
+		@Override
+		public boolean isComplete() {
+			return this.armRotationCapabilities.isAtTargetPosition();
+		}
 	}
 }
