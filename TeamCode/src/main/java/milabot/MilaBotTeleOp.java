@@ -8,8 +8,8 @@ import intothedeep.Constants;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import t10.bootstrap.AbstractRobotConfiguration;
+import t10.bootstrap.BootstrappedOpMode;
 import t10.bootstrap.Hardware;
-import t10.bootstrap.TeleOpOpMode;
 import t10.gamepad.GController;
 import t10.geometry.Pose;
 import t10.localizer.Localizer;
@@ -19,7 +19,7 @@ import t10.motion.mecanum.MecanumDriver;
 import t10.utils.MathUtils;
 
 @TeleOp
-public class MilaBotTeleOp extends TeleOpOpMode {
+public class MilaBotTeleOp extends BootstrappedOpMode {
 	public static final int POSITION_BIG_ARM_MAX = 1970;
 	public static final int POSITION_SMALL_ARM_MAX = 210;
 	public static final int POSITION_SMALL_ARM_TOP_MAX = 310;

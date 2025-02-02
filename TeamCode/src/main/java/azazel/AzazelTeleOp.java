@@ -6,12 +6,12 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
-import t10.bootstrap.TeleOpOpMode;
+import t10.bootstrap.BootstrappedOpMode;
 import t10.gamepad.GController;
 import t10.motion.mecanum.MecanumDriver;
 
 @TeleOp(name = "Azazel Tele-Op")
-public class AzazelTeleOp extends TeleOpOpMode {
+public class AzazelTeleOp extends BootstrappedOpMode {
     private AzazelRobotCapabilities capabilities;
     private MecanumDriver driver;
     private GController gamepadController;

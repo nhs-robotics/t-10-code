@@ -12,13 +12,13 @@ import t10.auto.MoveToAction;
 import t10.auto.SequentialAction;
 import t10.auto.SimultaneousAction;
 import t10.auto.SleepAction;
-import t10.bootstrap.AutonomousOpMode;
+import t10.bootstrap.BootstrappedOpMode;
 import t10.geometry.Pose;
 import t10.localizer.Localizer;
 import t10.motion.mecanum.MecanumDriver;
 import t10.motion.path.PurePursuitPathFollower;
 
-public abstract class EasyAuto extends AutonomousOpMode {
+public abstract class EasyAuto extends BootstrappedOpMode {
 	private final Pose startPose;
 	public MecanumDriver driver;
 	public SnowballConfig config;

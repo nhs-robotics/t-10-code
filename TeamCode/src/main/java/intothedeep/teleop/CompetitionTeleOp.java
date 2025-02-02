@@ -9,7 +9,7 @@ import intothedeep.capabilities.CraneCapabilities;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-import t10.bootstrap.TeleOpOpMode;
+import t10.bootstrap.BootstrappedOpMode;
 import t10.gamepad.GController;
 import t10.geometry.MovementVector;
 import t10.geometry.Pose;
@@ -17,7 +17,7 @@ import t10.localizer.Localizer;
 import t10.motion.mecanum.MecanumDriver;
 
 @TeleOp
-public class CompetitionTeleOp extends TeleOpOpMode {
+public class CompetitionTeleOp extends BootstrappedOpMode {
 	private SnowballConfig config;
 	private CraneCapabilities crane;
 	private GController g1;
