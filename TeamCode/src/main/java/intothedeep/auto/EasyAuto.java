@@ -1,16 +1,10 @@
 package intothedeep.auto;
 
 import intothedeep.SnowballConfig;
-import intothedeep.auto.actions.ArmExtensionAction;
-import intothedeep.auto.actions.ArmRotationAction;
-import intothedeep.auto.actions.ClawAction;
-import intothedeep.auto.actions.CraneAction;
 import intothedeep.capabilities.ArmExtensionCapabilities;
 import intothedeep.capabilities.ArmRotationCapabilities;
 import intothedeep.capabilities.ClawCapabilities;
 import intothedeep.capabilities.CraneCapabilities;
-
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import t10.auto.AutoAction;
 import t10.auto.FollowPathAction;
@@ -23,8 +17,6 @@ import t10.geometry.Pose;
 import t10.localizer.Localizer;
 import t10.motion.mecanum.MecanumDriver;
 import t10.motion.path.PurePursuitPathFollower;
-
-import java.util.ArrayList;
 
 public abstract class EasyAuto extends AutonomousOpMode {
 	private final Pose startPose;
@@ -97,20 +89,20 @@ public abstract class EasyAuto extends AutonomousOpMode {
 		return new MoveToAction(this.localizer, this.driver, destinationPose);
 	}
 
-	public ArmExtensionAction armExtension(int position) {
-		return new ArmExtensionAction(this.armExtension, position);
+	public ArmExtensionCapabilities.ArmExtensionAction armExtension(int position) {
+		return new ArmExtensionCapabilities.ArmExtensionAction(this.armExtension, position);
 	}
 
-	public ArmRotationAction armRotation(int position) {
-		return new ArmRotationAction(this.armRotation, position);
+	public ArmRotationCapabilities.ArmRotationAction armRotation(int position) {
+		return new ArmRotationCapabilities.ArmRotationAction(this.armRotation, position);
 	}
 
-	public CraneAction crane(int position) {
-		return new CraneAction(this.crane, position);
+	public CraneCapabilities.CraneAction crane(int position) {
+		return new CraneCapabilities.CraneAction(this.crane, position);
 	}
 
-	public ClawAction claw(boolean isOpen) {
-		return new ClawAction(this.claw, isOpen);
+	public ClawCapabilities.ClawAction claw(boolean isOpen) {
+		return new ClawCapabilities.ClawAction(this.claw, isOpen);
 	}
 
 	public SimultaneousAction simultaneously(AutoAction... actions) {

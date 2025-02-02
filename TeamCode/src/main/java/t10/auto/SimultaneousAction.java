@@ -34,6 +34,9 @@ public class SimultaneousAction implements AutoAction {
 
     @Override
     public void init() {
+		for (AutoAction action : this.actions) {
+			action.init();
+		}
     }
 
     @Override

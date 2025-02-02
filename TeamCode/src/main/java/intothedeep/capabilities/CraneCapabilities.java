@@ -3,6 +3,7 @@ package intothedeep.capabilities;
 import intothedeep.SnowballConfig;
 
 import t10.Loop;
+import t10.auto.AutoAction;
 import t10.motion.hardware.Motor;
 import t10.utils.MathUtils;
 import t10.utils.PIDController;
@@ -110,4 +111,28 @@ public class CraneCapabilities implements Loop {
 
 		motor.setPower(power);
 	}
+
+    public static class CraneAction implements AutoAction {
+        private final CraneCapabilities craneCapabilities;
+        private final int position;
+
+        public CraneAction(CraneCapabilities craneCapabilities, int position) {
+            this.craneCapabilities = craneCapabilities;
+            this.position = position;
+        }
+
+        @Override
+        public void init() {
+            this.craneCapabilities.setTargetPosition(this.position);
+        }
+
+        @Override
+        public void loop() {
+        }
+
+        @Override
+        public boolean isComplete() {
+            return this.craneCapabilities.isAtTargetPosition();
+        }
+    }
 }
