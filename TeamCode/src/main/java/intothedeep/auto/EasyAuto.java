@@ -40,14 +40,14 @@ public abstract class EasyAuto extends BootstrappedOpMode {
 		// Capabilities
 		this.armExtension = new ArmExtensionCapabilities(config);
 		this.armRotation = new ArmRotationCapabilities(config);
-		this.claw = new ClawCapabilities(config);
+//		this.claw = new ClawCapabilities(config);
 		this.crane = new CraneCapabilities(config);
 
 		// Configure robot's initial state
 		this.armRotation.setTargetPosition(ArmRotationCapabilities.POSITION_INSPECTION);
 		this.armExtension.setTargetPosition(ArmExtensionCapabilities.POSITION_FULLY_RETRACTED);
 		this.crane.setTargetPosition(CraneCapabilities.POSITION_BOTTOM);
-		this.claw.closeClaw();  // Keep closed to grasp a block for auto
+		this.claw.setOpen(false);  // Keep closed to grasp a block for auto
 
 		this.multithreadingService.execute(() -> {
 			while (this.isRunning) {

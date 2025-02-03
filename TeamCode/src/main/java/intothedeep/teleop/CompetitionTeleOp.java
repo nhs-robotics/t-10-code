@@ -39,7 +39,7 @@ public class CompetitionTeleOp extends BootstrappedOpMode {
 		this.crane = new CraneCapabilities(this.config);
 		this.armExtension = new ArmExtensionCapabilities(this.config);
 		this.armRotation = new ArmRotationCapabilities(this.config);
-		this.claw = new ClawCapabilities(this.config);
+//		this.claw = new ClawCapabilities(this.config);
 
 		// Driving
 		this.driver = this.config.createMecanumDriver();

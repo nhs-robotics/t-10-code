@@ -77,9 +77,6 @@ public class SnowballConfig extends AbstractRobotConfiguration {
 	@Hardware(name = "OctoQuad")
 	public OctoQuad octoQuad;
 
-    @Hardware(name = "Grabber")
-    public Servo clawServo;
-
     @Hardware(name = "ClawTwist")
     public Servo clawTwist;
 
