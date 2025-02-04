@@ -1,9 +1,13 @@
 package intothedeep.capabilities;
 
+//Up: 0.83
+//Forward: 0.5
+//Down: 0.16
+
 public enum ClawPreset {
-	STRAIGHT_FORWARD(0, 0),
-	PLACE_SPECIMEN(0.5, 0),
-	COLLECT_SPECIMEN_FROM_WALL(-0.5, 0);
+	UP(0.83, 0),
+	FORWARD(0.5, 0),
+	DOWN(0.16, 0);
 
 	public final double servoRotatePosition;
 	public final double servoTwistPosition;

@@ -3,6 +3,7 @@ package intothedeep.teleop;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import intothedeep.SnowballConfig;
 import intothedeep.capabilities.ClawCapabilities;
 import intothedeep.capabilities.ClawPreset;
@@ -18,6 +19,8 @@ public class ClawTest extends BootstrappedOpMode {
     private ClawTest.Config config;
     private ClawCapabilities claw;
     private GController g;
+	private Telemetry.Item rotatePosition;
+	private double position = 0;
 
     @Override
     public void init() {
@@ -27,14 +30,24 @@ public class ClawTest extends BootstrappedOpMode {
         this.claw = new ClawCapabilities(this.config);
         this.g = new GController(this.gamepad1)
                 .a.onToggle(state -> this.claw.setOpen(state)).ok()
-                .x.onPress(() -> this.claw.setPreset(ClawPreset.COLLECT_SPECIMEN_FROM_WALL)).ok()
-                .b.onPress(() -> this.claw.setPreset(ClawPreset.PLACE_SPECIMEN)).ok()
-                .y.onPress(() -> this.claw.setPreset(ClawPreset.STRAIGHT_FORWARD)).ok();
+                .x.onPress(() -> this.claw.setPreset(ClawPreset.UP)).ok()
+                .b.onPress(() -> this.claw.setPreset(ClawPreset.FORWARD)).ok()
+                .y.onPress(() -> this.claw.setPreset(ClawPreset.DOWN)).ok()
+				.dpadUp.onPress(() -> position += 0.05).ok()
+				.dpadDown.onPress(() -> position -= 0.05).ok()
+				.dpadRight.onPress(() -> this.config.clawRotate.setPosition(position)).ok()
+				.dpadLeft.onPress(() -> this.config.clawTwist.setPosition(position)).ok()
+				.rightBumper.onPress(() -> position += 0.01).ok()
+				.leftBumper.onPress(() -> position -= 0.01).ok();
+
+		rotatePosition = this.telemetry.addData("Position ", 0);
     }
 
     @Override
     public void loop() {
         this.g.loop();
+		rotatePosition.setValue(position);
+		telemetry.update();
     }
 
     public static class Config extends AbstractRobotConfiguration {

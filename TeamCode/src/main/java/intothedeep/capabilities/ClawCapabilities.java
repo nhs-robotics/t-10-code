@@ -1,5 +1,8 @@
 package intothedeep.capabilities;
 
+import intothedeep.Constants;
+import intothedeep.SnowballConfig;
+import t10.motion.hardware.Motor;
 import intothedeep.teleop.ClawTest;
 
 import t10.auto.AutoAction;
@@ -53,7 +56,7 @@ public class ClawCapabilities {
 
 	public void initializePosition() {
 		this.setOpen(false);
-		this.setPreset(ClawPreset.PLACE_SPECIMEN);
+		this.setPreset(ClawPreset.FORWARD);
 	}
 
 	public boolean isAtTargetPosition() {
