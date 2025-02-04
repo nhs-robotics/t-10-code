@@ -2,6 +2,8 @@ package t10.motion.profile;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
+import intothedeep.Constants;
+
 import t10.geometry.MovementVector;
 import t10.geometry.Pose;
 import t10.utils.MathUtils;
@@ -15,6 +17,7 @@ import t10.utils.MathUtils;
 public class TrapezoidalMotionProfile implements IMotionProfile {
 	private boolean initialized = false;
 	private TrapMotionInLine veloX, veloY;
+	private TrapMotionRotate veloH;
 	MovementVector initialVelocity;
 	MovementVector maxVelocity;
 	MovementVector endVelocity;
@@ -27,14 +30,40 @@ public class TrapezoidalMotionProfile implements IMotionProfile {
 
 	@Override
 	public MovementVector calculate(MovementVector initialVelocity, MovementVector maxVelocity, MovementVector endVelocity, MovementVector maxAcceleration, Pose initialPose, Pose currentPose, Pose finalPose, double lookAhead) {
-		veloX = new TrapMotionInLine(initialVelocity.getHorizontal(),maxVelocity.getHorizontal(),endVelocity.getHorizontal(),maxAcceleration.getHorizontal(),initialPose.getX(),finalPose.getX(),lookAhead);
-		veloY = new TrapMotionInLine(initialVelocity.getVertical(),maxVelocity.getVertical(),endVelocity.getVertical(),maxAcceleration.getVertical(),initialPose.getY(),finalPose.getY(),lookAhead);
+		updateProfiles(initialVelocity, maxVelocity, endVelocity, maxAcceleration, initialPose, finalPose, lookAhead);
 
-		return null;
+		double vx = veloX.getVelocity(currentPose.getX() - initialPose.getX());
+		double vy = veloY.getVelocity(currentPose.getY() - initialPose.getY());
+		double vh = veloH.getRotateVelo(currentPose.getHeading(AngleUnit.RADIANS),AngleUnit.RADIANS);
+		return new MovementVector(vx,vy,vh, null);
 	}
 
-	private boolean testParameters(MovementVector initialVelocity, MovementVector maxVelocity, MovementVector endVelocity, MovementVector maxAcceleration, Pose initialPose, Pose finalPose, double lookAhead) {
-		if ()
+	private void updateProfiles(MovementVector initialVelocity, MovementVector maxVelocity, MovementVector endVelocity, MovementVector maxAcceleration, Pose initialPose, Pose finalPose, double lookAhead) {
+		if (this.initialVelocity == initialVelocity && this.maxVelocity == maxVelocity && this.endVelocity == endVelocity && this.maxAcceleration == maxAcceleration && this.initialPose == initialPose && this.finalPose == finalPose && this.lookAhead == lookAhead) {
+
+		}
+		else {
+			veloX = new TrapMotionInLine(initialVelocity.getHorizontal(), maxVelocity.getHorizontal(), endVelocity.getHorizontal(), maxAcceleration.getHorizontal(), initialPose.getX(), finalPose.getX(), lookAhead);
+			veloY = new TrapMotionInLine(initialVelocity.getVertical(), maxVelocity.getVertical(), endVelocity.getVertical(), maxAcceleration.getVertical(), initialPose.getY(), finalPose.getY(), lookAhead);
+
+			veloH = new TrapMotionRotate(
+					initialVelocity.getAngleUnit().toRadians(initialVelocity.getRotation()),
+					maxVelocity.getAngleUnit().toRadians(maxVelocity.getRotation()),
+					endVelocity.getAngleUnit().toRadians(endVelocity.getRotation()),
+					maxAcceleration.getAngleUnit().toRadians(maxAcceleration.getRotation()),
+					initialPose.getHeading(AngleUnit.RADIANS),
+					finalPose.getHeading(AngleUnit.RADIANS),
+					lookAhead,
+					Constants.Robot.ROBOT_WHEEL_DIST_FROM_CENTER /*todo: fix this number*/
+			);
+			this.initialVelocity = initialVelocity;
+			this.maxVelocity = maxVelocity;
+			this.endVelocity = endVelocity;
+			this.maxAcceleration = maxAcceleration;
+			this.initialPose = initialPose;
+			this.finalPose = finalPose;
+			this.lookAhead = lookAhead;
+		}
 	}
 }
 
@@ -163,5 +192,47 @@ class TrapMotionInLine {
 
 	public boolean isDone() {
 		return finished;
+	}
+}
+
+class TrapMotionRotate extends TrapMotionInLine {
+	private double rotateVelo;
+	private double circleRadius;
+	private double initialAngle;
+
+	/**
+	 *
+	 * @param initialAngularVelocity In radians per second
+	 * @param maxAngularVelocity In radians per second
+	 * @param endAngularVelocity In radians per second
+	 * @param angularAcceleration In radians per second per second
+	 * @param initialAngle In radians
+	 * @param finalAngle In radians
+	 * @param lookAhead In radians
+	 * @param wheelDistFromCenter In inches
+	 */
+	public TrapMotionRotate (
+			double initialAngularVelocity,
+			double maxAngularVelocity,
+			double endAngularVelocity,
+			double angularAcceleration,
+			double initialAngle,
+			double finalAngle,
+			double lookAhead,
+			double wheelDistFromCenter
+	) {
+		super(initialAngularVelocity, maxAngularVelocity, endAngularVelocity, angularAcceleration, initialAngle, finalAngle, lookAhead);
+
+		this.initialAngle = initialAngle;
+		this.circleRadius = wheelDistFromCenter;
+	}
+
+	public double getRotateVelo(double currentAngle, AngleUnit angleUnit)
+	{
+		currentAngle = angleUnit.toRadians(currentAngle);
+		double angularVelo = (super.getVelocity(currentAngle - initialAngle));
+
+		//because velocity is angular velocity times radius
+		return angularVelo * circleRadius;
 	}
 }

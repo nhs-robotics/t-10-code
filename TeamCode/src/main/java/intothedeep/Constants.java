@@ -23,6 +23,7 @@ public class Constants {
 		public static final double WHEEL_DIAMETER_IN = 11.8737360135;
 		public static final double ACTUAL_DIAMETER_IN = 3.7795275590551185;
 		public static final double ROBOT_WIDTH_IN = 16.9291;
+		public static final double ROBOT_WHEEL_DIST_FROM_CENTER = 17.341;
 	}
 
 	public static class TickCounts {
