@@ -9,6 +9,11 @@ import intothedeep.capabilities.CraneCapabilities;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+
 import t10.bootstrap.BootstrappedOpMode;
 import t10.gamepad.GController;
 import t10.geometry.MovementVector;
@@ -26,7 +31,6 @@ public class CompetitionTeleOp extends BootstrappedOpMode {
 	private ClawCapabilities claw;
 	private ArmExtensionCapabilities armExtension;
 	private ArmRotationCapabilities armRotation;
-	private Telemetry.Item horizontal, vertical, angle, cranePos;
 	private Localizer<Pose> localizer;
 	double speed = 3;
 
@@ -75,30 +79,29 @@ public class CompetitionTeleOp extends BootstrappedOpMode {
 					armRotation.setTargetPosition(0);
 				}).ok();
 
-		this.vertical = telemetry.addData("y: ", 0);
-		this.horizontal = telemetry.addData("x: ", 0);
-		this.angle = telemetry.addData("angle: ", 0);
-		this.cranePos = telemetry.addData("cranePos: ", 0);
+		this.multithreadingService.execute(() -> {
+			while (this.isRunning) {
+				this.localizer.loop();
+			}
+		});
+
+		this.multithreadingService.execute(() -> {
+			while (this.isRunning) {
+				this.armRotation.loop();
+				this.armExtension.loop();
+				this.crane.loop();
+			}
+		});
 	}
 
 	@Override
 	public void loop() {
-		Pose pose = this.localizer.getFieldCentric();
-		vertical.setValue(pose.getY());
-		horizontal.setValue(pose.getX());
-		angle.setValue(pose.getHeading(AngleUnit.DEGREES));
-		cranePos.setValue(crane.getTargetPosition());
-
 		if (!gamepad2.dpad_up && !gamepad2.dpad_down && !gamepad2.dpad_right && !gamepad2.dpad_left) {
 			this.driver.useGamepad(this.gamepad1, this.g1.x.isToggled() ? 1 : 0.25);
 		}
 
 		this.g1.loop();
 		this.g2.loop();
-		this.crane.loop();
 		this.telemetry.update();
-		this.localizer.loop();
-		this.armExtension.loop();
-		this.armRotation.loop();
 	}
 }
