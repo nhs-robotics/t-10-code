@@ -5,6 +5,7 @@ import intothedeep.SnowballConfig;
 import t10.Loop;
 import t10.auto.AutoAction;
 import t10.motion.hardware.Motor;
+import t10.utils.MathUtils;
 import t10.utils.PIDController;
 
 /**
@@ -55,7 +56,7 @@ public class ArmRotationCapabilities implements Loop {
 	}
 
 	public void setPowerManually(double power) {
-		if (power == 0) {
+		if (Math.abs(power) < 0.1) {
 			if (this.isManuallyControlled) {
 				this.targetPosition = this.position;
 				this.isManuallyControlled = false;

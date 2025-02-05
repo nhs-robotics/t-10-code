@@ -52,8 +52,8 @@ public class CraneCapabilities implements Loop {
 					this.targetPosition
 			);
 
-			this.setPower(-powerLeft, this.positionLeft, this.liftLeft);
-			this.setPower(-powerRight, this.positionRight, this.liftRight);
+			this.setPower(powerLeft, this.positionLeft, this.liftLeft);
+			this.setPower(powerRight, this.positionRight, this.liftRight);
 		}
 
 		if (Math.abs(this.positionLeft - this.positionRight) >= CRANE_DIFFERENCE_FAIL_SAFE) {
@@ -79,7 +79,7 @@ public class CraneCapabilities implements Loop {
 	}
 
 	public void setPowerManually(double power) {
-		if (power == 0) {
+		if (Math.abs(power) < 0.1) {
 			if (this.isManuallyControlled) {
 				this.targetPosition = MathUtils.average(this.positionLeft, this.positionRight);
 				this.isManuallyControlled = false;

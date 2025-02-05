@@ -19,6 +19,7 @@ import t10.gamepad.GController;
 import t10.geometry.MovementVector;
 import t10.geometry.Pose;
 import t10.localizer.Localizer;
+import t10.metrics.Metric;
 import t10.motion.mecanum.MecanumDriver;
 
 @TeleOp
@@ -33,6 +34,11 @@ public class CompetitionTeleOp extends BootstrappedOpMode {
 	private ArmRotationCapabilities armRotation;
 	private Localizer<Pose> localizer;
 	double speed = 3;
+
+	@Metric
+	public Pose pose;
+	private Telemetry.Item craneRight, craneLeft;
+	private Telemetry.Item craneTargetValue;
 
 	@Override
 	public void init() {
@@ -85,13 +91,9 @@ public class CompetitionTeleOp extends BootstrappedOpMode {
 			}
 		});
 
-		this.multithreadingService.execute(() -> {
-			while (this.isRunning) {
-				this.armRotation.loop();
-				this.armExtension.loop();
-				this.crane.loop();
-			}
-		});
+		this.craneLeft = this.telemetry.addData("craneLeft ", "");
+		this.craneRight = this.telemetry.addData("craneRight ", "");
+		this.craneTargetValue = this.telemetry.addData("craneTargetValue ", "");
 	}
 
 	@Override
@@ -100,8 +102,17 @@ public class CompetitionTeleOp extends BootstrappedOpMode {
 			this.driver.useGamepad(this.gamepad1, this.g1.x.isToggled() ? 1 : 0.25);
 		}
 
+		this.pose = this.localizer.getFieldCentric();
+
+		this.craneLeft.setValue(this.config.liftLeft.motor.getCurrentPosition());
+		this.craneRight.setValue(this.config.liftRight.motor.getCurrentPosition());
+		this.craneTargetValue.setValue(this.crane.getTargetPosition());
+
 		this.g1.loop();
 		this.g2.loop();
 		this.telemetry.update();
+		this.armRotation.loop();
+		this.armExtension.loop();
+		this.crane.loop();
 	}
 }

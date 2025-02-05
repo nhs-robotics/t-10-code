@@ -15,7 +15,7 @@ public class CompetitionAuto extends EasyAuto {
 	public Pose pose;
 
 	public CompetitionAuto() {
-		super(new Pose(0, 0, 0, AngleUnit.DEGREES));
+		super(new Pose(0, 64, -90, AngleUnit.DEGREES));
 	}
 
 	@Override
@@ -23,8 +23,11 @@ public class CompetitionAuto extends EasyAuto {
 		super.init();
 
 		this.autoSequence = sequentially(
-				moveTo(new Pose(36, 0, 0, AngleUnit.DEGREES)),
-				moveTo(new Pose(0, 0, 0, AngleUnit.DEGREES))
+				moveTo(new Pose(36, 44, 90, AngleUnit.DEGREES)),
+				moveTo(new Pose(36, 16, 90, AngleUnit.DEGREES)),
+				moveTo(new Pose(44, 16, 90, AngleUnit.DEGREES)),
+				sleep(1000),
+				moveTo(new Pose(44, 58, 90, AngleUnit.DEGREES))
 		);
 	}
 
