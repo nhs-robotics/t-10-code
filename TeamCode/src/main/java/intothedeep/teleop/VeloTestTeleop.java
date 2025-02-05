@@ -23,12 +23,11 @@ public class VeloTestTeleop extends TeleOpOpMode {
 	private SnowballConfig config;
 	private GController g1;
 	private MecanumDriver driver;
-	private Telemetry.Item horizontal, vertical, angle, veloX, veloY, veloH;
+	private Telemetry.Item horizontal, vertical, angle, veloX, veloY, veloH, Finalhorizontal, Finalvertical, Finalangle;
 	private Localizer<Pose> localizer;
 	private IMotionProfile motionProfile;
-	double speed = 3;
-	MovementVector initialVelocity = new MovementVector(0,0,0,AngleUnit.RADIANS), endVelocity = new MovementVector(0,0,0,AngleUnit.RADIANS), maxAccel = new MovementVector(5,5,2 * Math.PI, AngleUnit.RADIANS);
-	Pose initialPose, finalPose;
+	MovementVector initialVelocity = new MovementVector(0,0,0,AngleUnit.RADIANS), endVelocity = new MovementVector(0,0,0, AngleUnit.RADIANS), maxAccel = new MovementVector(5,5,2 * Math.PI, AngleUnit.RADIANS);
+	Pose initialPose = new Pose(0,0,0,AngleUnit.RADIANS), finalPose = new Pose(0,0,0,AngleUnit.RADIANS);
 
 	@Override
 	public void init() {
@@ -45,14 +44,14 @@ public class VeloTestTeleop extends TeleOpOpMode {
 		// Gamepad
 		// G1 controls the robot's moveTo.
 		this.g1 = new GController(this.gamepad1)
-				.dpadUp.onPress(() -> finalPose.add(new Pose(5,0,0,AngleUnit.RADIANS))).ok()
-				.dpadDown.onPress(() -> finalPose.add(new Pose(-5,0,0,AngleUnit.RADIANS))).ok()
-				.dpadLeft.onPress(() -> finalPose.add(new Pose(0,-5,0,AngleUnit.RADIANS))).ok()
-				.dpadRight.onPress(() -> finalPose.add(new Pose(0,5,0,AngleUnit.RADIANS))).ok()
-				.rightBumper.onPress(() -> finalPose.add(new Pose(0,0,Math.PI / 4, AngleUnit.RADIANS))).ok()
-				.leftBumper.onPress(() -> finalPose.add(new Pose(0,0,-Math.PI / 4, AngleUnit.RADIANS))).ok()
+				.dpadUp.onPress(() -> finalPose = finalPose.add(new Pose(5,0,0,AngleUnit.RADIANS))).ok()
+				.dpadDown.onPress(() -> finalPose = finalPose.add(new Pose(-5,0,0,AngleUnit.RADIANS))).ok()
+				.dpadLeft.onPress(() -> finalPose = finalPose.add(new Pose(0,-5,0,AngleUnit.RADIANS))).ok()
+				.dpadRight.onPress(() -> finalPose = finalPose.add(new Pose(0,5,0,AngleUnit.RADIANS))).ok()
+				.rightBumper.onPress(() -> finalPose = finalPose.add(new Pose(0,0,Math.PI / 4, AngleUnit.RADIANS))).ok()
+				.leftBumper.onPress(() -> finalPose = finalPose.add(new Pose(0,0,-Math.PI / 4, AngleUnit.RADIANS))).ok()
 				.a.onPress(() -> initialPose = localizer.getFieldCentric()).ok()
-				.x.onPress(() -> driver.setVelocity(motionProfile.calculate(initialVelocity, new MovementVector(25,25,2*Math.PI,AngleUnit.RADIANS),endVelocity,maxAccel,initialPose,localizer.getFieldCentric(),localizer.getVelocity(),finalPose,3))).ok();
+				.x.whileDown(() -> driver.setVelocity(motionProfile.calculate(initialVelocity, new MovementVector(25,25,2*Math.PI,AngleUnit.RADIANS),endVelocity,maxAccel,initialPose,localizer.getFieldCentric(),localizer.getVelocity(),finalPose,3))).onRelease(() -> driver.halt()).ok();
 
 		this.vertical = telemetry.addData("y: ", 0);
 		this.horizontal = telemetry.addData("x: ", 0);
@@ -60,6 +59,9 @@ public class VeloTestTeleop extends TeleOpOpMode {
 		this.veloY = telemetry.addData("veloY: ", 0);
 		this.veloX = telemetry.addData("veloX: ", 0);
 		this.veloH = telemetry.addData("veloH: ", 0);
+		this.Finalvertical = telemetry.addData("y: ", 0);
+		this.Finalhorizontal = telemetry.addData("x: ", 0);
+		this.Finalangle = telemetry.addData("angle: ", 0);
 	}
 
 	@Override
@@ -72,6 +74,10 @@ public class VeloTestTeleop extends TeleOpOpMode {
 		veloY.setValue(velocity.getVertical());
 		veloX.setValue(velocity.getHorizontal());
 		veloH.setValue(velocity.getRotation());
+
+		Finalvertical.setValue(finalPose.getY());
+		Finalhorizontal.setValue(finalPose.getX());
+		Finalangle.setValue(finalPose.getHeading(AngleUnit.DEGREES));
 
 		this.g1.loop();
 		this.telemetry.update();

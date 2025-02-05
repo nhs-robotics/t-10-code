@@ -10,6 +10,7 @@ import t10.bootstrap.AbstractRobotConfiguration;
 import t10.bootstrap.Hardware;
 import t10.localizer.OdometryCoefficientSet;
 import t10.localizer.OdometryIMULocalizer;
+import t10.localizer.OdometryLocalizer;
 import t10.motion.hardware.Motor;
 import t10.motion.hardware.OctoQuadEncoder;
 import t10.motion.mecanum.MecanumDriver;
@@ -104,16 +105,15 @@ public class SnowballConfig extends AbstractRobotConfiguration {
 	}
 
 	@Override
-	public OdometryIMULocalizer createLocalizer() {
-		return new OdometryIMULocalizer(
+	public OdometryLocalizer createLocalizer() {
+		return new OdometryLocalizer(
 				new OdometryCoefficientSet(1, 1, -1),
 				// 4-6-5 is right-left-perpendicular
 				new OctoQuadEncoder(octoQuad, 4, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
 				new OctoQuadEncoder(octoQuad, 6, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
 				new OctoQuadEncoder(octoQuad, 5, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
 				11.5,
-				-6.5,
-				this.imu
+				-6.5
 		);
 	}
 }
