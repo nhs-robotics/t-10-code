@@ -29,12 +29,12 @@ public class TrapezoidalMotionProfile implements IMotionProfile {
 
 
 	@Override
-	public MovementVector calculate(MovementVector initialVelocity, MovementVector maxVelocity, MovementVector endVelocity, MovementVector maxAcceleration, Pose initialPose, Pose currentPose, Pose finalPose, double lookAhead) {
+	public MovementVector calculate(MovementVector initialVelocity, MovementVector maxVelocity, MovementVector endVelocity, MovementVector maxAcceleration, Pose initialPose, Pose currentPose, MovementVector currentVelocity, Pose finalPose, double lookAhead) {
 		updateProfiles(initialVelocity, maxVelocity, endVelocity, maxAcceleration, initialPose, finalPose, lookAhead);
 
-		double vx = veloX.getVelocity(currentPose.getX() - initialPose.getX());
-		double vy = veloY.getVelocity(currentPose.getY() - initialPose.getY());
-		double vh = veloH.getRotateVelo(currentPose.getHeading(AngleUnit.RADIANS),AngleUnit.RADIANS);
+		double vx = veloX.getVelocity(currentVelocity.getHorizontal(), currentPose.getX() - initialPose.getX());
+		double vy = veloY.getVelocity(currentVelocity.getVertical(), currentPose.getY() - initialPose.getY());
+		double vh = veloH.getRotateVelo(currentVelocity.getAngleUnit().toRadians(currentVelocity.getRotation()), currentPose.getHeading(AngleUnit.RADIANS), AngleUnit.RADIANS);
 		return new MovementVector(vx,vy,vh, null);
 	}
 
@@ -68,10 +68,10 @@ public class TrapezoidalMotionProfile implements IMotionProfile {
 }
 
 class TrapMotionInLine {
-	private double accelerateEndDistance;
-	private double cruiseEndDistance;
+	private double accelerateDistance;
+	private double cruiseDistance;
 	private double initialVelocity;
-	private double firstAcceleration, secondAcceleration;
+	private double acceleration;
 	private double distance;
 	private double peakVelocity;
 	private double lookAhead;
@@ -79,7 +79,9 @@ class TrapMotionInLine {
 	private boolean finished = false;
 	public boolean changedDirection = true;
 	private double deltaDistMin = 0;
+	private double finalVelocity;
 	public String state = "init";
+	private double time = (double) System.currentTimeMillis() / 1000;
 
 	 public TrapMotionInLine(
 			double initialVelocity,
@@ -90,88 +92,67 @@ class TrapMotionInLine {
 			double end,
 			double lookAhead
 	) {
-		// Validate inputs
-		if (maxSpeed < 0 || acceleration < 0 || lookAhead < 0) {
-			throw new IllegalArgumentException("check that everything that should be positive is positive");
-		}
 
-		if (maxSpeed < Math.abs(endVelocity)) {
-			throw new IllegalArgumentException();
-		}
-
-		if (Math.abs(distance) < Math.abs(MathUtils.solveDisplacement(endVelocity, initialVelocity, acceleration * Math.signum(endVelocity - initialVelocity)))) {
-			throw new RuntimeException("parameters have no solution - I need more distance to accelerate");
-		}
-
-		// Calculate profile
-		this.initialVelocity = initialVelocity;
-		this.direction = Math.signum(distance);
-		this.distance = distance;
-
-		if (Math.abs(initialVelocity) > maxSpeed && Math.signum(initialVelocity) == direction) {
-			firstAcceleration = acceleration * direction * -1;
-		} else {
-			firstAcceleration = acceleration * direction;
-		}
-
-		secondAcceleration = acceleration * direction * -1;
-
-		double fullAccelerationDistance = Math.abs(MathUtils.solveDisplacement(maxSpeed, initialVelocity, firstAcceleration)) * direction;
-		double targetToEndVelocityDistance = Math.abs(MathUtils.solveDisplacement(endVelocity, maxSpeed, secondAcceleration)) * direction;
-
-		if (Math.abs(fullAccelerationDistance + targetToEndVelocityDistance) < distance) {
-			// WILL cruise.
-			this.peakVelocity = maxSpeed * direction;
-			this.accelerateEndDistance = fullAccelerationDistance;
-			this.cruiseEndDistance = distance - fullAccelerationDistance - targetToEndVelocityDistance;
-		} else {
-			// Will NOT cruise.
+		 // Calculate profile
+		 this.initialVelocity = initialVelocity;
+		 this.direction = Math.signum(distance);
+		 this.distance = distance;
+		 this.finalVelocity = endVelocity;
+		 this.acceleration = Math.abs(acceleration);
 
 
-			// Only triggers if the V-X graph can look like a triangle, so the accelerations will be in opposite directions and the math below checks out.
-			// How this is derived:
-			//
-			// acceleration distance (da) = (peakVelocity^2 - initialVelocity^2) / (2 * acceleration)
-			// deceleration distance (dd) = (endVelocity^2 - peakVelocity^2) / (2 * -acceleration)
-			// da + dd = distance (d)
-			// (peakVelocity^2 - initialVelocity^2) / (2 * acceleration) + (endVelocity^2 - peakVelocity^2) / (2 * -acceleration) = d
-			// Solve for peakVelocity:
-			this.peakVelocity = Math.sqrt((2 * this.distance * this.firstAcceleration + this.initialVelocity * this.initialVelocity + endVelocity * endVelocity) / 2) * direction;
-			this.accelerateEndDistance = MathUtils.solveDisplacement(peakVelocity, initialVelocity, firstAcceleration);
-			this.cruiseEndDistance = 0;
-		}
-		this.lookAhead = lookAhead;
-		if (Math.signum(initialVelocity) != direction) {
-			changedDirection = false;
-		}
-		deltaDistMin = MathUtils.solveDisplacement(0, initialVelocity, firstAcceleration);
-	}
+		 double fullAccelerationDistance = Math.abs(MathUtils.solveDisplacement(maxSpeed, initialVelocity, this.acceleration * direction)) * direction;
+		 double targetToEndVelocityDistance = Math.abs(MathUtils.solveDisplacement(endVelocity, maxSpeed, this.acceleration * direction * -1)) * direction;
+
+		 if (Math.abs(fullAccelerationDistance + targetToEndVelocityDistance) < distance) {
+			 // WILL cruise.
+			 this.peakVelocity = maxSpeed * direction;
+			 this.accelerateDistance = fullAccelerationDistance;
+			 this.cruiseDistance = distance - fullAccelerationDistance - targetToEndVelocityDistance;
+		 } else {
+			 // Will NOT cruise.
+
+
+			 // Only triggers if the V-X graph can look like a triangle, so the accelerations will be in opposite directions and the math below checks out.
+			 // How this is derived:
+			 //
+			 // acceleration distance (da) = (peakVelocity^2 - initialVelocity^2) / (2 * acceleration)
+			 // deceleration distance (dd) = (endVelocity^2 - peakVelocity^2) / (2 * -acceleration)
+			 // da + dd = distance (d)
+			 // (peakVelocity^2 - initialVelocity^2) / (2 * acceleration) + (endVelocity^2 - peakVelocity^2) / (2 * -acceleration) = d
+			 // Solve for peakVelocity:
+			 this.peakVelocity = Math.sqrt((2 * Math.abs(this.distance) * this.acceleration + this.initialVelocity * this.initialVelocity + finalVelocity * finalVelocity) / 2) * direction;
+			 this.accelerateDistance = MathUtils.solveDisplacement(peakVelocity, initialVelocity, this.acceleration);
+			 this.cruiseDistance = 0;
+		 }
+		 this.lookAhead = lookAhead;
+	 }
 
 
 	/**
 	 * @param deltaDistance Should be signed - doesn't matter which way is positive, as long as you stick to it
 	 */
-	public double getVelocity(double deltaDistance) {
+	/*public double getVelocity(double deltaDistance) {
 		if (!changedDirection) {
 			deltaDistance += lookAhead * Math.signum(initialVelocity);
 		} else {
 			deltaDistance += lookAhead * direction;
 		}
 
-		if (Math.abs(deltaDistance) < Math.abs(this.accelerateEndDistance) || Math.signum(deltaDistance * accelerateEndDistance) == -1) {
+		if (Math.abs(deltaDistance) < Math.abs(this.accelerateDistance) || Math.signum(deltaDistance * accelerateDistance) == -1) {
 			state = "accelerating";
 			// Acceleration phase
 			if (!changedDirection) {
 				if (Math.abs(deltaDistance) < Math.abs(deltaDistMin) && Math.signum(deltaDistance * deltaDistMin) == 1) {
-					return MathUtils.solveVelocity(initialVelocity, firstAcceleration, deltaDistance) * direction * -1;
+					return MathUtils.solveVelocity(initialVelocity, acceleration, deltaDistance) * direction * -1;
 				} else {
 					changedDirection = true;
-					return MathUtils.solveVelocity(initialVelocity, firstAcceleration, deltaDistance) * direction;
+					return MathUtils.solveVelocity(initialVelocity, acceleration, deltaDistance) * direction;
 				}
 			} else {
-				return MathUtils.solveSpeed(initialVelocity, firstAcceleration, deltaDistance) * direction;
+				return MathUtils.solveSpeed(initialVelocity, acceleration, deltaDistance) * direction;
 			}
-		} else if (Math.abs(deltaDistance) < Math.abs(this.cruiseEndDistance + accelerateEndDistance)) {
+		} else if (Math.abs(deltaDistance) < Math.abs(this.cruiseDistance + accelerateDistance)) {
 			// Cruise phase
 			state = "cruising";
 			return this.peakVelocity;
@@ -180,12 +161,51 @@ class TrapMotionInLine {
 			if (Math.abs(deltaDistance) < Math.abs(this.distance)) {
 				// Deceleration phase
 				state = "decelerating";
-				return MathUtils.solveVelocity(this.peakVelocity, secondAcceleration, deltaDistance - (accelerateEndDistance + cruiseEndDistance));
+				return MathUtils.solveVelocity(this.peakVelocity, secondAcceleration, deltaDistance - (accelerateDistance + cruiseDistance));
 			} else {
 				// After the motion profile is complete
 				finished = true;
 				return 0;
 			}
+		}
+	}
+
+	/**
+	 *
+	 * @param currentVelo Current velocity, in inches per second
+	 * @param deltaDistance Should be signed
+	 */
+
+	public double getVelocity(double currentVelo, double deltaDistance) {
+		double dt = (double) System.currentTimeMillis() / 1000 - time;
+		time = (double) System.currentTimeMillis() / 1000;
+		if (peakVelocity > 0 && currentVelo < peakVelocity) {
+			if (deltaDistance < cruiseDistance) {
+				return currentVelo + Math.abs(acceleration) * dt;
+			} else if (deltaDistance > cruiseDistance) {
+				return peakVelocity;
+			} else if (deltaDistance > cruiseDistance + accelerateDistance && deltaDistance + lookAhead < distance) {
+				return MathUtils.solveVelocity(peakVelocity, -Math.abs(acceleration), deltaDistance - (cruiseDistance + accelerateDistance) + lookAhead);
+			} else {
+				finished = true;
+				return finalVelocity;
+			}
+
+		} else if (peakVelocity < 0 && currentVelo > peakVelocity) {
+			if (deltaDistance > cruiseDistance) {
+				return currentVelo - Math.abs(acceleration) * dt;
+			} else if (deltaDistance > cruiseDistance) {
+				return peakVelocity;
+			} else if (deltaDistance > cruiseDistance + accelerateDistance && deltaDistance + lookAhead < distance) {
+				return MathUtils.solveVelocity(peakVelocity, Math.abs(acceleration), deltaDistance - (cruiseDistance + accelerateDistance) + lookAhead);
+			} else {
+				finished = true;
+				return finalVelocity;
+			}
+		}
+		else {
+			finished = true;
+			return finalVelocity;
 		}
 	}
 
@@ -227,10 +247,10 @@ class TrapMotionRotate extends TrapMotionInLine {
 		this.circleRadius = wheelDistFromCenter;
 	}
 
-	public double getRotateVelo(double currentAngle, AngleUnit angleUnit)
+	public double getRotateVelo(double currentVelo, double currentAngle, AngleUnit angleUnit)
 	{
 		currentAngle = angleUnit.toRadians(currentAngle);
-		double angularVelo = (super.getVelocity(currentAngle - initialAngle));
+		double angularVelo = (super.getVelocity(currentVelo, currentAngle - initialAngle));
 
 		//because velocity is angular velocity times radius
 		return angularVelo * circleRadius;

@@ -12,6 +12,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
+import t10.geometry.MovementVector;
 import t10.geometry.Point;
 import t10.utils.MathUtils;
 
@@ -91,5 +92,12 @@ public class AprilTagLocalizer implements Localizer<Point> {
 	@Override
 	public Point getFieldCentric() {
 		return this.fieldCentricPoint;
+	}
+
+
+	@Override
+	public MovementVector getVelocity()
+	{
+		return null;
 	}
 }

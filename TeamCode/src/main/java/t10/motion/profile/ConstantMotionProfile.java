@@ -5,7 +5,7 @@ import t10.geometry.Pose;
 
 public class ConstantMotionProfile implements IMotionProfile {
 	@Override
-	public MovementVector calculate(MovementVector initialVelocity, MovementVector maxVelocity, MovementVector endVelocity, MovementVector maxAcceleration, Pose initialPose, Pose currentPose, Pose finalPose, double lookAhead) {
+	public MovementVector calculate(MovementVector initialVelocity, MovementVector maxVelocity, MovementVector endVelocity, MovementVector maxAcceleration, Pose initialPose, Pose currentPose, MovementVector currentVelocity, Pose finalPose, double lookAhead) {
 		return maxVelocity;
 	}
 }

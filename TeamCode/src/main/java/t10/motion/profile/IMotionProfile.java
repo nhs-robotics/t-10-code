@@ -12,6 +12,7 @@ public interface IMotionProfile {
 			MovementVector maxAcceleration,
 			Pose initialPose,
 			Pose currentPose,
+			MovementVector currentVelocity,
 			Pose finalPose,
 			double lookahead
 	);

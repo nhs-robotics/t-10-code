@@ -9,7 +9,7 @@ import t10.utils.MathUtils;
 public class SigmoidMotionProfile implements IMotionProfile {
 	// TODO: ensure that all MovementVectors have same angle unit, currently the could mix (bad)
 	@Override
-	public MovementVector calculate(MovementVector initialVelocity, MovementVector maxVelocity, MovementVector endVelocity, MovementVector maxAcceleration, Pose initialPose, Pose currentPose, Pose finalPose, double lookAhead) {
+	public MovementVector calculate(MovementVector initialVelocity, MovementVector maxVelocity, MovementVector endVelocity, MovementVector maxAcceleration, Pose initialPose, Pose currentPose, MovementVector currentVelocity, Pose finalPose, double lookAhead) {
 		final double slowdownCoefficient = 0.1 * Math.E;
 		double deltaX = finalPose.getX() - currentPose.getX();
 		double deltaY = finalPose.getY() - currentPose.getY();

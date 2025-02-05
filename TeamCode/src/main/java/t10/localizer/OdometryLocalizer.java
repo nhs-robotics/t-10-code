@@ -2,6 +2,7 @@ package t10.localizer;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
+import t10.geometry.MovementVector;
 import t10.geometry.Pose;
 import t10.motion.hardware.Encoder;
 
@@ -27,6 +28,8 @@ public class OdometryLocalizer implements Localizer<Pose> {
 	private double deltaLeftWheelPos;
 	private double deltaRightWheelPos;
 	private double deltaPerpendicularWheelPos;
+	private double veloX, veloY, veloH;
+	private double time;
 
 	/**
 	 * @param coefficients             The coefficients to use for the odometers. Chances are this is {@link OdometryCoefficientSet#DEFAULT}.
@@ -52,6 +55,7 @@ public class OdometryLocalizer implements Localizer<Pose> {
 		this.lateralWheelDistance = lateralWheelDistance;
 		this.perpendicularWheelOffset = perpendicularWheelOffset;
 
+		time = (double) System.currentTimeMillis() / 1000;
 		this.setFieldCentric(new Pose(0, 0, 0, AngleUnit.RADIANS));
 	}
 
@@ -90,6 +94,12 @@ public class OdometryLocalizer implements Localizer<Pose> {
 		this.leftWheelPos = newLeftWheelPos;
 		this.rightWheelPos = newRightWheelPos;
 		this.perpendicularWheelPos = newPerpendicularWheelPos;
+
+		double dt = (double) System.currentTimeMillis() / 1000 - time;
+		time = (double) System.currentTimeMillis() / 1000;
+		veloX = deltaX / dt;
+		veloY = deltaY / dt;
+		veloH = deltaHeading / dt;
 	}
 
 	@Override
@@ -103,5 +113,10 @@ public class OdometryLocalizer implements Localizer<Pose> {
 	@Override
 	public Pose getFieldCentric() {
 		return this.fieldCentricPose;
+	}
+
+	@Override
+	public MovementVector getVelocity() {
+		return new MovementVector(veloY,veloX,veloH,AngleUnit.RADIANS);
 	}
 }
