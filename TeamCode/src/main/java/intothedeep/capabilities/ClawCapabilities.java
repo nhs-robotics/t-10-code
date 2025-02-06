@@ -13,11 +13,11 @@ public class ClawCapabilities {
 	static final double CLAW_OPEN_POSITION = 0.05;
 	static final double CLAW_CLOSED_POSITION = 0.55;
 
-	private final ClawTest.Config config;
+	private final SnowballConfig config;
 	private boolean isOpen;
 	private ClawPreset clawPreset;
 
-	public ClawCapabilities(ClawTest.Config c) {
+	public ClawCapabilities(SnowballConfig c) {
 		this.config = c;
 	}
 

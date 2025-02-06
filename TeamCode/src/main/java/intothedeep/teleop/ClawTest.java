@@ -4,30 +4,40 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import intothedeep.SnowballConfig;
+import intothedeep.capabilities.ArmExtensionCapabilities;
+import intothedeep.capabilities.ArmRotationCapabilities;
 import intothedeep.capabilities.ClawCapabilities;
 import intothedeep.capabilities.ClawPreset;
+import intothedeep.capabilities.CraneCapabilities;
+
 import t10.bootstrap.AbstractRobotConfiguration;
 import t10.bootstrap.BootstrappedOpMode;
 import t10.bootstrap.Hardware;
 import t10.gamepad.GController;
+import t10.geometry.MovementVector;
 import t10.localizer.Localizer;
 import t10.motion.mecanum.MecanumDriver;
 
 @TeleOp
 public class ClawTest extends BootstrappedOpMode {
-    private ClawTest.Config config;
+    private SnowballConfig config;
     private ClawCapabilities claw;
-    private GController g;
-	private Telemetry.Item rotatePosition;
+	private ArmExtensionCapabilities armExtension;
+	private ArmRotationCapabilities armRotation;
+    private GController g, g2;
+	private Telemetry.Item rotatePosition, armPosition;
 	private double position = 0;
 
     @Override
     public void init() {
         super.init();
 
-        this.config = new ClawTest.Config(hardwareMap);
+        this.config = new SnowballConfig(hardwareMap);
         this.claw = new ClawCapabilities(this.config);
+		this.armExtension = new ArmExtensionCapabilities(this.config);
+		this.armRotation = new ArmRotationCapabilities(this.config);
         this.g = new GController(this.gamepad1)
                 .a.onToggle(state -> this.claw.setOpen(state)).ok()
                 .x.onPress(() -> this.claw.setPreset(ClawPreset.UP)).ok()
@@ -40,13 +50,24 @@ public class ClawTest extends BootstrappedOpMode {
 				.rightBumper.onPress(() -> position += 0.01).ok()
 				.leftBumper.onPress(() -> position -= 0.01).ok();
 
+		this.g2 = new GController(this.gamepad2)
+				.rightTrigger.whileDown(proportion -> this.armExtension.setPowerManually(-proportion)).onRelease(() -> this.armExtension.setPowerManually(0)).ok()
+				.rightBumper.onPress(() -> this.armExtension.setTargetPosition((int) (0.75 * ArmExtensionCapabilities.POSITION_FULLY_EXTENDED))).ok()
+				.leftTrigger.whileDown(proportion -> this.armExtension.setPowerManually(proportion)).onRelease(() -> this.armExtension.setPowerManually(0)).ok()
+				.leftBumper.onPress(() -> this.armExtension.setTargetPosition(0)).ok()
+				.leftJoystick.onMove((x, y) -> this.armRotation.setPowerManually(-y)).ok()
+				.a.onPress(() -> this.claw.toggleClaw()).ok();
+
 		rotatePosition = this.telemetry.addData("Position ", 0);
+		armPosition = this.telemetry.addData("arm: ", 0);
     }
 
     @Override
     public void loop() {
         this.g.loop();
+		this.g2.loop();
 		rotatePosition.setValue(position);
+		armPosition.setValue(armRotation.getPosition());
 		telemetry.update();
     }
 
