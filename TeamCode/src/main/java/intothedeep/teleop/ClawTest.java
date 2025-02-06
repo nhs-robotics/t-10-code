@@ -4,18 +4,15 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import intothedeep.SnowballConfig;
 import intothedeep.capabilities.ArmExtensionCapabilities;
 import intothedeep.capabilities.ArmRotationCapabilities;
 import intothedeep.capabilities.ClawCapabilities;
-import intothedeep.capabilities.CraneCapabilities;
 
 import t10.bootstrap.AbstractRobotConfiguration;
 import t10.bootstrap.BootstrappedOpMode;
 import t10.bootstrap.Hardware;
 import t10.gamepad.GController;
-import t10.geometry.MovementVector;
 import t10.localizer.Localizer;
 import t10.motion.mecanum.MecanumDriver;
 
@@ -39,9 +36,9 @@ public class ClawTest extends BootstrappedOpMode {
 		this.armRotation = new ArmRotationCapabilities(this.config);
         this.g = new GController(this.gamepad1)
                 .a.onToggle(state -> this.claw.setOpen(state)).ok()
-                .x.onPress(() -> this.claw.setPresetRelative(ClawCapabilities.ClawPreset.UP)).ok()
-                .b.onPress(() -> this.claw.setPresetRelative(ClawCapabilities.ClawPreset.FORWARD)).ok()
-                .y.onPress(() -> this.claw.setPresetRelative(ClawCapabilities.ClawPreset.DOWN)).ok()
+                .x.onPress(() -> this.claw.setPreset(ClawCapabilities.ClawPreset.UP)).ok()
+                .b.onPress(() -> this.claw.setPreset(ClawCapabilities.ClawPreset.FORWARD)).ok()
+                .y.onPress(() -> this.claw.setPreset(ClawCapabilities.ClawPreset.DOWN)).ok()
 				.dpadUp.onPress(() -> position += 0.05).ok()
 				.dpadDown.onPress(() -> position -= 0.05).ok()
 				.dpadRight.onPress(() -> this.config.clawRotate.setPosition(position)).ok()
@@ -68,7 +65,6 @@ public class ClawTest extends BootstrappedOpMode {
 		rotatePosition.setValue(position);
 		armPosition.setValue(armRotation.getPosition());
 		telemetry.update();
-		claw.loop();
     }
 
     public static class Config extends AbstractRobotConfiguration {

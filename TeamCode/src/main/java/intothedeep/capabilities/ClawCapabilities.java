@@ -13,7 +13,6 @@ public class ClawCapabilities {
 
 	private final SnowballConfig config;
 	private boolean isOpen;
-	private boolean isAbsoluteRotation = false;
 	private ClawPreset clawPreset;
 
 	public ClawCapabilities(SnowballConfig c) {
@@ -34,19 +33,25 @@ public class ClawCapabilities {
 		return this.isOpen;
 	}
 
+	public ClawPreset clawPreset() {
+		return this.clawPreset;
+	}
+
 	public void toggleClaw() {
 		this.setOpen(!this.isOpen);
 	}
 
-	public void setPresetRelative(ClawPreset preset) {
+	public void setPreset(ClawPreset preset) {
 		this.clawPreset = preset;
 		this.config.clawTwist.setPosition(preset.servoTwistPosition);
 		this.config.clawRotate.setPosition(preset.servoRotatePosition);
-		this.isAbsoluteRotation = false;
 	}
 
+	/*
+	This isn't being currently used, but it would orient the claw to always face a  given position
+	relative to the field, e.g. always down to pick up blocks.
+
 	private void setPresetAbsolute(double targetAngleClaw, Motor arm) {
-		// TODO: Help reimplement this
 		// double currentAngleArm = arm.motor.getCurrentPosition() / Constants.TickCounts.LIFT_MOTOR_TICK_COUNT;
 		// currentAngleArm *= 4;
 		// Linear interpolation between upward position and forward position, determined by correcting angle.
@@ -54,10 +59,11 @@ public class ClawCapabilities {
 		// setRotationRelative(newClawRotation);
 		this.isAbsoluteRotation = true;
 	}
+	 */
 
 	public void initializePosition() {
 		this.setOpen(false);
-		this.setPresetRelative(ClawPreset.FORWARD);
+		this.setPreset(ClawPreset.FORWARD);
 	}
 
 	public boolean isAtTargetPosition() {
@@ -70,24 +76,21 @@ public class ClawCapabilities {
 				Math.abs(twistTarget - this.config.clawTwist.getPosition()) < SERVO_MAX_ERROR;
 	}
 
-	public void loop() {
-		if (isAbsoluteRotation) {
-			setPresetAbsolute(0,null); // TODO reimplement
-		}
-	}
-
 	public static class ClawAction implements AutoAction {
 		private final ClawCapabilities clawCapabilities;
-		private final boolean isOpen;
+		private final ClawPreset clawPreset;
+		private final Boolean isOpen;
 
-		public ClawAction(ClawCapabilities clawCapabilities, boolean isOpen) {
+		public ClawAction(ClawCapabilities clawCapabilities, ClawPreset clawPreset, Boolean isOpen) {
 			this.clawCapabilities = clawCapabilities;
+			this.clawPreset = clawPreset;
 			this.isOpen = isOpen;
 		}
 
 		@Override
 		public void init() {
-			this.clawCapabilities.setOpen(this.isOpen);
+			if (this.isOpen != null) this.clawCapabilities.setOpen(this.isOpen);
+			if (this.clawPreset != null) this.clawCapabilities.setPreset(this.clawPreset);
 		}
 
 		@Override
@@ -99,6 +102,7 @@ public class ClawCapabilities {
 			return this.clawCapabilities.isAtTargetPosition();
 		}
 	}
+
 	//All the way back: 0.03
 	// All the way up: 1.00
 	//Forward: 0.72

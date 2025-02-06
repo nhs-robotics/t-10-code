@@ -95,8 +95,16 @@ public abstract class EasyAuto extends BootstrappedOpMode {
 		return new CraneCapabilities.CraneAction(this.crane, position);
 	}
 
+	public ClawCapabilities.ClawAction claw(ClawCapabilities.ClawPreset clawPreset, boolean isOpen) {
+		return new ClawCapabilities.ClawAction(this.claw, clawPreset, isOpen);
+	}
+
+	public ClawCapabilities.ClawAction claw(ClawCapabilities.ClawPreset clawPreset) {
+		return new ClawCapabilities.ClawAction(this.claw, clawPreset, null);
+	}
+
 	public ClawCapabilities.ClawAction claw(boolean isOpen) {
-		return new ClawCapabilities.ClawAction(this.claw, isOpen);
+		return new ClawCapabilities.ClawAction(this.claw, null, isOpen);
 	}
 
 	public SimultaneousAction simultaneously(AutoAction... actions) {
