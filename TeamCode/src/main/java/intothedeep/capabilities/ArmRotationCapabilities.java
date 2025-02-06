@@ -10,14 +10,6 @@ import t10.utils.PIDController;
 
 /**
  * Capabilities for rotating the arm.
- *
- * <h1>Power > 0</h1>
- * <li>Rotate UPWARDS</li>
- * <li>Position (Ticks) INCREASES</li>
- *
- * <h1>Power < 0</h1>
- * <li>Rotate DOWNWARDS</li>
- * <li>Position (Ticks) DECREASES</li>
  */
 public class ArmRotationCapabilities implements Loop {
 	public static final int POSITION_FULLY_DOWNWARDS = -50;
@@ -74,6 +66,10 @@ public class ArmRotationCapabilities implements Loop {
 		return Math.abs(this.targetPosition - this.position) < MAX_ERROR_ALLOWED;
 	}
 
+	/**
+	 * Rotate upwards with a POSITIVE power (ticks increase). Rotate downwards with a NEGATIVE power (ticks decrease).
+	 * @param power The power that the arm should rotate at.
+	 */
 	private void setPower(double power) {
 		// TODO: re-implement bounds, if necessary.
 		this.armRotation.setPower(power);

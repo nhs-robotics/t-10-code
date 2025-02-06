@@ -9,13 +9,41 @@ import t10.gamepad.input.GIsPressed;
 import t10.gamepad.input.GOnPress;
 import t10.gamepad.input.GOnRelease;
 
+/**
+ * Allows more granular input for a gamepad trigger. There are only two. You can apply a variable amount of pressure to them.
+ */
 public class GTrigger implements GInput, GOnPress<GTrigger>, GOnRelease<GTrigger>, GIsPressed {
+	/**
+	 * Internal. Returns the pressure applied to the trigger [0, 1].
+	 */
 	private final Supplier<Float> valueGetter;
+
+	/**
+	 * Internal. Reference to parent controller.
+	 */
 	private final GController controller;
+
+	/**
+	 * Bindings to trigger events.
+	 */
 	private Runnable onPress, onRelease;
+
+	/**
+	 * Called while the trigger is held down with the pressure applied to the trigger [0, 1].
+	 */
 	private Consumer<Float> whileDown;
+
+	/**
+	 * Tracks the pressure value of the last call.
+	 */
 	private float lastValue;
 
+	/**
+	 * Initializes the {@link GTrigger}. Internal use mainly.
+	 *
+	 * @param controller  The reference to the parent controller.
+	 * @param valueGetter Must return the pressure value of the trigger.
+	 */
 	public GTrigger(GController controller, Supplier<Float> valueGetter) {
 		this.valueGetter = valueGetter;
 		this.controller = controller;

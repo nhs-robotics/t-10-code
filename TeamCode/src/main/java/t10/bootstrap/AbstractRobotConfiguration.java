@@ -15,33 +15,13 @@ import t10.vision.Webcam;
 
 /**
  * <p>Sets fields marked with @{@link Hardware} to their initialized value based on the {@link OpMode#hardwareMap}.</p>
- * <p>
- * Example where a webcam and wheel are auto initialized using @{@link Hardware}. You would be able to use these
- * variables just like normal. RoboBase does the initialization for you. The example class:
- *
- * <pre>{@code
- * public class MyRobotConfiguration extends AbstractRobotConfiguration {
- *      @Hardware(name = "Webcam")
- *      public Webcam webcam;
- *
- *      @Hardware(
- *          name = "Chain",
- *          wheelDiameterCm = 9.6,
- *          ticksPerRevolution = 500,
- *          zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
- *      )
- *      public Motor chainWheel;
- * }
- * }</pre>
- *
- * <b>Notes:</b>
- * <ul>
- *     <li>Fields must be {@code public} and not {@code final} or {@code private}.</li>
- *     <li>Hardware not found will throw an exception; all hardware defined in the configuration must be present.</li>
- * </ul>
- * </p>
  */
 public abstract class AbstractRobotConfiguration {
+	/**
+	 * Initializes this {@link AbstractRobotConfiguration} with the {@code hardwareMap}.
+	 *
+	 * @param hardwareMap The {@link HardwareMap} to load this {@link AbstractRobotConfiguration} with.
+	 */
 	public AbstractRobotConfiguration(HardwareMap hardwareMap) {
 		try {
 			for (Field field : this.getClass().getFields()) {
@@ -72,7 +52,13 @@ public abstract class AbstractRobotConfiguration {
 		}
 	}
 
+	/**
+	 * @return The mecanum driver to use with this robot configuration.
+	 */
 	public abstract MecanumDriver createMecanumDriver();
 
+	/**
+	 * @return The localizer to use with this robot configuration.
+	 */
 	public abstract Localizer<?> createLocalizer();
 }
