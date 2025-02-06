@@ -23,7 +23,7 @@ public class VeloTestTeleop extends TeleOpOpMode {
 	private SnowballConfig config;
 	private GController g1;
 	private MecanumDriver driver;
-	private Telemetry.Item horizontal, vertical, angle, veloX, veloY, veloH, Finalhorizontal, Finalvertical, Finalangle;
+	private Telemetry.Item horizontal, vertical, angle, veloX, veloY, veloH, Finalhorizontal, Finalvertical, Finalangle, calcVelo;
 	private Localizer<Pose> localizer;
 	private IMotionProfile motionProfile;
 	MovementVector initialVelocity = new MovementVector(0,0,0,AngleUnit.RADIANS), endVelocity = new MovementVector(0,0,0, AngleUnit.RADIANS), maxAccel = new MovementVector(5,5,2 * Math.PI, AngleUnit.RADIANS);
@@ -51,8 +51,21 @@ public class VeloTestTeleop extends TeleOpOpMode {
 				.rightBumper.onPress(() -> finalPose = finalPose.add(new Pose(0,0,Math.PI / 4, AngleUnit.RADIANS))).ok()
 				.leftBumper.onPress(() -> finalPose = finalPose.add(new Pose(0,0,-Math.PI / 4, AngleUnit.RADIANS))).ok()
 				.a.onPress(() -> initialPose = localizer.getFieldCentric()).ok()
-				.x.whileDown(() -> driver.setVelocity(motionProfile.calculate(initialVelocity, new MovementVector(25,25,2*Math.PI,AngleUnit.RADIANS),endVelocity,maxAccel,initialPose,localizer.getFieldCentric(),localizer.getVelocity(),finalPose,3))).onRelease(() -> driver.halt()).ok();
+				.x.whileDown(() -> driver.setVelocity(
+						motionProfile.calculate(
+								initialVelocity,
+								new MovementVector(25,25,2*Math.PI,AngleUnit.RADIANS),
+								new MovementVector(3,3,0.125,AngleUnit.RADIANS),
+								endVelocity,
+								maxAccel,
+								initialPose,
+								localizer.getFieldCentric(),
+								localizer.getVelocity(),
+								finalPose,
+								3)
+				)).onRelease(() -> driver.halt()).ok();
 
+		this.calcVelo = telemetry.addData("Velocity: ", 0);
 		this.vertical = telemetry.addData("y: ", 0);
 		this.horizontal = telemetry.addData("x: ", 0);
 		this.angle = telemetry.addData("angle: ", 0);
@@ -66,6 +79,19 @@ public class VeloTestTeleop extends TeleOpOpMode {
 
 	@Override
 	public void loop() {
+		calcVelo.setValue(motionProfile.calculate(
+				initialVelocity,
+				new MovementVector(25,25,2*Math.PI,AngleUnit.RADIANS),
+				new MovementVector(3,3,0.125,AngleUnit.RADIANS),
+				endVelocity,
+				maxAccel,
+				initialPose,
+				localizer.getFieldCentric(),
+				localizer.getVelocity(),
+				finalPose,
+				3).toString());
+		finalPose.toString();
+
 		Pose pose = this.localizer.getFieldCentric();
 		vertical.setValue(pose.getY());
 		horizontal.setValue(pose.getX());

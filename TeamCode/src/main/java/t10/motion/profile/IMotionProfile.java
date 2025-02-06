@@ -8,6 +8,7 @@ public interface IMotionProfile {
 	MovementVector calculate(
 			MovementVector initialVelocity,
 			MovementVector maxVelocity,
+			MovementVector minVelocity,
 			MovementVector endVelocity,
 			MovementVector maxAcceleration,
 			Pose initialPose,

@@ -29,12 +29,12 @@ public class TrapezoidalMotionProfile implements IMotionProfile {
 
 
 	@Override
-	public MovementVector calculate(MovementVector initialVelocity, MovementVector maxVelocity, MovementVector endVelocity, MovementVector maxAcceleration, Pose initialPose, Pose currentPose, MovementVector currentVelocity, Pose finalPose, double lookAhead) {
+	public MovementVector calculate(MovementVector initialVelocity, MovementVector maxVelocity, MovementVector minVelocity, MovementVector endVelocity, MovementVector maxAcceleration, Pose initialPose, Pose currentPose, MovementVector currentVelocity, Pose finalPose, double lookAhead) {
 		updateProfiles(initialVelocity, maxVelocity, endVelocity, maxAcceleration, initialPose, finalPose, lookAhead);
 
-		double vx = veloX.getVelocity(currentVelocity.getHorizontal(), currentPose.getX() - initialPose.getX());
-		double vy = veloY.getVelocity(currentVelocity.getVertical(), currentPose.getY() - initialPose.getY());
-		double vh = veloH.getRotateVelo(currentVelocity.getAngleUnit().toRadians(currentVelocity.getRotation()), currentPose.getHeading(AngleUnit.RADIANS), AngleUnit.RADIANS);
+		double vx = veloX.getVelocity(currentVelocity.getHorizontal(), currentPose.getX() - initialPose.getX(), minVelocity.getHorizontal());
+		double vy = veloY.getVelocity(currentVelocity.getVertical(), currentPose.getY() - initialPose.getY(), minVelocity.getVertical());
+		double vh = veloH.getRotateVelo(currentVelocity.getAngleUnit().toRadians(currentVelocity.getRotation()), currentPose.getHeading(AngleUnit.RADIANS), minVelocity.getAngleUnit().toRadians(minVelocity.getRotation()), AngleUnit.RADIANS);
 		return new MovementVector(vx,vy,vh, null);
 	}
 
@@ -176,11 +176,15 @@ class TrapMotionInLine {
 	 * @param deltaDistance Should be signed
 	 */
 
-	public double getVelocity(double currentVelo, double deltaDistance) {
+	public double getVelocity(double currentVelo, double deltaDistance, double minSpeed) {
 		double dt = (double) System.currentTimeMillis() / 1000 - time;
 		time = (double) System.currentTimeMillis() / 1000;
 		if (peakVelocity > 0 && currentVelo < peakVelocity) {
 			if (deltaDistance < cruiseDistance) {
+				if(0 <= currentVelo && currentVelo <= Math.abs(minSpeed))
+				{
+					return Math.abs(minSpeed);
+				}
 				return currentVelo + Math.abs(acceleration) * dt;
 			} else if (deltaDistance > cruiseDistance) {
 				return peakVelocity;
@@ -193,6 +197,10 @@ class TrapMotionInLine {
 
 		} else if (peakVelocity < 0 && currentVelo > peakVelocity) {
 			if (deltaDistance > cruiseDistance) {
+				if(0 <= currentVelo && currentVelo <= Math.abs(minSpeed))
+				{
+					return -Math.abs(minSpeed);
+				}
 				return currentVelo - Math.abs(acceleration) * dt;
 			} else if (deltaDistance > cruiseDistance) {
 				return peakVelocity;
@@ -247,10 +255,10 @@ class TrapMotionRotate extends TrapMotionInLine {
 		this.circleRadius = wheelDistFromCenter;
 	}
 
-	public double getRotateVelo(double currentVelo, double currentAngle, AngleUnit angleUnit)
+	public double getRotateVelo(double currentVelo, double currentAngle, double minVelo, AngleUnit angleUnit)
 	{
 		currentAngle = angleUnit.toRadians(currentAngle);
-		double angularVelo = (super.getVelocity(currentVelo, currentAngle - initialAngle));
+		double angularVelo = super.getVelocity(currentVelo,(currentAngle - initialAngle),minVelo);
 
 		//because velocity is angular velocity times radius
 		return angularVelo * circleRadius;
