@@ -1,12 +1,10 @@
 package intothedeep.capabilities;
 
-import intothedeep.Constants;
 import intothedeep.SnowballConfig;
+
 import t10.motion.hardware.Motor;
-import intothedeep.teleop.ClawTest;
 
 import t10.auto.AutoAction;
-import t10.motion.hardware.Motor;
 
 public class ClawCapabilities {
 	static final double SERVO_MAX_ERROR = 0.05;
@@ -15,6 +13,7 @@ public class ClawCapabilities {
 
 	private final SnowballConfig config;
 	private boolean isOpen;
+	private boolean isAbsoluteRotation = false;
 	private ClawPreset clawPreset;
 
 	public ClawCapabilities(SnowballConfig c) {
@@ -39,24 +38,26 @@ public class ClawCapabilities {
 		this.setOpen(!this.isOpen);
 	}
 
-	public void setPreset(ClawPreset preset) {
+	public void setPresetRelative(ClawPreset preset) {
 		this.clawPreset = preset;
 		this.config.clawTwist.setPosition(preset.servoTwistPosition);
 		this.config.clawRotate.setPosition(preset.servoRotatePosition);
+		this.isAbsoluteRotation = false;
 	}
 
-	private void setRotationAbsolute(double targetAngleClaw, Motor arm) {
+	private void setPresetAbsolute(double targetAngleClaw, Motor arm) {
 		// TODO: Help reimplement this
 		// double currentAngleArm = arm.motor.getCurrentPosition() / Constants.TickCounts.LIFT_MOTOR_TICK_COUNT;
 		// currentAngleArm *= 4;
 		// Linear interpolation between upward position and forward position, determined by correcting angle.
 		// double newClawRotation = (targetAngleClaw - currentAngleArm) * (ROTATE_UPWARD_POSITION - ROTATE_FORWARD_POSITION) + ROTATE_FORWARD_POSITION;
 		// setRotationRelative(newClawRotation);
+		this.isAbsoluteRotation = true;
 	}
 
 	public void initializePosition() {
 		this.setOpen(false);
-		this.setPreset(ClawPreset.FORWARD);
+		this.setPresetRelative(ClawPreset.FORWARD);
 	}
 
 	public boolean isAtTargetPosition() {
@@ -67,6 +68,12 @@ public class ClawCapabilities {
 		return Math.abs(gripTarget - this.config.clawGrip.getPosition()) < SERVO_MAX_ERROR &&
 				Math.abs(rotateTarget - this.config.clawRotate.getPosition()) < SERVO_MAX_ERROR &&
 				Math.abs(twistTarget - this.config.clawTwist.getPosition()) < SERVO_MAX_ERROR;
+	}
+
+	public void loop() {
+		if (isAbsoluteRotation) {
+			setPresetAbsolute(0,null); // TODO reimplement
+		}
 	}
 
 	public static class ClawAction implements AutoAction {
@@ -90,6 +97,29 @@ public class ClawCapabilities {
 		@Override
 		public boolean isComplete() {
 			return this.clawCapabilities.isAtTargetPosition();
+		}
+	}
+	//All the way back: 0.03
+	// All the way up: 1.00
+	//Forward: 0.72
+	//Down: 0.36
+
+
+	//Mandible_Servo_Out: 0.29
+	//Mandible_Servo_In: 1.00
+	//Vertical: 0.67
+
+	public enum ClawPreset {
+		UP(1, 1),
+		FORWARD(0.72, 1),
+		DOWN(0.36, 1);
+
+		public final double servoRotatePosition;
+		public final double servoTwistPosition;
+
+		ClawPreset(double servoRotatePosition, double servoTwistPosition) {
+			this.servoRotatePosition = servoRotatePosition;
+			this.servoTwistPosition = servoTwistPosition;
 		}
 	}
 }

@@ -9,7 +9,6 @@ import intothedeep.SnowballConfig;
 import intothedeep.capabilities.ArmExtensionCapabilities;
 import intothedeep.capabilities.ArmRotationCapabilities;
 import intothedeep.capabilities.ClawCapabilities;
-import intothedeep.capabilities.ClawPreset;
 import intothedeep.capabilities.CraneCapabilities;
 
 import t10.bootstrap.AbstractRobotConfiguration;
@@ -40,9 +39,9 @@ public class ClawTest extends BootstrappedOpMode {
 		this.armRotation = new ArmRotationCapabilities(this.config);
         this.g = new GController(this.gamepad1)
                 .a.onToggle(state -> this.claw.setOpen(state)).ok()
-                .x.onPress(() -> this.claw.setPreset(ClawPreset.UP)).ok()
-                .b.onPress(() -> this.claw.setPreset(ClawPreset.FORWARD)).ok()
-                .y.onPress(() -> this.claw.setPreset(ClawPreset.DOWN)).ok()
+                .x.onPress(() -> this.claw.setPresetRelative(ClawCapabilities.ClawPreset.UP)).ok()
+                .b.onPress(() -> this.claw.setPresetRelative(ClawCapabilities.ClawPreset.FORWARD)).ok()
+                .y.onPress(() -> this.claw.setPresetRelative(ClawCapabilities.ClawPreset.DOWN)).ok()
 				.dpadUp.onPress(() -> position += 0.05).ok()
 				.dpadDown.onPress(() -> position -= 0.05).ok()
 				.dpadRight.onPress(() -> this.config.clawRotate.setPosition(position)).ok()
@@ -69,6 +68,7 @@ public class ClawTest extends BootstrappedOpMode {
 		rotatePosition.setValue(position);
 		armPosition.setValue(armRotation.getPosition());
 		telemetry.update();
+		claw.loop();
     }
 
     public static class Config extends AbstractRobotConfiguration {
