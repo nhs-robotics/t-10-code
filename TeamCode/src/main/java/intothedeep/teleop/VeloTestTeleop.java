@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import intothedeep.SnowballConfig;
 import intothedeep.capabilities.ArmExtensionCapabilities;
 import intothedeep.capabilities.ArmRotationCapabilities;
-import intothedeep.capabilities.ClawCapabilities;
 import intothedeep.capabilities.CraneCapabilities;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -23,9 +22,9 @@ public class VeloTestTeleop extends TeleOpOpMode {
 	private SnowballConfig config;
 	private GController g1;
 	private MecanumDriver driver;
-	private Telemetry.Item horizontal, vertical, angle, veloX, veloY, veloH, Finalhorizontal, Finalvertical, Finalangle, calcVelo;
+	private Telemetry.Item state, horizontal, vertical, angle, veloX, veloY, veloH, Finalhorizontal, Finalvertical, Finalangle, calcVelo;
 	private Localizer<Pose> localizer;
-	private IMotionProfile motionProfile;
+	private TrapezoidalMotionProfile motionProfile;
 	MovementVector initialVelocity = new MovementVector(0,0,0,AngleUnit.RADIANS), endVelocity = new MovementVector(0,0,0, AngleUnit.RADIANS), maxAccel = new MovementVector(5,5,2 * Math.PI, AngleUnit.RADIANS);
 	Pose initialPose = new Pose(0,0,0,AngleUnit.RADIANS), finalPose = new Pose(0,0,0,AngleUnit.RADIANS);
 
@@ -65,6 +64,7 @@ public class VeloTestTeleop extends TeleOpOpMode {
 								3)
 				)).onRelease(() -> driver.halt()).ok();
 
+		this.state = telemetry.addData("","");
 		this.calcVelo = telemetry.addData("Velocity: ", 0);
 		this.vertical = telemetry.addData("y: ", 0);
 		this.horizontal = telemetry.addData("x: ", 0);
@@ -79,10 +79,11 @@ public class VeloTestTeleop extends TeleOpOpMode {
 
 	@Override
 	public void loop() {
+		state.setValue(motionProfile.getState().toString());
 		calcVelo.setValue(motionProfile.calculate(
 				initialVelocity,
 				new MovementVector(25,25,2*Math.PI,AngleUnit.RADIANS),
-				new MovementVector(3,3,0.125,AngleUnit.RADIANS),
+				new MovementVector(10,10,1,AngleUnit.RADIANS),
 				endVelocity,
 				maxAccel,
 				initialPose,

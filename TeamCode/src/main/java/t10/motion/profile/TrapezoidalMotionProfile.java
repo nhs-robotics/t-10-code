@@ -26,17 +26,24 @@ public class TrapezoidalMotionProfile implements IMotionProfile {
 	Pose currentPose;
 	Pose finalPose;
 	double lookAhead;
+	String[] state;
 
 
 	@Override
 	public MovementVector calculate(MovementVector initialVelocity, MovementVector maxVelocity, MovementVector minVelocity, MovementVector endVelocity, MovementVector maxAcceleration, Pose initialPose, Pose currentPose, MovementVector currentVelocity, Pose finalPose, double lookAhead) {
 		updateProfiles(initialVelocity, maxVelocity, endVelocity, maxAcceleration, initialPose, finalPose, lookAhead);
 
+		state[0] = veloY.getState();
+		state[1] = veloX.getState();
+		state[2] = veloH.getState();
+
 		double vx = veloX.getVelocity(currentVelocity.getHorizontal(), currentPose.getX() - initialPose.getX(), minVelocity.getHorizontal());
 		double vy = veloY.getVelocity(currentVelocity.getVertical(), currentPose.getY() - initialPose.getY(), minVelocity.getVertical());
 		double vh = veloH.getRotateVelo(currentVelocity.getAngleUnit().toRadians(currentVelocity.getRotation()), currentPose.getHeading(AngleUnit.RADIANS), minVelocity.getAngleUnit().toRadians(minVelocity.getRotation()), AngleUnit.RADIANS);
 		return new MovementVector(vx,vy,vh, null);
 	}
+
+	public String[] getState() {return state;}
 
 	private void updateProfiles(MovementVector initialVelocity, MovementVector maxVelocity, MovementVector endVelocity, MovementVector maxAcceleration, Pose initialPose, Pose finalPose, double lookAhead) {
 		if (this.initialVelocity == initialVelocity && this.maxVelocity == maxVelocity && this.endVelocity == endVelocity && this.maxAcceleration == maxAcceleration && this.initialPose == initialPose && this.finalPose == finalPose && this.lookAhead == lookAhead) {
@@ -181,37 +188,48 @@ class TrapMotionInLine {
 		time = (double) System.currentTimeMillis() / 1000;
 		if (peakVelocity > 0 && currentVelo < peakVelocity) {
 			if (deltaDistance < cruiseDistance) {
-				if(0 <= currentVelo && currentVelo <= Math.abs(minSpeed))
+				if(-Math.abs(minSpeed) <= currentVelo && currentVelo <= Math.abs(minSpeed))
 				{
+					state = "Below Min";
 					return Math.abs(minSpeed);
 				}
+				state = "Accelerating";
 				return currentVelo + Math.abs(acceleration) * dt;
 			} else if (deltaDistance > cruiseDistance) {
+				state = "Cruising";
 				return peakVelocity;
 			} else if (deltaDistance > cruiseDistance + accelerateDistance && deltaDistance + lookAhead < distance) {
+				state = "Decelerating";
 				return MathUtils.solveVelocity(peakVelocity, -Math.abs(acceleration), deltaDistance - (cruiseDistance + accelerateDistance) + lookAhead);
 			} else {
+				state = "finished";
 				finished = true;
 				return finalVelocity;
 			}
 
 		} else if (peakVelocity < 0 && currentVelo > peakVelocity) {
 			if (deltaDistance > cruiseDistance) {
-				if(0 <= currentVelo && currentVelo <= Math.abs(minSpeed))
+				if(Math.abs(minSpeed) >= currentVelo && currentVelo >= -Math.abs(minSpeed))
 				{
+					state = "Below Min";
 					return -Math.abs(minSpeed);
 				}
+				state = "Accelerating";
 				return currentVelo - Math.abs(acceleration) * dt;
 			} else if (deltaDistance > cruiseDistance) {
+				state = "Cruising";
 				return peakVelocity;
 			} else if (deltaDistance > cruiseDistance + accelerateDistance && deltaDistance + lookAhead < distance) {
+				state = "Decelerating";
 				return MathUtils.solveVelocity(peakVelocity, Math.abs(acceleration), deltaDistance - (cruiseDistance + accelerateDistance) + lookAhead);
 			} else {
+				state = "Finished";
 				finished = true;
 				return finalVelocity;
 			}
 		}
 		else {
+			state = "Neither Triggered";
 			finished = true;
 			return finalVelocity;
 		}
@@ -221,6 +239,8 @@ class TrapMotionInLine {
 	public boolean isDone() {
 		return finished;
 	}
+
+	public String getState() {return state;}
 }
 
 class TrapMotionRotate extends TrapMotionInLine {
