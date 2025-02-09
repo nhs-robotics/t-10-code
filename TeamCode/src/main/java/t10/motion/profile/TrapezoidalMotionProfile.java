@@ -16,8 +16,8 @@ import t10.utils.MathUtils;
  */
 public class TrapezoidalMotionProfile implements IMotionProfile {
 	private boolean initialized = false;
-	private TrapMotionInLine veloX, veloY;
-	private TrapMotionRotate veloH;
+	public TrapMotionInLine veloX, veloY;
+	public TrapMotionRotate veloH;
 	MovementVector initialVelocity;
 	MovementVector maxVelocity;
 	MovementVector endVelocity;
@@ -26,30 +26,39 @@ public class TrapezoidalMotionProfile implements IMotionProfile {
 	Pose currentPose;
 	Pose finalPose;
 	double lookAhead;
-	String[] state;
+	Integer triggers = 0;
+	public int calcs = 0;
+	String[] state = {"0","0","0","0"};
+	public double[] peakVelocity = {0,0,0};
 
 
 	@Override
 	public MovementVector calculate(MovementVector initialVelocity, MovementVector maxVelocity, MovementVector minVelocity, MovementVector endVelocity, MovementVector maxAcceleration, Pose initialPose, Pose currentPose, MovementVector currentVelocity, Pose finalPose, double lookAhead) {
 		updateProfiles(initialVelocity, maxVelocity, endVelocity, maxAcceleration, initialPose, finalPose, lookAhead);
 
-		state[0] = veloY.getState();
-		state[1] = veloX.getState();
-		state[2] = veloH.getState();
 
 		double vx = veloX.getVelocity(currentVelocity.getHorizontal(), currentPose.getX() - initialPose.getX(), minVelocity.getHorizontal());
 		double vy = veloY.getVelocity(currentVelocity.getVertical(), currentPose.getY() - initialPose.getY(), minVelocity.getVertical());
 		double vh = veloH.getRotateVelo(currentVelocity.getAngleUnit().toRadians(currentVelocity.getRotation()), currentPose.getHeading(AngleUnit.RADIANS), minVelocity.getAngleUnit().toRadians(minVelocity.getRotation()), AngleUnit.RADIANS);
+
+		state[0] = veloY.getState();
+		state[1] = veloX.getState();
+		state[2] = veloH.getState();
+		state[3] = triggers.toString();
+
+		peakVelocity[0] = veloY.peakVelocity;
+		peakVelocity[1] = veloX.peakVelocity;
+		peakVelocity[2] = veloH.peakVelocity;
+		calcs++;
+
 		return new MovementVector(vx,vy,vh, null);
 	}
 
 	public String[] getState() {return state;}
 
 	private void updateProfiles(MovementVector initialVelocity, MovementVector maxVelocity, MovementVector endVelocity, MovementVector maxAcceleration, Pose initialPose, Pose finalPose, double lookAhead) {
-		if (this.initialVelocity == initialVelocity && this.maxVelocity == maxVelocity && this.endVelocity == endVelocity && this.maxAcceleration == maxAcceleration && this.initialPose == initialPose && this.finalPose == finalPose && this.lookAhead == lookAhead) {
-
-		}
-		else {
+		if (triggers == 0 || !(this.initialVelocity.equals(initialVelocity) && this.maxVelocity.equals(maxVelocity) && this.endVelocity.equals(endVelocity) && this.maxAcceleration.equals(maxAcceleration) && this.initialPose.equals(initialPose) && this.finalPose.equals(finalPose) && this.lookAhead == lookAhead)) {
+			triggers++;
 			veloX = new TrapMotionInLine(initialVelocity.getHorizontal(), maxVelocity.getHorizontal(), endVelocity.getHorizontal(), maxAcceleration.getHorizontal(), initialPose.getX(), finalPose.getX(), lookAhead);
 			veloY = new TrapMotionInLine(initialVelocity.getVertical(), maxVelocity.getVertical(), endVelocity.getVertical(), maxAcceleration.getVertical(), initialPose.getY(), finalPose.getY(), lookAhead);
 
@@ -75,20 +84,23 @@ public class TrapezoidalMotionProfile implements IMotionProfile {
 }
 
 class TrapMotionInLine {
-	private double accelerateDistance;
-	private double cruiseDistance;
-	private double initialVelocity;
-	private double acceleration;
-	private double distance;
-	private double peakVelocity;
-	private double lookAhead;
-	private double direction;
-	private boolean finished = false;
-	public boolean changedDirection = true;
-	private double deltaDistMin = 0;
-	private double finalVelocity;
+	public double accelerateDistance;
+	public double cruiseDistance;
+	public double initialVelocity;
+	public double acceleration;
+	public double distance;
+	public double peakVelocity;
+	public double lookAhead;
+	public double direction;
+	public boolean finished;
+	public double deltaDistMin = 0;
+	public double finalVelocity;
 	public String state = "init";
 	private double time = (double) System.currentTimeMillis() / 1000;
+
+	public double getPeakVelocity() {
+		return peakVelocity;
+	}
 
 	 public TrapMotionInLine(
 			double initialVelocity,
@@ -100,10 +112,11 @@ class TrapMotionInLine {
 			double lookAhead
 	) {
 
+		finished = false;
 		 // Calculate profile
 		 this.initialVelocity = initialVelocity;
+		 this.distance = end - start;
 		 this.direction = Math.signum(distance);
-		 this.distance = distance;
 		 this.finalVelocity = endVelocity;
 		 this.acceleration = Math.abs(acceleration);
 
@@ -184,6 +197,7 @@ class TrapMotionInLine {
 	 */
 
 	public double getVelocity(double currentVelo, double deltaDistance, double minSpeed) {
+		state = "Starting to Get Velocity";
 		double dt = (double) System.currentTimeMillis() / 1000 - time;
 		time = (double) System.currentTimeMillis() / 1000;
 		if (peakVelocity > 0 && currentVelo < peakVelocity) {
