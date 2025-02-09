@@ -55,7 +55,7 @@ public class MoveToAction implements AutoAction {
 	 * @param destinationPose The destination position and orientation that the robot will drive to.
 	 */
 	public MoveToAction(Localizer<Pose> localizer, MecanumDriver driver, Pose destinationPose) {
-		this(localizer, driver, destinationPose, 2, 2, 40, 40);
+		this(localizer, driver, destinationPose, 2, 2, 40, 60);
 	}
 
 	/**
@@ -95,8 +95,8 @@ public class MoveToAction implements AutoAction {
 				AngleUnit.RADIANS
 		);
 
-		double vy = this.movementSpeed / (1 + Math.pow(0.1 * Math.E, dy)) - (this.movementSpeed / 2);
-		double vx = this.movementSpeed / (1 + Math.pow(0.1 * Math.E, dx)) - (this.movementSpeed / 2);
+		double vy = this.movementSpeed / (1 + Math.pow(0.5 * Math.E, -dy)) - (this.movementSpeed / 2);
+		double vx = this.movementSpeed / (1 + Math.pow(0.5 * Math.E, -dx)) - (this.movementSpeed / 2);
 		double vh = this.rotationalSpeed / (1 + Math.pow(1.5 * Math.E, -dh)) - (this.rotationalSpeed / 2);
 
 		MovementVector vector = new MovementVector(

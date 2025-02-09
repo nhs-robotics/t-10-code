@@ -80,7 +80,7 @@ public class SnowballConfig extends AbstractRobotConfiguration {
 	@Hardware(name = "OctoQuad")
 	public OctoQuad octoQuad;
 
-	@Hardware(name = "Grabber")
+	@Hardware(name = "ClawGrip")
 	public Servo claw;
 
 	public SnowballConfig(HardwareMap hardwareMap) {
@@ -91,7 +91,7 @@ public class SnowballConfig extends AbstractRobotConfiguration {
 		parameters.accelBandwidth = BNO055IMU.AccelBandwidth.HZ125;
 		parameters.gyroRange = BNO055IMU.GyroRange.DPS2000;
 		parameters.gyroBandwidth = BNO055IMU.GyroBandwidth.HZ230;
-		parameters.calibrationDataFile = "BNO055IMUCalibration.json";
+		parameters.mode = BNO055IMU.SensorMode.IMU;
 		this.imu.initialize(parameters);
 	}
 
@@ -109,15 +109,15 @@ public class SnowballConfig extends AbstractRobotConfiguration {
 	@Override
 	public Localizer<Pose> createLocalizer() {
 		// Use OdometryLocalizer for now, IMU is shipping
-		return new OdometryLocalizer(
+		return new OdometryIMULocalizer(
 				new OdometryCoefficientSet(1, 1, -1),
 				// 4-6-5 is right-left-perpendicular
 				new OctoQuadEncoder(octoQuad, 4, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
 				new OctoQuadEncoder(octoQuad, 6, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
 				new OctoQuadEncoder(octoQuad, 5, Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN, Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION),
 				11.5,
-				-6.5
-//				this.imu
+				-6.5,
+				this.imu
 		);
 	}
 }

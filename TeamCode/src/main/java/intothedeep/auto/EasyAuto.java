@@ -7,7 +7,8 @@ import intothedeep.capabilities.ClawCapabilities;
 import intothedeep.capabilities.CraneCapabilities;
 
 import t10.auto.AutoAction;
-import t10.auto.FollowPathAction;
+import t10.auto.FollowPathPoseAction;
+import t10.auto.FollowPathPurePursuitAction;
 import t10.auto.MoveToAction;
 import t10.auto.SequentialAction;
 import t10.auto.SimultaneousAction;
@@ -16,6 +17,7 @@ import t10.bootstrap.BootstrappedOpMode;
 import t10.geometry.Pose;
 import t10.localizer.Localizer;
 import t10.motion.mecanum.MecanumDriver;
+import t10.motion.path.PosePathFollower;
 import t10.motion.path.PurePursuitPathFollower;
 
 public abstract class EasyAuto extends BootstrappedOpMode {
@@ -109,8 +111,12 @@ public abstract class EasyAuto extends BootstrappedOpMode {
 		return new SimultaneousAction(actions);
 	}
 
-	public FollowPathAction followPath(PurePursuitPathFollower pathFollower) {
-		return new FollowPathAction(pathFollower, this.driver);
+	public FollowPathPurePursuitAction followPath(PurePursuitPathFollower pathFollower) {
+		return new FollowPathPurePursuitAction(pathFollower, this.driver);
+	}
+
+	public FollowPathPoseAction followPath(PosePathFollower pathFollower) {
+		return new FollowPathPoseAction(pathFollower, this.driver);
 	}
 
 	public SequentialAction sequentially(AutoAction... actions) {

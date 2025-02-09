@@ -6,7 +6,7 @@ import t10.motion.path.PurePursuitPathFollower;
 /**
  * An {@link AutoAction} that uses {@link PurePursuitPathFollower} to follow a path.
  */
-public class FollowPathAction implements AutoAction {
+public class FollowPathPurePursuitAction implements AutoAction {
 	/**
 	 * The path follower to use.
 	 */
@@ -23,12 +23,12 @@ public class FollowPathAction implements AutoAction {
 	private boolean isComplete;
 
 	/**
-	 * Creates a {@link FollowPathAction}.
+	 * Creates a {@link FollowPathPurePursuitAction}.
 	 *
 	 * @param pathFollower The path to use. <strong>Important: Make sure you set the localizer on this {@link PurePursuitPathFollower}!</strong>
 	 * @param driver       The driver to drive the robot with along this path.
 	 */
-	public FollowPathAction(PurePursuitPathFollower pathFollower, MecanumDriver driver) {
+	public FollowPathPurePursuitAction(PurePursuitPathFollower pathFollower, MecanumDriver driver) {
 		this.pathFollower = pathFollower;
 		this.driver = driver;
 		this.isComplete = false;
