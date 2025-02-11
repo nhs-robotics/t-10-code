@@ -12,29 +12,84 @@ import t10.gamepad.input.types.GTrigger;
  * Declarative gamepad input framework.
  */
 public class GController implements Loop {
-	// Gamepad buttons
+	/**
+	 * Access to the X button.
+	 */
 	public final GButton x;
+
+	/**
+	 * Access to the Y button.
+	 */
 	public final GButton y;
+
+	/**
+	 * Access to the A button.
+	 */
 	public final GButton a;
+
+	/**
+	 * Access to the B button.
+	 */
 	public final GButton b;
+
+	/**
+	 * Access to the right bumper.
+	 */
 	public final GButton rightBumper;
+
+	/**
+	 * Access to the left bumper.
+	 */
 	public final GButton leftBumper;
 
-	// Gamepad D-Pad buttons
+	/**
+	 * Access to the D-Pad up button.
+	 */
 	public final GButton dpadUp;
+
+	/**
+	 * Access to the D-Pad down button.
+	 */
 	public final GButton dpadDown;
+
+	/**
+	 * Access to the D-Pad right button.
+	 */
 	public final GButton dpadRight;
+
+	/**
+	 * Access to the D-Pad left button.
+	 */
 	public final GButton dpadLeft;
 
-	// Gamepad joysticks
+	/**
+	 * Access the button on the left joystick (you can press the joysticks down).
+	 */
 	public final GButton leftJoystickButton;
+
+	/**
+	 * Access the button on the right joystick (you can press the joysticks down).
+	 */
 	public final GButton rightJoystickButton;
 
+	/**
+	 * Access the movable left joystick.
+	 */
 	public final GJoystick leftJoystick;
+
+	/**
+	 * Access the movable right joystick.
+	 */
 	public final GJoystick rightJoystick;
 
-	// Gamepad triggers
+	/**
+	 * Access the right trigger.
+	 */
 	public final GTrigger rightTrigger;
+
+	/**
+	 * Access the left trigger.
+	 */
 	public final GTrigger leftTrigger;
 
 	/**

@@ -1,15 +1,13 @@
 package t10.motion.mecanum;
 
 /**
- * <p>
- *     Coefficient matrix for the total coefficients, vertical driving coefficients, horizontal driving coefficients, and the rotational coefficients. Omni driving coefficients are used for corrections that are easier to make on the software side than hardware side:
- *     <ul>
- *         <li>if hardware sets motors up backward</li>
- *         <li>to adjust motor power</li>
- *         <li>to correct drift and/or uneven motor power</li>
- *         <li>to allow for omni driving</li>
- *     </ul>
- * </p>
+ * Coefficient matrix for the total coefficients, vertical driving coefficients, horizontal driving coefficients, and the rotational coefficients. Omni driving coefficients are used for corrections that are easier to make on the software side than hardware side:
+ * <ul>
+ *     <li>if hardware sets motors up backward</li>
+ *     <li>to adjust motor power</li>
+ *     <li>to correct drift and/or uneven motor power</li>
+ *     <li>to allow for omni driving</li>
+ * </ul>
  */
 public class MecanumCoefficientMatrix {
 	/**

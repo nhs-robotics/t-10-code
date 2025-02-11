@@ -8,39 +8,73 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import t10.metrics.MetricsServer;
 
+/**
+ * An {@link OpMode} that automatically loads capabilities of T-10's library.
+ */
 public abstract class BootstrappedOpMode extends OpMode {
 	private static BootstrappedOpMode instance;
+
+	/**
+	 * True if the robot is running in a real, live competition, false otherwise.
+	 */
+	private final boolean isProductionMode;
 	protected MetricsServer metrics;
 	protected ExecutorService multithreadingService;
 	protected volatile boolean isRunning;
 
+	/**
+	 * Initializes a {@link BootstrappedOpMode}.
+	 *
+	 * @param isProductionMode True if the robot is running in a real, live competition, false otherwise.
+	 */
+	public BootstrappedOpMode(boolean isProductionMode) {
+		this.isProductionMode = isProductionMode;
+	}
+
+	/**
+	 * Initializes a {@link BootstrappedOpMode}.in developer mode.
+	 */
+	public BootstrappedOpMode() {
+		this(false);
+	}
+
 	@Override
 	public void init() {
 		instance = this;
-		this.isRunning = true;
-		this.metrics = new MetricsServer(this);
-		this.metrics.start();
-		this.multithreadingService = Executors.newCachedThreadPool();
-		this.multithreadingService.execute(() -> {
-			while (this.isRunning) {
-				this.metrics.loop();
-			}
 
-			try {
-				this.metrics.stop();
-			} catch (IOException | InterruptedException e) {
-				throw new RuntimeException(e);
-			}
-		});
+		this.isRunning = true;
+		this.multithreadingService = Executors.newCachedThreadPool();
+
+		// Only run the MetricsServer when NOT in production mode
+		if (!this.isProductionMode) {
+			this.metrics = new MetricsServer(this);
+			this.metrics.start();
+
+			this.multithreadingService.execute(() -> {
+				while (this.isRunning) {
+					this.metrics.loop();
+				}
+
+				try {
+					this.metrics.stop();
+				} catch (IOException | InterruptedException e) {
+					throw new RuntimeException(e);
+				}
+			});
+		}
 	}
 
 	@Override
 	public void stop() {
 		super.stop();
+
 		this.isRunning = false;
 		this.multithreadingService.shutdown();
 	}
 
+	/**
+	 * @return The OpMode that is currently running. You can access this from anywhere.
+	 */
 	public static BootstrappedOpMode getInstance() {
 		return instance;
 	}

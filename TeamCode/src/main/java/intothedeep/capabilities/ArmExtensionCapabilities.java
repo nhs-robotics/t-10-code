@@ -18,8 +18,8 @@ import t10.motion.hardware.Motor;
  */
 public class ArmExtensionCapabilities implements Loop {
 	public static final int POSITION_FULLY_RETRACTED = 0;
-	public static final int POSITION_FULLY_EXTENDED = -6000;
-	public static final int MAX_ERROR_ALLOWED = 100;
+	public static final int POSITION_FULLY_EXTENDED = -1700;
+	public static final int MAX_ERROR_ALLOWED = 50;
 	private final Motor armExtension;
 	private int targetPosition;
 	private int position;
@@ -36,7 +36,7 @@ public class ArmExtensionCapabilities implements Loop {
 
 		if (!this.isManuallyControlled) {
 			double error = this.targetPosition - this.position;
-			double power = error * 0.01;
+			double power = error * 0.01 * -1;
 			this.setPower(power);
 		}
 	}

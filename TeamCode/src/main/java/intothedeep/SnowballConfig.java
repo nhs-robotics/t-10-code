@@ -8,8 +8,11 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import t10.bootstrap.AbstractRobotConfiguration;
 import t10.bootstrap.Hardware;
+import t10.geometry.Pose;
+import t10.localizer.Localizer;
 import t10.localizer.OdometryCoefficientSet;
 import t10.localizer.OdometryIMULocalizer;
+import t10.localizer.OdometryLocalizer;
 import t10.motion.hardware.Motor;
 import t10.motion.hardware.OctoQuadEncoder;
 import t10.motion.mecanum.MecanumDriver;
@@ -94,7 +97,7 @@ public class SnowballConfig extends AbstractRobotConfiguration {
 		parameters.accelBandwidth = BNO055IMU.AccelBandwidth.HZ125;
 		parameters.gyroRange = BNO055IMU.GyroRange.DPS2000;
 		parameters.gyroBandwidth = BNO055IMU.GyroBandwidth.HZ230;
-		parameters.calibrationDataFile = "BNO055IMUCalibration.json";
+		parameters.mode = BNO055IMU.SensorMode.IMU;
 		this.imu.initialize(parameters);
 	}
 
@@ -110,7 +113,8 @@ public class SnowballConfig extends AbstractRobotConfiguration {
 	}
 
 	@Override
-	public OdometryIMULocalizer createLocalizer() {
+	public Localizer<Pose> createLocalizer() {
+		// Use OdometryLocalizer for now, IMU is shipping
 		return new OdometryIMULocalizer(
 				new OdometryCoefficientSet(1, 1, -1),
 				// 4-6-5 is right-left-perpendicular

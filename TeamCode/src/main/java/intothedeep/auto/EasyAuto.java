@@ -10,6 +10,7 @@ import t10.bootstrap.BootstrappedOpMode;
 import t10.geometry.Pose;
 import t10.localizer.Localizer;
 import t10.motion.mecanum.MecanumDriver;
+import t10.motion.path.PosePathFollower;
 import t10.motion.path.PurePursuitPathFollower;
 
 public abstract class EasyAuto extends BootstrappedOpMode {
@@ -40,7 +41,7 @@ public abstract class EasyAuto extends BootstrappedOpMode {
 		// Capabilities
 		this.armExtension = new ArmExtensionCapabilities(config);
 		this.armRotation = new ArmRotationCapabilities(config);
-//		this.claw = new ClawCapabilities(config);
+		this.claw = new ClawCapabilities(config);
 		this.crane = new CraneCapabilities(config);
 
 		// Configure robot's initial state
@@ -62,7 +63,7 @@ public abstract class EasyAuto extends BootstrappedOpMode {
 				this.crane.loop();
 			}
 		});
-    }
+	}
 
 	@Override
 	public void loop() {
@@ -111,8 +112,12 @@ public abstract class EasyAuto extends BootstrappedOpMode {
 		return new SimultaneousAction(actions);
 	}
 
-	public FollowPathAction followPath(PurePursuitPathFollower pathFollower) {
-		return new FollowPathAction(pathFollower, this.driver);
+	public FollowPathPurePursuitAction followPath(PurePursuitPathFollower pathFollower) {
+		return new FollowPathPurePursuitAction(pathFollower, this.driver);
+	}
+
+	public FollowPathPoseAction followPath(PosePathFollower pathFollower) {
+		return new FollowPathPoseAction(pathFollower, this.driver);
 	}
 
 	public SequentialAction sequentially(AutoAction... actions) {

@@ -8,26 +8,54 @@ import t10.localizer.Localizer;
 import t10.motion.mecanum.MecanumDriver;
 import t10.utils.MathUtils;
 
+/**
+ * An {@link AutoAction} that moves the robot to a position on the field.
+ */
 public class MoveToAction implements AutoAction {
 	/**
-	 * The maximum amount of error allowed in distance in inches. Current recommended is 0.5 inches.
+	 * The maximum amount of error allowed in distance in inches.
 	 */
 	private final double maxRotationError;
+
 	/**
-	 * The maximum amount of error allowed in rotation in degrees. Current recommended is 1.5 degrees.
+	 * The maximum amount of error allowed in rotation in degrees.
 	 */
 	private final double maxDistanceError;
+
+	/**
+	 * The localizer to keep track of the robot's position
+	 */
 	private final Localizer<Pose> localizer;
+
+	/**
+	 * The driver to drive the robot with.
+	 */
 	private final MecanumDriver driver;
+
+	/**
+	 * The destination position and orientation that the robot will drive to.
+	 */
 	private final Pose destinationPose;
+
+	/**
+	 * The speed of the robot to move horizontally and vertically in inches/sec.
+	 */
 	private final double movementSpeed;
+
+	/**
+	 * The speed that the robot will rotate in inches/sec. TODO: make this degrees
+	 */
 	private final double rotationalSpeed;
 
 	/**
 	 * Moves the robot from its current pose to a new `destinationPose`.
+	 *
+	 * @param localizer       The localizer to keep track of the robot's position
+	 * @param driver          The driver to drive the robot with.
+	 * @param destinationPose The destination position and orientation that the robot will drive to.
 	 */
 	public MoveToAction(Localizer<Pose> localizer, MecanumDriver driver, Pose destinationPose) {
-		this(localizer, driver, destinationPose, 2, 2, 40, 70);
+		this(localizer, driver, destinationPose, 2, 2, 40, 60);
 	}
 
 	/**
@@ -67,8 +95,8 @@ public class MoveToAction implements AutoAction {
 				AngleUnit.RADIANS
 		);
 
-		double vy = this.movementSpeed / (1 + Math.pow(0.1 * Math.E, dy)) - (this.movementSpeed / 2);
-		double vx = this.movementSpeed / (1 + Math.pow(0.1 * Math.E, dx)) - (this.movementSpeed / 2);
+		double vy = this.movementSpeed / (1 + Math.pow(0.5 * Math.E, -dy)) - (this.movementSpeed / 2);
+		double vx = this.movementSpeed / (1 + Math.pow(0.5 * Math.E, -dx)) - (this.movementSpeed / 2);
 		double vh = this.rotationalSpeed / (1 + Math.pow(1.5 * Math.E, -dh)) - (this.rotationalSpeed / 2);
 
 		MovementVector vector = new MovementVector(
