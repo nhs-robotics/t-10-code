@@ -69,17 +69,13 @@ public class CompetitionTeleOp extends BootstrappedOpMode {
 				.leftBumper.onPress(() -> this.armExtension.setTargetPosition(0)).ok()
 				.rightJoystick.onMove((x, y) -> this.crane.setPowerManually(-y)).ok()
 				.leftJoystick.onMove((x, y) -> this.armRotation.setPowerManually(-y)).ok()
-				.dpadUp.whileDown(() -> driver.setVelocity(new MovementVector(speed, 0, 0, AngleUnit.DEGREES))).ok()
-				.dpadDown.whileDown(() -> driver.setVelocity(new MovementVector(-speed, 0, 0, AngleUnit.DEGREES))).ok()
-				.dpadRight.whileDown(() -> driver.setVelocity(new MovementVector(0, speed, 0, AngleUnit.DEGREES))).ok()
-				.dpadLeft.whileDown(() -> driver.setVelocity(new MovementVector(0, -speed, 0, AngleUnit.DEGREES))).ok()
 				.b.onPress(() -> crane.setTargetPosition(CraneCapabilities.POSITION_HIGH_BASKET)).ok()
 				.x.onPress(() -> {
 					if (Math.abs(armExtension.getPosition() - 0) < ArmExtensionCapabilities.MAX_ERROR_ALLOWED) {
 						crane.setTargetPosition(CraneCapabilities.POSITION_BOTTOM);
 					}
 				}).ok()
-				.a.onPress(() -> this.claw.toggle()).ok()
+				.a.onPress(() -> this.claw.toggleClaw()).ok()
 				.y.onPress(() -> {
 					crane.setTargetPosition(CraneCapabilities.POSITION_HIGH_CHAMBER);
 					armRotation.setTargetPosition(0);

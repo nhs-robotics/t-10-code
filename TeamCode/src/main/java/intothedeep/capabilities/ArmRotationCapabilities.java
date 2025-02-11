@@ -75,6 +75,10 @@ public class ArmRotationCapabilities implements Loop {
 		this.armRotation.setPower(power);
 	}
 
+    public int getPosition() {
+        return this.armRotation.motor.getCurrentPosition();
+    }
+
 	public static class ArmRotationAction implements AutoAction {
 		private final ArmRotationCapabilities armRotationCapabilities;
 		private final int position;

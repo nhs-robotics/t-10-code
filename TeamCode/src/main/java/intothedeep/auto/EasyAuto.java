@@ -5,14 +5,7 @@ import intothedeep.capabilities.ArmExtensionCapabilities;
 import intothedeep.capabilities.ArmRotationCapabilities;
 import intothedeep.capabilities.ClawCapabilities;
 import intothedeep.capabilities.CraneCapabilities;
-
-import t10.auto.AutoAction;
-import t10.auto.FollowPathPoseAction;
-import t10.auto.FollowPathPurePursuitAction;
-import t10.auto.MoveToAction;
-import t10.auto.SequentialAction;
-import t10.auto.SimultaneousAction;
-import t10.auto.SleepAction;
+import t10.auto.*;
 import t10.bootstrap.BootstrappedOpMode;
 import t10.geometry.Pose;
 import t10.localizer.Localizer;
@@ -103,8 +96,16 @@ public abstract class EasyAuto extends BootstrappedOpMode {
 		return new CraneCapabilities.CraneAction(this.crane, position);
 	}
 
+	public ClawCapabilities.ClawAction claw(ClawCapabilities.ClawPreset clawPreset, boolean isOpen) {
+		return new ClawCapabilities.ClawAction(this.claw, clawPreset, isOpen);
+	}
+
+	public ClawCapabilities.ClawAction claw(ClawCapabilities.ClawPreset clawPreset) {
+		return new ClawCapabilities.ClawAction(this.claw, clawPreset, null);
+	}
+
 	public ClawCapabilities.ClawAction claw(boolean isOpen) {
-		return new ClawCapabilities.ClawAction(this.claw, isOpen);
+		return new ClawCapabilities.ClawAction(this.claw, null, isOpen);
 	}
 
 	public SimultaneousAction simultaneously(AutoAction... actions) {
