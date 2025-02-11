@@ -36,6 +36,10 @@ public class ClawCapabilities {
 		}
 	}
 
+	public void setAbsoluteMode(boolean state) {
+		isAbsolute = state;
+	}
+
 	public boolean isOpen() {
 		return this.isOpen;
 	}
@@ -67,10 +71,6 @@ public class ClawCapabilities {
 			else {
 				isAbsolute = false;
 				this.config.clawRotate.setPosition(preset.servoRotatePosition);
-			}
-			if(wasOpen) {
-				SystemClock.sleep(250);
-				toggleClaw();
 			}
 		}
 	}
