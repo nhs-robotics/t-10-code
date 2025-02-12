@@ -16,6 +16,7 @@ import t10.localizer.Localizer;
 import t10.motion.mecanum.MecanumDriver;
 import t10.motion.profile.IMotionProfile;
 import t10.motion.profile.TrapezoidalMotionProfile;
+import t10.utils.MathUtils;
 
 @TeleOp
 public class VeloTestTeleop extends TeleOpOpMode {
@@ -79,8 +80,9 @@ public class VeloTestTeleop extends TeleOpOpMode {
 
 	@Override
 	public void loop() {
-		state.setValue(motionProfile.getState().toString());
-		calcVelo.setValue(motionProfile.calculate(
+		String[] veloState = motionProfile.getState();
+		state.setValue(veloState[0] + ", " + veloState[1] + ", " + veloState[2] + ", " + veloState[3]);
+		MovementVector vector = motionProfile.calculate(
 				initialVelocity,
 				new MovementVector(25,25,2*Math.PI,AngleUnit.RADIANS),
 				new MovementVector(10,10,1,AngleUnit.RADIANS),
@@ -90,8 +92,10 @@ public class VeloTestTeleop extends TeleOpOpMode {
 				localizer.getFieldCentric(),
 				localizer.getVelocity(),
 				finalPose,
-				3).toString());
-		finalPose.toString();
+				3);
+		calcVelo.setValue(vector.toString());
+		angle.setValue(motionProfile.calcs);
+
 
 		Pose pose = this.localizer.getFieldCentric();
 		vertical.setValue(pose.getY());
