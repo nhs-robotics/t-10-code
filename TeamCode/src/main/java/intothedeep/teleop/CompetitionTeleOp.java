@@ -59,7 +59,10 @@ public class CompetitionTeleOp extends BootstrappedOpMode {
 		// Gamepad
 		// G1 controls the robot's moveTo.
 		this.g1 = new GController(this.gamepad1)
-				.x.initialToggleState(true).ok();
+				.x.initialToggleState(true).ok()
+				.y.onPress(() -> this.claw.setPreset(ClawCapabilities.ClawPreset.UP, false)).ok()
+				.b.onPress(() -> this.claw.setPreset(ClawCapabilities.ClawPreset.FORWARD, false)).ok()
+				.a.onPress(() -> this.claw.setPreset(ClawCapabilities.ClawPreset.DOWN, false)).ok();
 
 		// G2 controls the intake/outtake
 		this.g2 = new GController(this.gamepad2)
