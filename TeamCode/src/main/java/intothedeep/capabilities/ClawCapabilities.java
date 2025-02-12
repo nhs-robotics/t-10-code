@@ -1,6 +1,5 @@
 package intothedeep.capabilities;
 
-import android.os.SystemClock;
 import intothedeep.Constants;
 import intothedeep.SnowballConfig;
 
@@ -10,19 +9,26 @@ public class ClawCapabilities {
 	static final double SERVO_MAX_ERROR = 0.05;
 	static final double CLAW_OPEN_POSITION = 0.05;
 	static final double CLAW_CLOSED_POSITION = 0.55;
+	private static final long MS_DURATION_COMPLETE_SERVO_ACTION = 250;
 
 	private final SnowballConfig config;
 	private boolean isOpen, isAbsolute;
 	private ClawPreset clawPreset;
+	private long timeCompletePresetMovement;
+	boolean isDone = false;
 
 	public ClawCapabilities(SnowballConfig c) {
 		this.config = c;
 		this.setPreset(ClawPreset.DOWN, false);
 	}
 
-	public void loop(double armTicks) {
-		if(isAbsolute) {
-			setAbsolutePreset(clawPreset);
+	public void loop() {
+		if(this.timeCompletePresetMovement < System.currentTimeMillis()) {
+			if (isAbsolute) {
+				setAbsolutePreset(clawPreset);
+			} else {
+				this.setPreset(this.clawPreset, false);
+			}
 		}
 	}
 
@@ -54,23 +60,22 @@ public class ClawCapabilities {
 
 	public void setPreset(ClawPreset preset, boolean absoluteRotation) {
 		this.clawPreset = preset;
-		boolean wasOpen = this.isOpen;
 
-		if(!preset.needsToBeExtended || config.armExtension.motor.getCurrentPosition() < preset.minExtensionWhenNeeded) {
-			if(this.isOpen) {
-				this.setOpen(false);
-			}
-			if (config.clawTwist.getPosition() != 1) {
-				this.config.clawTwist.setPosition(1);
-				SystemClock.sleep(250);
-			}
-			if(absoluteRotation) {
+		if (!preset.needsToBeExtended || config.armExtension.motor.getCurrentPosition() < preset.minExtensionWhenNeeded) {
+			if (absoluteRotation) {
 				isAbsolute = true;
-				setAbsolutePreset(preset);
+			} else {
+				isAbsolute = false;
+			}
+
+			if (this.isOpen || config.clawTwist.getPosition() != 1) {
+				this.setOpen(false);
+				this.config.clawTwist.setPosition(1);
+				this.timeCompletePresetMovement = System.currentTimeMillis() + ClawCapabilities.MS_DURATION_COMPLETE_SERVO_ACTION;
 			}
 			else {
-				isAbsolute = false;
-				this.config.clawRotate.setPosition(preset.servoRotatePosition);
+				config.clawRotate.setPosition(preset.servoRotatePosition);
+				isDone = true;
 			}
 		}
 	}
@@ -94,30 +99,37 @@ public class ClawCapabilities {
 	}
 
 	public boolean isAtTargetPosition() {
-		double gripTarget = this.isOpen ? CLAW_OPEN_POSITION : CLAW_CLOSED_POSITION;
-		double rotateTarget = this.clawPreset.servoRotatePosition;
-		double twistTarget = this.clawPreset.defaultTwistPosition;
+//		double gripTarget = this.isOpen ? CLAW_OPEN_POSITION : CLAW_CLOSED_POSITION;
+//		double rotateTarget = this.clawPreset.servoRotatePosition;
+//		double twistTarget = this.clawPreset.defaultTwistPosition;
+//
+//		return Math.abs(gripTarget - this.config.clawGrip.getPosition()) < SERVO_MAX_ERROR &&
+//				Math.abs(rotateTarget - this.config.clawRotate.getPosition()) < SERVO_MAX_ERROR &&
+//				Math.abs(twistTarget - this.config.clawTwist.getPosition()) < SERVO_MAX_ERROR;
 
-		return Math.abs(gripTarget - this.config.clawGrip.getPosition()) < SERVO_MAX_ERROR &&
-				Math.abs(rotateTarget - this.config.clawRotate.getPosition()) < SERVO_MAX_ERROR &&
-				Math.abs(twistTarget - this.config.clawTwist.getPosition()) < SERVO_MAX_ERROR;
+		return isDone;
 	}
 
 	public static class ClawAction implements AutoAction {
 		private final ClawCapabilities clawCapabilities;
 		private final ClawPreset clawPreset;
-		private final Boolean isOpen;
+		private final boolean isOpen;
+		private final boolean isAbsoluteRotation;
 
-		public ClawAction(ClawCapabilities clawCapabilities, ClawPreset clawPreset, Boolean isOpen) {
+		public ClawAction(ClawCapabilities clawCapabilities, ClawPreset clawPreset, boolean isOpen, boolean isAbsoluteRotation) {
 			this.clawCapabilities = clawCapabilities;
 			this.clawPreset = clawPreset;
 			this.isOpen = isOpen;
+			this.isAbsoluteRotation = isAbsoluteRotation;
 		}
 
 		@Override
 		public void init() {
-			if (this.isOpen != null) this.clawCapabilities.setOpen(this.isOpen);
-			if (this.clawPreset != null) this.clawCapabilities.setPreset(this.clawPreset, false);
+			this.clawCapabilities.setOpen(this.isOpen);
+
+			if (this.clawPreset != null) {
+				this.clawCapabilities.setPreset(this.clawPreset, this.isAbsoluteRotation);
+			}
 		}
 
 		@Override
@@ -151,7 +163,7 @@ public class ClawCapabilities {
 		public final double servoRotatePosition;
 		public final double defaultTwistPosition = 1;
 		public final boolean needsToBeExtended;
-		public final double minExtensionWhenNeeded = -565;
+		public final int minExtensionWhenNeeded = -565;
 		public final double maxRotationNotDefaultTwist = 0.65;
 
 		ClawPreset(double servoRotatePosition, boolean needsToBeExtended) {

@@ -61,6 +61,7 @@ public abstract class EasyAuto extends BootstrappedOpMode {
 				this.armRotation.loop();
 				this.armExtension.loop();
 				this.crane.loop();
+				this.claw.loop();
 			}
 		});
 	}
@@ -96,16 +97,20 @@ public abstract class EasyAuto extends BootstrappedOpMode {
 		return new CraneCapabilities.CraneAction(this.crane, position);
 	}
 
+	public ClawCapabilities.ClawAction claw(ClawCapabilities.ClawPreset clawPreset, boolean isOpen, boolean isAbsoluteRotation) {
+		return new ClawCapabilities.ClawAction(this.claw, clawPreset, isOpen, isAbsoluteRotation);
+	}
+
 	public ClawCapabilities.ClawAction claw(ClawCapabilities.ClawPreset clawPreset, boolean isOpen) {
-		return new ClawCapabilities.ClawAction(this.claw, clawPreset, isOpen);
+		return new ClawCapabilities.ClawAction(this.claw, clawPreset, isOpen, false);
 	}
 
 	public ClawCapabilities.ClawAction claw(ClawCapabilities.ClawPreset clawPreset) {
-		return new ClawCapabilities.ClawAction(this.claw, clawPreset, null);
+		return new ClawCapabilities.ClawAction(this.claw, clawPreset, this.claw.isOpen(), false);
 	}
 
 	public ClawCapabilities.ClawAction claw(boolean isOpen) {
-		return new ClawCapabilities.ClawAction(this.claw, null, isOpen);
+		return new ClawCapabilities.ClawAction(this.claw, null, isOpen, false);
 	}
 
 	public SimultaneousAction simultaneously(AutoAction... actions) {

@@ -71,7 +71,7 @@ public class ClawTest extends BootstrappedOpMode {
 		rotatePosition.setValue(position);
 		extension.setValue(config.armExtension.motor.getCurrentPosition());
 		rotation.setValue(config.armRotation.motor.getCurrentPosition());
-		claw.loop(config.armExtension.motor.getCurrentPosition());
+		claw.loop();
 		telemetry.update();
     }
 

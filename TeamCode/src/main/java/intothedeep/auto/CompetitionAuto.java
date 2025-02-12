@@ -2,6 +2,8 @@ package intothedeep.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import intothedeep.capabilities.ArmExtensionCapabilities;
+import intothedeep.capabilities.ArmRotationCapabilities;
+import intothedeep.capabilities.ClawCapabilities;
 import intothedeep.capabilities.CraneCapabilities;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
@@ -25,7 +27,21 @@ public class CompetitionAuto extends EasyAuto {
 		super.init();
 
 		this.autoSequence = sequentially(
-				moveTo(new Pose(36, 44, -90, AngleUnit.DEGREES)),
+				simultaneously(
+						armRotation(687),
+						claw(ClawCapabilities.ClawPreset.UP, false, false),
+						armExtension((int) (ArmExtensionCapabilities.POSITION_FULLY_EXTENDED * 0.75))
+				),
+				moveTo(new Pose(12, 44, -90, AngleUnit.DEGREES)),
+				armExtension(ArmExtensionCapabilities.POSITION_FULLY_EXTENDED),
+				claw(true),
+				simultaneously(
+						sequentially(
+								armExtension(ArmExtensionCapabilities.POSITION_FULLY_RETRACTED),
+								armRotation(0)
+						),
+						moveTo(new Pose(36, 46, -90, AngleUnit.DEGREES))
+				),
 				moveTo(new Pose(36, 16, -90, AngleUnit.DEGREES)),
 				moveTo(new Pose(44, 16, -90, AngleUnit.DEGREES)),
 				moveTo(new Pose(44, 58, -90, AngleUnit.DEGREES)),
