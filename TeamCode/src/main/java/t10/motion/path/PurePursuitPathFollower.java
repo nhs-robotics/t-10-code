@@ -23,7 +23,7 @@ public class PurePursuitPathFollower {
 	/**
 	 * The absolute points that the robot will follow which make up the path.
 	 */
-	public final Point[] path;
+	public final Point[][] pathSegments;
 
 	/**
 	 * The {@link Localizer} that this path follower is using to determine its position.
@@ -46,22 +46,28 @@ public class PurePursuitPathFollower {
 	private double lastTurningAngle;
 
 	/**
+	 * The current path segment being followed.
+	 */
+	private int currentSegment;
+
+	/**
 	 * Creates a path follower to follow the path specified in {@code path}.
 	 *
-	 * @param path              The path that the robot will follow.
+	 * @param pathSegments              The path that the robot will follow.
 	 * @param localizer         The localizer the robot will use to determine its position on the field.
 	 * @param lookaheadDistance The distance, in inches, the robot will aim towards on the path.
 	 * @param speed             The speed the robot will attempt to follow the path at.
 	 */
-	public PurePursuitPathFollower(Point[] path, Localizer<Pose> localizer, double lookaheadDistance, double speed) {
-		if (path.length < 2) {
-			throw new IllegalArgumentException("path must contain at least two points (a start and an end)");
-		}
+	public PurePursuitPathFollower(Point[][] pathSegments, Localizer<Pose> localizer, double lookaheadDistance, double speed) {
+		//if (pathSegments.length < 2) {
+		//	throw new IllegalArgumentException("path must contain at least two points (a start and an end)");
+		//}
 
-		this.path = path;
+		this.pathSegments = pathSegments;
 		this.localizer = localizer;
 		this.lookaheadDistance = lookaheadDistance;
 		this.speed = speed;
+		this.currentSegment = 0;
 	}
 
 	/**
@@ -90,7 +96,7 @@ public class PurePursuitPathFollower {
 
 		if (currentPose.distanceTo(lookaheadPoint) < FOLLOWER_STOP_DISTANCE) {
 			mecanumDriver.halt();
-			return true;
+			return ++currentSegment == pathSegments.length;
 		}
 
 		moveTowardsPosition(
@@ -110,9 +116,9 @@ public class PurePursuitPathFollower {
 	private double getTraveledDistance(Point targetPoint) {
 		double distanceTraveled = 0;
 
-		for (int i = 0; this.path.length - 1 > i; i++) {
-			Point p1 = this.path[i];
-			Point p2 = this.path[i + 1];
+		for (int i = 0; this.pathSegments[currentSegment].length - 1 > i; i++) {
+			Point p1 = this.pathSegments[currentSegment][i];
+			Point p2 = this.pathSegments[currentSegment][i + 1];
 
 			if (isPointOnLine(p1, p2, targetPoint)) {
 				distanceTraveled += p1.distanceTo(this.localizer.getFieldCentric());
@@ -197,10 +203,10 @@ public class PurePursuitPathFollower {
 		double y = point.getY();
 
 		// iterate through all pairs of points
-		for (int i = 0; i < path.length - 1; i++) {
+		for (int i = 0; i < pathSegments[currentSegment].length - 1; i++) {
 			// form a segment from each two adjacent points
-			Point segmentStart = path[i];
-			Point segmentEnd = path[i + 1];
+			Point segmentStart = pathSegments[currentSegment][i];
+			Point segmentEnd = pathSegments[currentSegment][i + 1];
 
 			// translate the segment to the origin
 			double[] p1 = new double[]{segmentStart.getX() - x, segmentStart.getY() - y};
@@ -248,7 +254,7 @@ public class PurePursuitPathFollower {
 		}
 
 		// special case for the very last point on the path
-		Point lastPoint = path[path.length - 1];
+		Point lastPoint = pathSegments[currentSegment][pathSegments.length - 1];
 
 		double endX = lastPoint.getX();
 		double endY = lastPoint.getY();
@@ -262,12 +268,14 @@ public class PurePursuitPathFollower {
 	}
 
 	public static class Builder {
-		private final LinkedList<Point> path;
+		private LinkedList<Point> path;
+		private final LinkedList<Point[]> pathSegments;
 		private double lookaheadDistance;
 		private Localizer<Pose> localizer;
 		private double speed;
 
 		public Builder() {
+			this.pathSegments = new LinkedList<>();
 			this.path = new LinkedList<>();
 		}
 
@@ -348,10 +356,16 @@ public class PurePursuitPathFollower {
 
 			return d;
 		}
+		
+		public Builder endSegment() {
+			this.pathSegments.add(this.path.toArray(new Point[0]));
+			this.path = new LinkedList<>();
+			return this;
+		}
 
 		public PurePursuitPathFollower build() {
 			return new PurePursuitPathFollower(
-					this.path.toArray(new Point[0]),
+					this.pathSegments.toArray(new Point[0][0]),
 					this.localizer,
 					this.lookaheadDistance,
 					this.speed
