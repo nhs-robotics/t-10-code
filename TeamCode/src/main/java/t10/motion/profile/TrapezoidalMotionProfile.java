@@ -51,7 +51,7 @@ public class TrapezoidalMotionProfile implements IMotionProfile {
 		peakVelocity[2] = veloH.peakVelocity;
 		calcs++;
 
-		return new MovementVector(vx,vy,vh, null);
+		return new MovementVector(vy,vx,vh, null);
 	}
 
 	public String[] getState() {return state;}
@@ -208,7 +208,7 @@ class TrapMotionInLine {
 					return Math.abs(minSpeed);
 				}
 				state = "Accelerating";
-				return currentVelo + Math.abs(acceleration) * dt;
+				return MathUtils.solveVelocity(initialVelocity,acceleration,deltaDistance);
 			} else if (deltaDistance > cruiseDistance) {
 				state = "Cruising";
 				return peakVelocity;
