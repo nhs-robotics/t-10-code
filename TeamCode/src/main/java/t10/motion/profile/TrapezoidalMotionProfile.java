@@ -37,9 +37,9 @@ public class TrapezoidalMotionProfile implements IMotionProfile {
 		updateProfiles(initialVelocity, maxVelocity, endVelocity, maxAcceleration, initialPose, finalPose, lookAhead);
 
 
-		double vx = veloX.getVelocity(currentVelocity.getHorizontal(), currentPose.getX() - initialPose.getX(), minVelocity.getHorizontal());
-		double vy = veloY.getVelocity(currentVelocity.getVertical(), currentPose.getY() - initialPose.getY(), minVelocity.getVertical());
-		double vh = veloH.getRotateVelo(currentVelocity.getAngleUnit().toRadians(currentVelocity.getRotation()), currentPose.getHeading(AngleUnit.RADIANS), minVelocity.getAngleUnit().toRadians(minVelocity.getRotation()), AngleUnit.RADIANS);
+		double vx = veloX.getVelocity(currentPose.getX() - initialPose.getX(), minVelocity.getHorizontal());
+		double vy = veloY.getVelocity(currentPose.getY() - initialPose.getY(), minVelocity.getVertical());
+		double vh = veloH.getRotateVelo(currentPose.getHeading(AngleUnit.RADIANS), minVelocity.getAngleUnit().toRadians(minVelocity.getRotation()), AngleUnit.RADIANS);
 
 		state[0] = veloY.getState();
 		state[1] = veloX.getState();
@@ -56,6 +56,21 @@ public class TrapezoidalMotionProfile implements IMotionProfile {
 
 	public String[] getState() {return state;}
 
+	public Double[] getPeakVelos() {
+		 Double[] velos = {veloY.peakVelocity, veloX.peakVelocity, veloH.peakVelocity};
+		 return velos;
+	}
+
+	public Double[] getCruiseDists() {
+		Double[] dists = {veloY.cruiseDistance, veloX.cruiseDistance, veloH.cruiseDistance};
+		return dists;
+	}
+
+	public Double[] getAccelDists() {
+		Double[] dists = {veloY.accelerateDistance, veloX.accelerateDistance, veloH.accelerateDistance};
+		return dists;
+	}
+
 	private void updateProfiles(MovementVector initialVelocity, MovementVector maxVelocity, MovementVector endVelocity, MovementVector maxAcceleration, Pose initialPose, Pose finalPose, double lookAhead) {
 		if (triggers == 0 || !(this.initialVelocity.equals(initialVelocity) && this.maxVelocity.equals(maxVelocity) && this.endVelocity.equals(endVelocity) && this.maxAcceleration.equals(maxAcceleration) && this.initialPose.equals(initialPose) && this.finalPose.equals(finalPose) && this.lookAhead == lookAhead)) {
 			triggers++;
@@ -66,7 +81,7 @@ public class TrapezoidalMotionProfile implements IMotionProfile {
 					initialVelocity.getAngleUnit().toRadians(initialVelocity.getRotation()),
 					maxVelocity.getAngleUnit().toRadians(maxVelocity.getRotation()),
 					endVelocity.getAngleUnit().toRadians(endVelocity.getRotation()),
-					maxAcceleration.getAngleUnit().toRadians(maxAcceleration.getRotation()),
+					maxAcceleration.getRotation(),
 					initialPose.getHeading(AngleUnit.RADIANS),
 					finalPose.getHeading(AngleUnit.RADIANS),
 					lookAhead,
@@ -121,10 +136,10 @@ class TrapMotionInLine {
 		 this.acceleration = Math.abs(acceleration);
 
 
-		 double fullAccelerationDistance = Math.abs(MathUtils.solveDisplacement(maxSpeed, initialVelocity, this.acceleration * direction)) * direction;
-		 double targetToEndVelocityDistance = Math.abs(MathUtils.solveDisplacement(endVelocity, maxSpeed, this.acceleration * direction * -1)) * direction;
+		 double fullAccelerationDistance = MathUtils.solveDisplacement(maxSpeed, initialVelocity, this.acceleration * direction) * direction;
+		 double targetToEndVelocityDistance = MathUtils.solveDisplacement(endVelocity, maxSpeed, this.acceleration * direction * -1) * direction;
 
-		 if (Math.abs(fullAccelerationDistance + targetToEndVelocityDistance) < distance) {
+		 if (Math.abs(fullAccelerationDistance + targetToEndVelocityDistance) < Math.abs(distance)) {
 			 // WILL cruise.
 			 this.peakVelocity = maxSpeed * direction;
 			 this.accelerateDistance = fullAccelerationDistance;
@@ -142,16 +157,13 @@ class TrapMotionInLine {
 			 // (peakVelocity^2 - initialVelocity^2) / (2 * acceleration) + (endVelocity^2 - peakVelocity^2) / (2 * -acceleration) = d
 			 // Solve for peakVelocity:
 			 this.peakVelocity = Math.sqrt((2 * Math.abs(this.distance) * this.acceleration + this.initialVelocity * this.initialVelocity + finalVelocity * finalVelocity) / 2) * direction;
-			 this.accelerateDistance = MathUtils.solveDisplacement(peakVelocity, initialVelocity, this.acceleration);
+			 this.accelerateDistance = MathUtils.solveDisplacement(peakVelocity, initialVelocity, this.acceleration * direction);
 			 this.cruiseDistance = 0;
 		 }
 		 this.lookAhead = lookAhead;
 	 }
 
 
-	/**
-	 * @param deltaDistance Should be signed - doesn't matter which way is positive, as long as you stick to it
-	 */
 	/*public double getVelocity(double deltaDistance) {
 		if (!changedDirection) {
 			deltaDistance += lookAhead * Math.signum(initialVelocity);
@@ -196,24 +208,31 @@ class TrapMotionInLine {
 	 * @param deltaDistance Should be signed
 	 */
 
-	public double getVelocity(double currentVelo, double deltaDistance, double minSpeed) {
+	public double getCruiseDistance() {
+		return cruiseDistance;
+	}
+
+	public double getVelocity(double deltaDistance, double minSpeed) {
 		state = "Starting to Get Velocity";
-		double dt = (double) System.currentTimeMillis() / 1000 - time;
-		time = (double) System.currentTimeMillis() / 1000;
-		if (peakVelocity > 0 && currentVelo < peakVelocity) {
-			if (deltaDistance < cruiseDistance) {
-				if(-Math.abs(minSpeed) <= currentVelo && currentVelo <= Math.abs(minSpeed))
+		if(deltaDistance == 0) { deltaDistance += 0.001;}
+
+		double minDeltaDist = MathUtils.solveDisplacement(minSpeed,initialVelocity,acceleration);
+
+		if (peakVelocity > 0) {
+			if (deltaDistance < accelerateDistance) {
+				if(Math.abs(deltaDistance) < Math.abs(minDeltaDist))
 				{
-					state = "Below Min";
+					state = "below min";
 					return Math.abs(minSpeed);
 				}
-				state = "Accelerating";
+				state = "accelerating";
 				return MathUtils.solveVelocity(initialVelocity,acceleration,deltaDistance);
-			} else if (deltaDistance > cruiseDistance) {
-				state = "Cruising";
+
+			} else if (cruiseDistance != 0 && accelerateDistance < deltaDistance && deltaDistance < accelerateDistance + cruiseDistance) {
+				state = "cruising";
 				return peakVelocity;
 			} else if (deltaDistance > cruiseDistance + accelerateDistance && deltaDistance + lookAhead < distance) {
-				state = "Decelerating";
+				state = "decelerating";
 				return MathUtils.solveVelocity(peakVelocity, -Math.abs(acceleration), deltaDistance - (cruiseDistance + accelerateDistance) + lookAhead);
 			} else {
 				state = "finished";
@@ -221,21 +240,20 @@ class TrapMotionInLine {
 				return finalVelocity;
 			}
 
-		} else if (peakVelocity < 0 && currentVelo > peakVelocity) {
-			if (deltaDistance > cruiseDistance) {
-				if(Math.abs(minSpeed) >= currentVelo && currentVelo >= -Math.abs(minSpeed))
-				{
+		} else if (peakVelocity < 0) {
+			if (deltaDistance > accelerateDistance) {
+				if(Math.abs(deltaDistance) < Math.abs(minDeltaDist)){
 					state = "Below Min";
 					return -Math.abs(minSpeed);
 				}
 				state = "Accelerating";
-				return currentVelo - Math.abs(acceleration) * dt;
-			} else if (deltaDistance > cruiseDistance) {
+				return direction * MathUtils.solveVelocity(initialVelocity,-Math.abs(acceleration), deltaDistance);
+			} else if (cruiseDistance != 0 && accelerateDistance > deltaDistance && deltaDistance > accelerateDistance + cruiseDistance) {
 				state = "Cruising";
 				return peakVelocity;
-			} else if (deltaDistance > cruiseDistance + accelerateDistance && deltaDistance + lookAhead < distance) {
+			} else if (deltaDistance < cruiseDistance + accelerateDistance && deltaDistance - lookAhead > distance) {
 				state = "Decelerating";
-				return MathUtils.solveVelocity(peakVelocity, Math.abs(acceleration), deltaDistance - (cruiseDistance + accelerateDistance) + lookAhead);
+				return direction * MathUtils.solveVelocity(peakVelocity, Math.abs(acceleration), deltaDistance - (cruiseDistance + accelerateDistance) + lookAhead);
 			} else {
 				state = "Finished";
 				finished = true;
@@ -283,18 +301,20 @@ class TrapMotionRotate extends TrapMotionInLine {
 			double lookAhead,
 			double wheelDistFromCenter
 	) {
-		super(initialAngularVelocity, maxAngularVelocity, endAngularVelocity, angularAcceleration, initialAngle, finalAngle, lookAhead);
+
+		super(initialAngularVelocity, maxAngularVelocity, endAngularVelocity, angularAcceleration, initialAngle, finalAngle, (lookAhead * (Math.PI / 180)));
 
 		this.initialAngle = initialAngle;
 		this.circleRadius = wheelDistFromCenter;
 	}
 
-	public double getRotateVelo(double currentVelo, double currentAngle, double minVelo, AngleUnit angleUnit)
+	public double getRotateVelo(double currentAngle, double minVelo, AngleUnit angleUnit)
 	{
 		currentAngle = angleUnit.toRadians(currentAngle);
-		double angularVelo = super.getVelocity(currentVelo,(currentAngle - initialAngle),minVelo);
+		double angularVelo = super.getVelocity((currentAngle),minVelo);
 
-		//because velocity is angular velocity times radius
+		this.state = state + ", " + String.valueOf(acceleration) + ", " + String.valueOf(distance);
+	//because velocity is angular velocity times radius
 		return angularVelo * circleRadius;
 	}
 }

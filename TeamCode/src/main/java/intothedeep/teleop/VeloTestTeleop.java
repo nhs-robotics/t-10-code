@@ -17,13 +17,14 @@ import t10.motion.mecanum.MecanumDriver;
 import t10.motion.profile.IMotionProfile;
 import t10.motion.profile.TrapezoidalMotionProfile;
 import t10.utils.MathUtils;
+import t10.utils.OdometryUtils;
 
 @TeleOp
 public class VeloTestTeleop extends TeleOpOpMode {
 	private SnowballConfig config;
 	private GController g1;
 	private MecanumDriver driver;
-	private Telemetry.Item state, horizontal, vertical, angle, veloX, veloY, veloH, Finalhorizontal, Finalvertical, Finalangle, calcVelo;
+	private Telemetry.Item state, horizontal, vertical, angle, veloX, veloY, veloH, Finalhorizontal, Finalvertical, Finalangle, calcVelo, peakY, peakX, peakH, cruiseY, cruiseX, cruiseH, accelY, accelX, accelH;
 	private Localizer<Pose> localizer;
 	private TrapezoidalMotionProfile motionProfile;
 	MovementVector initialVelocity = new MovementVector(0,0,0,AngleUnit.RADIANS), endVelocity = new MovementVector(0,0,0, AngleUnit.RADIANS), maxAccel = new MovementVector(5,5,2 * Math.PI, AngleUnit.RADIANS);
@@ -52,30 +53,42 @@ public class VeloTestTeleop extends TeleOpOpMode {
 				.leftBumper.onPress(() -> finalPose = finalPose.add(new Pose(0,0,-Math.PI / 4, AngleUnit.RADIANS))).ok()
 				.a.onPress(() -> initialPose = localizer.getFieldCentric()).ok()
 				.x.whileDown(() -> driver.setVelocity(
-						motionProfile.calculate(
-								initialVelocity,
-								new MovementVector(25,25,2*Math.PI,AngleUnit.RADIANS),
-								new MovementVector(3,3,0.125,AngleUnit.RADIANS),
-								endVelocity,
-								maxAccel,
-								initialPose,
-								localizer.getFieldCentric(),
-								localizer.getVelocity(),
-								finalPose,
-								3)
+						OdometryUtils.changeToRobotCenteredVelocity(
+								motionProfile.calculate(
+										initialVelocity,
+										new MovementVector(25,25,2*Math.PI - 0.001,AngleUnit.RADIANS),
+										new MovementVector(3,3,3,AngleUnit.RADIANS),
+										endVelocity,
+										maxAccel,
+										initialPose,
+										localizer.getFieldCentric(),
+										localizer.getVelocity(),
+										finalPose,
+										0.5),
+								this.localizer.getFieldCentric()
+						)
 				)).onRelease(() -> driver.halt()).ok();
 
 		this.state = telemetry.addData("","");
 		this.calcVelo = telemetry.addData("Velocity: ", 0);
+
 		this.vertical = telemetry.addData("y: ", 0);
-		this.horizontal = telemetry.addData("x: ", 0);
-		this.angle = telemetry.addData("angle: ", 0);
 		this.veloY = telemetry.addData("veloY: ", 0);
+		this.Finalvertical = telemetry.addData("yFinal: ", 0);
+		this.peakY = telemetry.addData("peakY: ",0);
+		this.cruiseY = telemetry.addData("cruiseY: ", 0);
+		this.accelY = telemetry.addData("accelY: ", 0);
+
+		this.horizontal = telemetry.addData("x: ", 0);
 		this.veloX = telemetry.addData("veloX: ", 0);
+		this.Finalhorizontal = telemetry.addData("xFinal: ", 0);
+
+		this.angle = telemetry.addData("angle: ", 0);
 		this.veloH = telemetry.addData("veloH: ", 0);
-		this.Finalvertical = telemetry.addData("y: ", 0);
-		this.Finalhorizontal = telemetry.addData("x: ", 0);
-		this.Finalangle = telemetry.addData("angle: ", 0);
+		this.Finalangle = telemetry.addData("angleFinal: ", 0);
+		this.peakH = telemetry.addData("peakH: ",0);
+		this.cruiseH = telemetry.addData("cruiseH: ", 0);
+		this.accelH = telemetry.addData("accelH: ", 0);
 	}
 
 	@Override
@@ -84,23 +97,24 @@ public class VeloTestTeleop extends TeleOpOpMode {
 		state.setValue(veloState[0] + ", " + veloState[1] + ", " + veloState[2] + ", " + veloState[3]);
 		MovementVector vector = motionProfile.calculate(
 				initialVelocity,
-				new MovementVector(25,25,2*Math.PI,AngleUnit.RADIANS),
-				new MovementVector(10,10,1,AngleUnit.RADIANS),
+				new MovementVector(25,25,2*Math.PI - 0.001,AngleUnit.RADIANS),
+				new MovementVector(3,3,0.125,AngleUnit.RADIANS),
 				endVelocity,
 				maxAccel,
 				initialPose,
 				localizer.getFieldCentric(),
 				localizer.getVelocity(),
 				finalPose,
-				3);
+				0.5);
 		calcVelo.setValue(vector.toString());
 		angle.setValue(motionProfile.calcs);
 
 
 		Pose pose = this.localizer.getFieldCentric();
-		vertical.setValue(pose.getY());
-		horizontal.setValue(pose.getX());
-		angle.setValue(pose.getHeading(AngleUnit.DEGREES));
+		vertical.setValue(pose.getY() - initialPose.getY());
+		horizontal.setValue(pose.getX() - initialPose.getX());
+		angle.setValue(pose.getHeading(AngleUnit.RADIANS) - initialPose.getHeading(AngleUnit.RADIANS));
+
 		MovementVector velocity = this.localizer.getVelocity();
 		veloY.setValue(velocity.getVertical());
 		veloX.setValue(velocity.getHorizontal());
@@ -108,7 +122,19 @@ public class VeloTestTeleop extends TeleOpOpMode {
 
 		Finalvertical.setValue(finalPose.getY());
 		Finalhorizontal.setValue(finalPose.getX());
-		Finalangle.setValue(finalPose.getHeading(AngleUnit.DEGREES));
+		Finalangle.setValue(finalPose.getHeading(AngleUnit.RADIANS));
+
+		Double[] peakVelos = motionProfile.getPeakVelos();
+		peakY.setValue(peakVelos[0]);
+		peakH.setValue(peakVelos[2]);
+
+		Double[] cruiseDists = motionProfile.getCruiseDists();
+		cruiseY.setValue(cruiseDists[0]);
+		cruiseH.setValue(cruiseDists[2]);
+
+		Double[] accelDists = motionProfile.getAccelDists();
+		accelY.setValue(accelDists[0]);
+		accelH.setValue(accelDists[2]);
 
 		this.g1.loop();
 		this.telemetry.update();
