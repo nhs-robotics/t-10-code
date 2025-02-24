@@ -6,23 +6,12 @@ import t10.Loop;
 import t10.auto.AutoAction;
 import t10.motion.hardware.Motor;
 
-/**
- * Capabilities for extending the arm.
- * <h1>Power > 0</h1>
- * <li>RETRACTS</li>
- * <li>Position (Ticks) INCREASES</li>
- *
- * <h1>Power < 0</h1>
- * <li>EXTENDS</li>
- * <li>Position (Ticks) DECREASES</li>
- */
 public class ArmExtensionCapabilities implements Loop {
 	public static final int POSITION_FULLY_RETRACTED = 0;
 	public static final int POSITION_FULLY_EXTENDED = -1700;
-	public static final int MAX_ERROR_ALLOWED = 50;
+	public static final int MAX_ERROR_ALLOWED = 40;
 	private final Motor armExtension;
 	private int targetPosition;
-	private int position;
 	private boolean isManuallyControlled;
 
 	public ArmExtensionCapabilities(SnowballConfig config) {
@@ -32,17 +21,20 @@ public class ArmExtensionCapabilities implements Loop {
 
 	@Override
 	public void loop() {
-		this.position = this.armExtension.motor.getCurrentPosition();
-
 		if (!this.isManuallyControlled) {
-			double error = this.targetPosition - this.position;
-			double power = error * 0.01 * -1;
-			this.setPower(power);
+			double error = this.targetPosition - this.getPosition();
+			double power = error * 0.045 * -1;
+
+			if (this.isAtTargetPosition()) {
+				this.setPower(0);
+			} else {
+				this.setPower(power);
+			}
 		}
 	}
 
 	public int getPosition() {
-		return position;
+		return this.armExtension.motor.getCurrentPosition();
 	}
 
 	public void setTargetPosition(int targetPosition) {
@@ -53,7 +45,7 @@ public class ArmExtensionCapabilities implements Loop {
 	public void setPowerManually(double power) {
 		if (power == 0) {
 			if (this.isManuallyControlled) {
-				this.targetPosition = this.position;
+				this.targetPosition = this.getPosition();
 				this.isManuallyControlled = false;
 				this.setPower(0);
 			}
@@ -66,7 +58,7 @@ public class ArmExtensionCapabilities implements Loop {
 	}
 
 	public boolean isAtTargetPosition() {
-		return Math.abs(this.targetPosition - this.position) < MAX_ERROR_ALLOWED;
+		return Math.abs(this.targetPosition - this.getPosition()) < MAX_ERROR_ALLOWED;
 	}
 
 	private void setPower(double power) {

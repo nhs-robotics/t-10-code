@@ -150,6 +150,16 @@ public class MathUtils {
 		}
 	}
 
+	public static float clamp(float value, float min, float max) {
+		if (value > max) {
+			return max;
+		} else if (min > value) {
+			return min;
+		} else {
+			return value;
+		}
+	}
+
 	public static int average(int a, int b) {
 		return (a + b) / 2;
 	}

@@ -14,8 +14,8 @@ public class Constants {
 		public static final double C270_FOCAL_LENGTH_Y = 649.5805;
 		public static final double C270_PRINCIPAL_POINT_X = 330.0829;
 		public static final double C270_PRINCIPAL_POINT_Y = 231.2183;
-		public static final int CAMERA_RES_WIDTH = 640;
-		public static final int CAMERA_RES_HEIGHT = 480;
+		public static final int CAMERA_RES_WIDTH = 640 / 2;
+		public static final int CAMERA_RES_HEIGHT = 480 / 2;
 	}
 
 	public static class Robot {

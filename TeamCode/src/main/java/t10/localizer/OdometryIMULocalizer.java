@@ -33,8 +33,10 @@ public class OdometryIMULocalizer extends OdometryLocalizer {
 	@Override
 	protected double computeDeltaHeading() {
 		Orientation angularOrientation = this.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
-		double deltaHeading = MathUtils.angleDifference(this.lastHeading, angularOrientation.firstAngle * -1, AngleUnit.RADIANS);
-		this.lastHeading = angularOrientation.firstAngle * -1;
+		final float dao = (float) (2 * Math.PI);
+		float currentHeading = MathUtils.clamp(angularOrientation.firstAngle * -1, -dao, dao);
+		double deltaHeading = MathUtils.angleDifference(this.lastHeading, currentHeading, AngleUnit.RADIANS);
+		this.lastHeading = currentHeading;
 
 		return deltaHeading;
 	}

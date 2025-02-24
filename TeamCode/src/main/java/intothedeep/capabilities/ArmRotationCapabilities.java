@@ -1,5 +1,6 @@
 package intothedeep.capabilities;
 
+import intothedeep.Constants;
 import intothedeep.SnowballConfig;
 
 import t10.Loop;
@@ -15,11 +16,10 @@ public class ArmRotationCapabilities implements Loop {
 	public static final int POSITION_FULLY_DOWNWARDS = -50;
 	public static final int POSITION_INSPECTION = 725;
 	public static final int POSITION_FULLY_UPWARDS = 788;
-	private static final int MAX_ERROR_ALLOWED = 25;
+	private static final int MAX_ERROR_ALLOWED = 15;
 	private final Motor armRotation;
 	private final PIDController armRotationStabilizer;
 	private int targetPosition;
-	private int position;
 	private boolean isManuallyControlled;
 
 	public ArmRotationCapabilities(SnowballConfig config) {
@@ -30,11 +30,9 @@ public class ArmRotationCapabilities implements Loop {
 
 	@Override
 	public void loop() {
-		this.position = this.armRotation.motor.getCurrentPosition();
-
 		if (!this.isManuallyControlled) {
 			double power = this.armRotationStabilizer.calculate(
-					this.position,
+					this.getPosition(),
 					this.targetPosition
 			);
 
@@ -47,10 +45,14 @@ public class ArmRotationCapabilities implements Loop {
 		this.isManuallyControlled = false;
 	}
 
+	public static int getTargetPositionAngle(double angleDegrees) {
+		return (int) ((angleDegrees / 360) * Constants.TickCounts.LIFT_MOTOR_TICK_COUNT);
+	}
+
 	public void setPowerManually(double power) {
 		if (Math.abs(power) < 0.1) {
 			if (this.isManuallyControlled) {
-				this.targetPosition = this.position;
+				this.targetPosition = this.getPosition();
 				this.isManuallyControlled = false;
 				this.setPower(0);
 			}
@@ -63,7 +65,7 @@ public class ArmRotationCapabilities implements Loop {
 	}
 
 	public boolean isAtTargetPosition() {
-		return Math.abs(this.targetPosition - this.position) < MAX_ERROR_ALLOWED;
+		return Math.abs(this.targetPosition - this.getPosition()) < MAX_ERROR_ALLOWED;
 	}
 
 	/**

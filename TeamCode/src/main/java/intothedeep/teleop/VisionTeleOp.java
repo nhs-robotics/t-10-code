@@ -6,13 +6,10 @@ import intothedeep.capabilities.ArmExtensionCapabilities;
 import intothedeep.capabilities.ArmRotationCapabilities;
 import intothedeep.capabilities.ClawCapabilities;
 import intothedeep.capabilities.CraneCapabilities;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 import t10.bootstrap.BootstrappedOpMode;
 import t10.gamepad.GController;
@@ -21,12 +18,11 @@ import t10.geometry.Pose;
 import t10.localizer.Localizer;
 import t10.metrics.Metric;
 import t10.motion.mecanum.MecanumDriver;
-
-import java.util.ArrayList;
-import java.util.List;
+import t10.utils.MathUtils;
+import t10.vision.SampleAlignmentProcessor;
 
 @TeleOp
-public class CompetitionTeleOp extends BootstrappedOpMode {
+public class VisionTeleOp extends BootstrappedOpMode {
 	private SnowballConfig config;
 	private CraneCapabilities crane;
 	private GController g1;
@@ -36,14 +32,10 @@ public class CompetitionTeleOp extends BootstrappedOpMode {
 	private ArmExtensionCapabilities armExtension;
 	private ArmRotationCapabilities armRotation;
 	private Localizer<Pose> localizer;
-	private long updates;
-	private long startUpdates;
 
 	@Metric
 	public Pose pose;
-	private Telemetry.Item t_armRotation;
-	private Telemetry.Item t_armExtension;
-	private Telemetry.Item ups;
+	private SampleAlignmentProcessor sampleAlignmentProcessor;
 
 	@Override
 	public void init() {
@@ -60,13 +52,12 @@ public class CompetitionTeleOp extends BootstrappedOpMode {
 		// Driving
 		this.driver = this.config.createMecanumDriver();
 		this.localizer = this.config.createLocalizer();
-		this.localizer.setFieldCentric(new Pose(0, 0, 0, AngleUnit.DEGREES));
 
 		// Gamepad
 		// G1 controls the robot's moveTo.
 		this.g1 = new GController(this.gamepad1)
 				.x.initialToggleState(true).ok()
-				.y.onPress(() -> this.claw.setPreset(ClawCapabilities.ClawPreset.UP, true)).ok()
+				.y.onPress(() -> this.claw.setPreset(ClawCapabilities.ClawPreset.UP, false)).ok()
 				.b.onPress(() -> this.claw.setPreset(ClawCapabilities.ClawPreset.FORWARD, false)).ok()
 				.a.onPress(() -> this.claw.setPreset(ClawCapabilities.ClawPreset.DOWN, false)).ok();
 
@@ -90,31 +81,31 @@ public class CompetitionTeleOp extends BootstrappedOpMode {
 					armRotation.setTargetPosition(0);
 				}).ok();
 
-		this.claw.setPreset(ClawCapabilities.ClawPreset.UP, true);
-		this.t_armRotation = this.telemetry.addData("armRotation", "");
-		this.t_armExtension = this.telemetry.addData("armExtension", "");
-		this.ups = this.telemetry.addData("ups", 0);
+		this.claw.setPreset(ClawCapabilities.ClawPreset.FORWARD, false);
+		this.claw.setOpen(true);
+		this.sampleAlignmentProcessor = new SampleAlignmentProcessor(SampleAlignmentProcessor.SampleColor.BLUE);
+		this.config.webcam.start(this.sampleAlignmentProcessor);
+		this.metrics.streamWebcam(this.config.webcam);
 	}
 
 	@Override
 	public void loop() {
-		super.loop();
-
-		if (updates == 0) {
-			startUpdates = System.currentTimeMillis() / 1000L;
-		}
-
-		updates++;
-
 		if (!gamepad2.dpad_up && !gamepad2.dpad_down && !gamepad2.dpad_right && !gamepad2.dpad_left) {
 			this.driver.useGamepad(this.gamepad1, this.g1.x.isToggled() ? 1 : 0.25);
 		}
 
-		this.localizer.loop();
 		this.pose = this.localizer.getFieldCentric();
-		this.t_armRotation.setValue(this.armRotation.getPosition());
-		this.t_armExtension.setValue(this.armExtension.getPosition());
-		this.ups.setValue(updates / ((System.currentTimeMillis() / 1000L + 1) - startUpdates));
+
+		if (this.gamepad1.left_bumper) {
+			double center = this.sampleAlignmentProcessor.detectedSpecimen.x + this.sampleAlignmentProcessor.detectedSpecimen.width;
+			double difference = center - SampleAlignmentProcessor.CENTER_X_POSITION;
+			double vh = 20 / (1 + Math.pow(1.5 * Math.E, -(90 - this.pose.getHeading(AngleUnit.RADIANS)))) - (20 / 2);
+
+			this.driver.setVelocity(new MovementVector(
+					0, difference * -0.15, vh, AngleUnit.DEGREES
+			));
+		}
+
 		this.g1.loop();
 		this.g2.loop();
 		this.telemetry.update();
@@ -122,5 +113,6 @@ public class CompetitionTeleOp extends BootstrappedOpMode {
 		this.armExtension.loop();
 		this.crane.loop();
 		this.claw.loop();
+		this.localizer.loop();
 	}
 }

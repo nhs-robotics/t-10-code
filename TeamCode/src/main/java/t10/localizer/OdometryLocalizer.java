@@ -7,9 +7,9 @@ import t10.motion.hardware.Encoder;
 
 public class OdometryLocalizer implements Localizer<Pose> {
 	private final OdometryCoefficientSet coefficients;
-	private final Encoder rightEncoder;
-	private final Encoder leftEncoder;
-	private final Encoder perpendicularEncoder;
+	protected final Encoder rightEncoder;
+	protected final Encoder leftEncoder;
+	protected final Encoder perpendicularEncoder;
 
 	/**
 	 * Distance between parallel wheels.
@@ -51,8 +51,6 @@ public class OdometryLocalizer implements Localizer<Pose> {
 		this.perpendicularEncoder = perpendicularEncoder;
 		this.lateralWheelDistance = lateralWheelDistance;
 		this.perpendicularWheelOffset = perpendicularWheelOffset;
-
-		this.setFieldCentric(new Pose(0, 0, 0, AngleUnit.RADIANS));
 	}
 
 	protected double computeDeltaHeading() {

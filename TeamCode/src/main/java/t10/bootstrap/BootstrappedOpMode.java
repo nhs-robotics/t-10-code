@@ -1,9 +1,12 @@
 package t10.bootstrap;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.hardware.lynx.commands.LynxMessage;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import t10.metrics.MetricsServer;
@@ -21,6 +24,7 @@ public abstract class BootstrappedOpMode extends OpMode {
 	protected MetricsServer metrics;
 	protected ExecutorService multithreadingService;
 	protected volatile boolean isRunning;
+	private List<LynxModule> hubs;
 
 	/**
 	 * Initializes a {@link BootstrappedOpMode}.
@@ -62,6 +66,13 @@ public abstract class BootstrappedOpMode extends OpMode {
 				}
 			});
 		}
+
+		// Perform one bulk read for optimization
+		this.hubs = hardwareMap.getAll(LynxModule.class);
+
+		for (LynxModule hub : this.hubs) {
+			hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+		}
 	}
 
 	@Override
@@ -70,6 +81,22 @@ public abstract class BootstrappedOpMode extends OpMode {
 
 		this.isRunning = false;
 		this.multithreadingService.shutdown();
+	}
+
+	@Override
+	public void init_loop() {
+		// Clear bulk read cache - optimization
+		for (LynxModule hub : this.hubs) {
+			hub.clearBulkCache();
+		}
+	}
+
+	@Override
+	public void loop() {
+		// Clear bulk read cache - optimization
+		for (LynxModule hub : this.hubs) {
+			hub.clearBulkCache();
+		}
 	}
 
 	/**

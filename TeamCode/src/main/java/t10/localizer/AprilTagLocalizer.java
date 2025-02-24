@@ -63,6 +63,10 @@ public class AprilTagLocalizer implements Localizer<Point> {
 				continue;
 			}
 
+			if (detection.decisionMargin < 0.7) {
+				continue;
+			}
+
 			Position position = detection.robotPose.getPosition();
 
 			// Transform AprilTag coordinate to our local coordinate system.

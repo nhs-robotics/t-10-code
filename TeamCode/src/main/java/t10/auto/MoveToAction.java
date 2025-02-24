@@ -55,7 +55,7 @@ public class MoveToAction implements AutoAction {
 	 * @param destinationPose The destination position and orientation that the robot will drive to.
 	 */
 	public MoveToAction(Localizer<Pose> localizer, MecanumDriver driver, Pose destinationPose) {
-		this(localizer, driver, destinationPose, 2, 2, 40, 60);
+		this(localizer, driver, destinationPose, 1.25, 1.25, 30, 50);
 	}
 
 	/**

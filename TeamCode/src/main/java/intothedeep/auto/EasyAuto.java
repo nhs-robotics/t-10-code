@@ -49,26 +49,7 @@ public abstract class EasyAuto extends BootstrappedOpMode {
 		this.armExtension.setTargetPosition(ArmExtensionCapabilities.POSITION_FULLY_RETRACTED);
 		this.crane.setTargetPosition(CraneCapabilities.POSITION_BOTTOM);
 		this.claw.setOpen(false);  // Keep closed to grasp a block for auto
-
-		this.multithreadingService.execute(() -> {
-			while (this.isRunning) {
-				this.localizer.loop();
-			}
-		});
-
-		this.multithreadingService.execute(() -> {
-			while (this.isRunning) {
-				this.armRotation.loop();
-				this.armExtension.loop();
-				this.crane.loop();
-				this.claw.loop();
-			}
-		});
-	}
-
-	@Override
-	public void loop() {
-		this.telemetry.update();
+		this.claw.setPreset(ClawCapabilities.ClawPreset.DOWN, true);
 	}
 
 	@Override
@@ -107,10 +88,6 @@ public abstract class EasyAuto extends BootstrappedOpMode {
 
 	public ClawCapabilities.ClawAction claw(ClawCapabilities.ClawPreset clawPreset) {
 		return new ClawCapabilities.ClawAction(this.claw, clawPreset, this.claw.isOpen(), false);
-	}
-
-	public ClawCapabilities.ClawAction claw(boolean isOpen) {
-		return new ClawCapabilities.ClawAction(this.claw, null, isOpen, false);
 	}
 
 	public SimultaneousAction simultaneously(AutoAction... actions) {
