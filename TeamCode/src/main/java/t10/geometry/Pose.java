@@ -13,6 +13,11 @@ public class Pose extends Point {
 		this.headingRadians = angleUnit.toRadians(heading);
 	}
 
+	public Pose(Point point, double heading, AngleUnit angleUnit) {
+		super(point.x,point.y);
+		this.headingRadians = angleUnit.toRadians(heading);
+	}
+
 	/**
 	 * IMPORTANT: Novel uses INCHES for x, y, and ROTATION. Therefore, this assumes the Z coordinate of the vector is in inches.
 	 *

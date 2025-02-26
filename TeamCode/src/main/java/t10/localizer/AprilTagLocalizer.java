@@ -13,9 +13,10 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import t10.geometry.Point;
+import t10.geometry.Pose;
 import t10.utils.MathUtils;
 
-public class AprilTagLocalizer implements Localizer<Point> {
+public class AprilTagLocalizer implements Localizer<Pose> {
 	public final AprilTagProcessor aprilTagProcessor;
 
 	/**
@@ -89,11 +90,11 @@ public class AprilTagLocalizer implements Localizer<Point> {
 	}
 
 	@Override
-	public void setFieldCentric(Point point) {
+	public void setFieldCentric(Pose pose) {
 	}
 
 	@Override
-	public Point getFieldCentric() {
-		return this.fieldCentricPoint;
+	public Pose getFieldCentric() {
+		return new Pose(this.fieldCentricPoint, 0,AngleUnit.RADIANS);
 	}
 }

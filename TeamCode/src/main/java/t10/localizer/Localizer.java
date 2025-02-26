@@ -2,9 +2,10 @@ package t10.localizer;
 
 import t10.Loop;
 import t10.geometry.Point;
+import t10.geometry.Pose;
 
 // TODO: Implement velocity and acceleration.
-public interface Localizer<T extends Point> extends Loop {
+public interface Localizer<T extends Pose> extends Loop {
 	/**
 	 * Sets the reference.
 	 *
