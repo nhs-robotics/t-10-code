@@ -11,10 +11,9 @@ import t10.bootstrap.Hardware;
 import t10.geometry.Pose;
 import t10.localizer.Localizer;
 import t10.localizer.OdometryCoefficientSet;
-import t10.localizer.OdometryIMULocalizer;
-import t10.localizer.OdometryIMULocalizerWithOctoQuadBulk;
+import t10.localizer.OdometryIMULocalizerFast;
+import t10.localizer.OdometryLocalizerFast;
 import t10.motion.hardware.Motor;
-import t10.motion.hardware.OctoQuadEncoder;
 import t10.motion.mecanum.MecanumDriver;
 import t10.vision.Webcam;
 
@@ -96,13 +95,7 @@ public class SnowballConfig extends AbstractRobotConfiguration {
 	public SnowballConfig(HardwareMap hardwareMap) {
 		super(hardwareMap);
 
-		BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-		parameters.accelRange = BNO055IMU.AccelRange.G2;
-		parameters.accelBandwidth = BNO055IMU.AccelBandwidth.HZ125;
-		parameters.gyroRange = BNO055IMU.GyroRange.DPS2000;
-		parameters.gyroBandwidth = BNO055IMU.GyroBandwidth.HZ230;
-		parameters.mode = BNO055IMU.SensorMode.IMU;
-		this.imu.initialize(parameters);
+		this.imu.initialize(Constants.IMU_PARAMETERS);
 	}
 
 	@Override
@@ -118,7 +111,7 @@ public class SnowballConfig extends AbstractRobotConfiguration {
 
 	@Override
 	public Localizer<Pose> createLocalizer() {
-		return new OdometryIMULocalizerWithOctoQuadBulk(
+		return new OdometryIMULocalizerFast(
 				new OdometryCoefficientSet(1, 1, -1),
 				octoQuad,
 				4,

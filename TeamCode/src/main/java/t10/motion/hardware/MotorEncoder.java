@@ -39,4 +39,10 @@ public class MotorEncoder implements Encoder {
 	public double getCurrentInches() {
 		return this.getCurrentTicks() / this.ticksPerRevolution * this.encoderDiameterIn * Math.PI;
 	}
+
+	@Override
+	public void reset() {
+		this.encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+		this.encoder.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+	}
 }

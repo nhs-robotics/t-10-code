@@ -36,4 +36,9 @@ public class OctoQuadEncoder implements Encoder {
 	public double getCurrentInches() {
 		return this.getCurrentTicks() / this.ticksPerRevolution * this.encoderDiameterIn * Math.PI;
 	}
+
+	@Override
+	public void reset() {
+		this.octoQuad.resetSinglePosition(channel);
+	}
 }

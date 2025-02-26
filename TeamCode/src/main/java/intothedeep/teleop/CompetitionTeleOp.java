@@ -60,7 +60,7 @@ public class CompetitionTeleOp extends BootstrappedOpMode {
 		// Driving
 		this.driver = this.config.createMecanumDriver();
 		this.localizer = this.config.createLocalizer();
-		this.localizer.setFieldCentric(new Pose(0, 0, 0, AngleUnit.DEGREES));
+		this.localizer.setFieldCentric(new Pose(0, 64, -90, AngleUnit.DEGREES));
 
 		// Gamepad
 		// G1 controls the robot's moveTo.

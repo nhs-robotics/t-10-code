@@ -19,4 +19,8 @@ public class DummyEncoder implements Encoder {
 	public double getCurrentInches() {
 		return this.ticks / this.ticksPerRevolution * this.encoderDiameterIn * Math.PI;
 	}
+
+	@Override
+	public void reset() {
+	}
 }

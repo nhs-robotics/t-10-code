@@ -1,11 +1,13 @@
 package t10.localizer;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import intothedeep.Constants;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
+import t10.geometry.Pose;
 import t10.motion.hardware.Encoder;
 import t10.utils.MathUtils;
 
@@ -39,5 +41,11 @@ public class OdometryIMULocalizer extends OdometryLocalizer {
 		this.lastHeading = currentHeading;
 
 		return deltaHeading;
+	}
+
+	@Override
+	public void setFieldCentric(Pose pose) {
+		super.setFieldCentric(pose);
+		this.imu.initialize(Constants.IMU_PARAMETERS);
 	}
 }

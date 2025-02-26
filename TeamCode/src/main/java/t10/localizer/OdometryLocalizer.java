@@ -105,6 +105,9 @@ public class OdometryLocalizer implements Localizer<Pose> {
 	@Override
 	public void setFieldCentric(Pose pose) {
 		this.fieldCentricPose = pose;  // Reset field-centric pose to match new robot-centric pose
+		this.leftEncoder.reset();
+		this.rightEncoder.reset();
+		this.perpendicularEncoder.reset();
 		this.leftWheelPos = this.leftEncoder.getCurrentInches();
 		this.rightWheelPos = this.rightEncoder.getCurrentInches();
 		this.perpendicularWheelPos = this.perpendicularEncoder.getCurrentInches();

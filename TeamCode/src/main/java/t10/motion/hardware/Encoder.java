@@ -10,4 +10,9 @@ public interface Encoder {
 	 * @return The current position of the motor in inches.
 	 */
 	double getCurrentInches();
+
+	/**
+	 * Resets the underlying encoder.
+	 */
+    void reset();
 }

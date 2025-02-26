@@ -126,4 +126,12 @@ public class MoveToAction implements AutoAction {
 
 		return isComplete;
 	}
+	
+	private double ensureMinimumSpeed(double v, double min) {
+		if (v < min && -min < v) {
+			return min * Math.signum(v);
+		}
+
+		return v;
+	}
 }

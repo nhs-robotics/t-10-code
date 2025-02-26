@@ -1,18 +1,11 @@
 package t10.localizer;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.digitalchickenlabs.OctoQuad;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 import t10.geometry.Pose;
 import t10.motion.hardware.DummyEncoder;
-import t10.motion.hardware.Encoder;
-import t10.utils.MathUtils;
 
-public class OdometryIMULocalizerWithOctoQuadBulk extends OdometryIMULocalizer {
+public class OdometryLocalizerFast extends OdometryLocalizer {
 	private final OctoQuad theOctoQuad;
 	private final int rightChannel;
 	private final int leftChannel;
@@ -25,15 +18,14 @@ public class OdometryIMULocalizerWithOctoQuadBulk extends OdometryIMULocalizer {
 	 * @param perpendicularWheelOffset The offset of the perpendicular wheel from the center of the robot chassis.
 	 * @see <a href="http://web.archive.org/web/20230529000105if_/https://gm0.org/en/latest/_images/offsets-and-trackwidth.png">Diagram (archived)</a> or <a href="https://gm0.org/en/latest/_images/offsets-and-trackwidth.png">diagram</a>.
 	 */
-	public OdometryIMULocalizerWithOctoQuadBulk(OdometryCoefficientSet coefficients, OctoQuad octoQuad, int rightChannel, int leftChannel, int perpendicularChannel, double lateralWheelDistance, double perpendicularWheelOffset, double ticksPerRevolution, double encoderDiameterIn, BNO055IMU imu) {
+	public OdometryLocalizerFast(OdometryCoefficientSet coefficients, OctoQuad octoQuad, int rightChannel, int leftChannel, int perpendicularChannel, double lateralWheelDistance, double perpendicularWheelOffset, double ticksPerRevolution, double encoderDiameterIn) {
 		super(
 				coefficients,
 				new DummyEncoder(ticksPerRevolution, encoderDiameterIn),
 				new DummyEncoder(ticksPerRevolution, encoderDiameterIn),
 				new DummyEncoder(ticksPerRevolution, encoderDiameterIn),
 				lateralWheelDistance,
-				perpendicularWheelOffset,
-				imu
+				perpendicularWheelOffset
 		);
 		this.theOctoQuad = octoQuad;
 		this.rightChannel = rightChannel;
@@ -43,16 +35,14 @@ public class OdometryIMULocalizerWithOctoQuadBulk extends OdometryIMULocalizer {
 	}
 
 	private void updatePositions() {
-		int[] positions = {0,0,0,0,0,0,0,0};
 		try {
-			positions = this.theOctoQuad.readAllPositions();
-		} catch (Exception ignored) {
-			return;
-		}
+			int[] positions = this.theOctoQuad.readAllPositions();
 
-		((DummyEncoder) this.rightEncoder).ticks = positions[this.rightChannel];
-		((DummyEncoder) this.leftEncoder).ticks = positions[this.leftChannel];
-		((DummyEncoder) this.perpendicularEncoder).ticks = positions[this.perpendicularChannel];
+			((DummyEncoder) this.rightEncoder).ticks = positions[this.rightChannel];
+			((DummyEncoder) this.leftEncoder).ticks = positions[this.leftChannel];
+			((DummyEncoder) this.perpendicularEncoder).ticks = positions[this.perpendicularChannel];
+		} catch (Exception ignored) {
+		}
 	}
 
 	@Override

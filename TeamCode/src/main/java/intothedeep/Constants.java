@@ -1,5 +1,7 @@
 package intothedeep;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+
 import t10.motion.mecanum.MecanumCoefficientMatrix;
 
 public class Constants {
@@ -47,4 +49,13 @@ public class Constants {
 
 	public static final double APRIL_TAG_SIZE_METERS = 0.0508;
 	public static final int GAMEPAD_JOYSTICK_Y_COEFFICIENT = -1;
+	public static final BNO055IMU.Parameters IMU_PARAMETERS = new BNO055IMU.Parameters();
+
+	static {
+		IMU_PARAMETERS.accelRange = BNO055IMU.AccelRange.G2;
+		IMU_PARAMETERS.accelBandwidth = BNO055IMU.AccelBandwidth.HZ125;
+		IMU_PARAMETERS.gyroRange = BNO055IMU.GyroRange.DPS2000;
+		IMU_PARAMETERS.gyroBandwidth = BNO055IMU.GyroBandwidth.HZ230;
+		IMU_PARAMETERS.mode = BNO055IMU.SensorMode.IMU;
+	}
 }

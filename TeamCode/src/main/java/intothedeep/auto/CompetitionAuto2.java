@@ -24,7 +24,7 @@ public class CompetitionAuto2 extends EasyAuto {
 	public Pose pose;
 
 	public CompetitionAuto2() {
-		super(new Pose(36, 64, -90, AngleUnit.DEGREES));
+		super(new Pose(36, 62, -90, AngleUnit.DEGREES));
 	}
 
 	@Override
@@ -34,11 +34,11 @@ public class CompetitionAuto2 extends EasyAuto {
 		this.autoSequence = sequentially(
 				shuffleAllGroundSamples(),
 				collectHumanPlayerSpecimen(),
-				placeSpecimenHighChamber(-4),
+				placeSpecimenHighChamber(0),
 				collectHumanPlayerSpecimen(),
-				placeSpecimenHighChamber(-2),
+				placeSpecimenHighChamber(1.5),
 				collectHumanPlayerSpecimen(),
-				placeSpecimenHighChamber(1),
+				placeSpecimenHighChamber(3),
 				park(),
 				sleep(2500),
 				claw(ClawCapabilities.ClawPreset.DOWN),
@@ -52,6 +52,14 @@ public class CompetitionAuto2 extends EasyAuto {
 
 	private AutoAction placeSpecimenHighChamber(double yCoord) {
 		return sequentially(
+				new MoveToAction(
+						this.localizer,
+						this.driver,
+						new Pose(yCoord, 48.5, 90, AngleUnit.DEGREES),
+						1.5,
+						1.25,
+						60, 90
+				),
 				simultaneously(
 						new MoveToAction(
 								this.localizer,
@@ -72,21 +80,24 @@ public class CompetitionAuto2 extends EasyAuto {
 						this.localizer,
 						this.driver,
 						new Pose(yCoord, 32, -90, AngleUnit.DEGREES),
-						1.5,
-						1.25,
+						5,
+						2,
 						30,
 						60
 
 				),
 				claw(ClawCapabilities.ClawPreset.UP, true, true),
-				new MoveToAction(
-						this.localizer,
-						this.driver,
-						new Pose(yCoord, 38,-90,AngleUnit.DEGREES),
-						2,
-						4,
-						60,
-						80
+				simultaneously(
+						new MoveToAction(
+								this.localizer,
+								this.driver,
+								new Pose(yCoord, 38,-90, AngleUnit.DEGREES),
+								2,
+								4,
+								60,
+								80
+						),
+						claw(ClawCapabilities.ClawPreset.DOWN, false, false)
 				)
 		);
 	}
@@ -100,7 +111,7 @@ public class CompetitionAuto2 extends EasyAuto {
 						new Pose(36, 26, -90, AngleUnit.DEGREES),
 						5,
 						3,
-						70, 60
+						50, 60
 				),
 
 				// position precisely behind first one
@@ -120,24 +131,24 @@ public class CompetitionAuto2 extends EasyAuto {
 						new Pose(45, 48, -90, AngleUnit.DEGREES),
 						5,
 						3,
-						70, 60
+						50, 60
 				),
 
 				// move out to middle again to shuffle second one
 				new MoveToAction(
 						this.localizer,
 						this.driver,
-						new Pose(45, 16, -90, AngleUnit.DEGREES),
+						new Pose(45, 26, -90, AngleUnit.DEGREES),
 						5,
 						3,
-						70, 60
+						50, 60
 				),
 
 				// position precisely behind second one
 				new MoveToAction(
 						this.localizer,
 						this.driver,
-						new Pose(55, 20, -90, AngleUnit.DEGREES),
+						new Pose(55, 16, -90, AngleUnit.DEGREES),
 						3,
 						3,
 						50, 60
@@ -150,39 +161,8 @@ public class CompetitionAuto2 extends EasyAuto {
 						new Pose(55, 48, -90, AngleUnit.DEGREES),
 						5,
 						3,
-						70, 60
+						50, 60
 				)
-/*
-				// move out to middle again to shuffle third (last) one
-				new MoveToAction(
-						this.localizer,
-						this.driver,
-						new Pose(55, 20, -90, AngleUnit.DEGREES),
-						5,
-						3,
-						70, 60
-				),
-
-				// position precisely behind third (last) one
-				new MoveToAction(
-						this.localizer,
-						this.driver,
-						new Pose(61, 14, -90, AngleUnit.DEGREES),
-						1.15,
-						2,
-						30, 60
-				),
-
-				// shuffle third/last one into observation zone
-				new MoveToAction(
-						this.localizer,
-						this.driver,
-						new Pose(61, 48, -90, AngleUnit.DEGREES),
-						4,
-						2,
-						70, 60
-				)
- */
 		);
 	}
 
@@ -192,10 +172,10 @@ public class CompetitionAuto2 extends EasyAuto {
 						new MoveToAction(
 								this.localizer,
 								this.driver,
-								new Pose(37, 44, 90, AngleUnit.DEGREES),
+								new Pose(40, 44, -90, AngleUnit.DEGREES),
 								1.75,
 								2.0,
-								60, 90
+								60, 100
 						),
 						sequentially(
 								armExtension(ArmExtensionCapabilities.POSITION_FULLY_RETRACTED),
@@ -203,9 +183,24 @@ public class CompetitionAuto2 extends EasyAuto {
 						),
 						claw(ClawCapabilities.ClawPreset.FORWARD, true, true)
 				),
-				armExtension(-1480),
+				new MoveToAction(
+						this.localizer,
+						this.driver,
+						new Pose(40, 44, 90, AngleUnit.DEGREES),
+						1.75,
+						2.0,
+						60, 100
+				),
+				new MoveToAction(
+						this.localizer,
+						this.driver,
+						new Pose(40, 56, 90, AngleUnit.DEGREES),
+						4,
+						100,
+						30, 0
+				),
 				claw(ClawCapabilities.ClawPreset.FORWARD, false, true),
-				armRotation(270)
+				armRotation(325)
 //				armExtension(-750),
 //				claw(ClawCapabilities.ClawPreset.FORWARD, false, true),
 //				armRotation(ArmRotationCapabilities.getTargetPositionAngle(25))

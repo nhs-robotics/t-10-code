@@ -77,6 +77,10 @@ public class MecanumEncodersLocalizer implements Localizer<Pose> {
 	@Override
 	public void setFieldCentric(Pose pose) {
 		this.fieldCentricPose = pose;
+		this.fr.reset();
+		this.br.reset();
+		this.fl.reset();
+		this.bl.reset();
 		this.lastFrInches = this.fr.getCurrentInches();
 		this.lastBrInches = this.br.getCurrentInches();
 		this.lastFlInches = this.fl.getCurrentInches();
