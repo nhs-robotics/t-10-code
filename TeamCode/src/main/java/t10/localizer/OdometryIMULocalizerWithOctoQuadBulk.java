@@ -43,7 +43,12 @@ public class OdometryIMULocalizerWithOctoQuadBulk extends OdometryIMULocalizer {
 	}
 
 	private void updatePositions() {
-		int[] positions = this.theOctoQuad.readAllPositions();
+		int[] positions = {0,0,0,0,0,0,0,0};
+		try {
+			positions = this.theOctoQuad.readAllPositions();
+		} catch (Exception ignored) {
+			return;
+		}
 
 		((DummyEncoder) this.rightEncoder).ticks = positions[this.rightChannel];
 		((DummyEncoder) this.leftEncoder).ticks = positions[this.leftChannel];

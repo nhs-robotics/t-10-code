@@ -27,6 +27,7 @@ public class OdometryLocalizer implements Localizer<Pose> {
 	private double deltaLeftWheelPos;
 	private double deltaRightWheelPos;
 	private double deltaPerpendicularWheelPos;
+	private double maxDeltaValue = 20;
 
 	/**
 	 * @param coefficients             The coefficients to use for the odometers. Chances are this is {@link OdometryCoefficientSet#DEFAULT}.
@@ -66,8 +67,19 @@ public class OdometryLocalizer implements Localizer<Pose> {
 
 		// Get changes in odometry wheel positions since last update - results from the robot's perspective
 		this.deltaLeftWheelPos = this.coefficients.leftCoefficient * (newLeftWheelPos - this.leftWheelPos);
+		if(Math.abs(deltaLeftWheelPos) > maxDeltaValue) {
+			deltaLeftWheelPos = maxDeltaValue * Math.signum(deltaLeftWheelPos);
+		}
+
 		this.deltaRightWheelPos = this.coefficients.rightCoefficient * (newRightWheelPos - this.rightWheelPos);
+		if(Math.abs(deltaRightWheelPos) > maxDeltaValue) {
+			deltaRightWheelPos = maxDeltaValue * Math.signum(deltaRightWheelPos);
+		}
+
 		this.deltaPerpendicularWheelPos = this.coefficients.perpendicularCoefficient * (newPerpendicularWheelPos - this.perpendicularWheelPos);
+		if(Math.abs(deltaPerpendicularWheelPos) > maxDeltaValue) {
+			deltaPerpendicularWheelPos = maxDeltaValue * Math.signum(deltaPerpendicularWheelPos);
+		}
 
 		// Convert changes in robot-perspective wheel positions into changes in x/y/angle from the robot's perspective
 		double deltaHeading = this.computeDeltaHeading();

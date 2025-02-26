@@ -25,7 +25,7 @@ public class ArmRotationCapabilities implements Loop {
 	public ArmRotationCapabilities(SnowballConfig config) {
 		this.armRotation = config.armRotation;
 		this.isManuallyControlled = true;
-		this.armRotationStabilizer = new PIDController(0.01, 0, 0);
+		this.armRotationStabilizer = new PIDController(0.015, 0, 0);
 	}
 
 	@Override
