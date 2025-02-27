@@ -78,7 +78,7 @@ public class ClawCapabilities implements Loop {
 
 		this.isOpen = isOpen;
 		this.isGripDirty = true;
-		this.operationCompletionTime = System.currentTimeMillis() + 150;
+		this.operationCompletionTime = System.currentTimeMillis() + 350;
 	}
 
 	public void setTwist(double position) {

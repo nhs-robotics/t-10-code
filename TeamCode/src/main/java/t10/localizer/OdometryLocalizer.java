@@ -27,7 +27,7 @@ public class OdometryLocalizer implements Localizer<Pose> {
 	private double deltaLeftWheelPos;
 	private double deltaRightWheelPos;
 	private double deltaPerpendicularWheelPos;
-	private double maxDeltaValue = 20;
+	private double maxDeltaValue = 1;
 
 	/**
 	 * @param coefficients             The coefficients to use for the odometers. Chances are this is {@link OdometryCoefficientSet#DEFAULT}.
