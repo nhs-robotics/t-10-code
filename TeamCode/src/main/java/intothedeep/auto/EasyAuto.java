@@ -7,6 +7,7 @@ import intothedeep.capabilities.ClawCapabilities;
 import intothedeep.capabilities.CraneCapabilities;
 import t10.auto.*;
 import t10.bootstrap.BootstrappedOpMode;
+import t10.gamepad.input.types.GButton;
 import t10.geometry.Pose;
 import t10.localizer.Localizer;
 import t10.motion.mecanum.MecanumDriver;
@@ -108,5 +109,9 @@ public abstract class EasyAuto extends BootstrappedOpMode {
 
 	public SleepAction sleep(long ms) {
 		return new SleepAction(ms);
+	}
+
+	public WaitForButtonAction waitForButton(GButton button) {
+		return new WaitForButtonAction(button);
 	}
 }

@@ -143,5 +143,17 @@ public class SnowballConfig extends AbstractRobotConfiguration {
 		int[] orderXY = {1,0};
 		int[] orderRotation = {0};
 		return new LocalizerPriorityOrderer(localizers,orderXY,orderRotation);
+		/*return new OdometryIMULocalizerWithOctoQuadBulk(
+				new OdometryCoefficientSet(1, 1, -1),
+				octoQuad,
+				4,
+				6,
+				5,
+				11.5,
+				-6.5,
+				Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION,
+				Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN,
+				this.imu
+		);*/
 	}
 }
