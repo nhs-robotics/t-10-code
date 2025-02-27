@@ -8,7 +8,7 @@ import intothedeep.capabilities.CraneCapabilities;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-import t10.bootstrap.TeleOpOpMode;
+import t10.bootstrap.BootstrappedOpMode;
 import t10.gamepad.GController;
 import t10.geometry.MovementVector;
 import t10.geometry.Pose;
@@ -20,7 +20,7 @@ import t10.utils.MathUtils;
 import t10.utils.OdometryUtils;
 
 @TeleOp
-public class VeloTestTeleop extends TeleOpOpMode {
+public class VeloTestTeleop extends BootstrappedOpMode {
 	private SnowballConfig config;
 	private GController g1;
 	private MecanumDriver driver;
@@ -53,7 +53,7 @@ public class VeloTestTeleop extends TeleOpOpMode {
 				.leftBumper.onPress(() -> finalPose = finalPose.add(new Pose(0,0,-Math.PI / 4, AngleUnit.RADIANS))).ok()
 				.a.onPress(() -> initialPose = localizer.getFieldCentric()).ok()
 				.x.whileDown(() -> driver.setVelocity(
-						OdometryUtils.changeToRobotCenteredVelocity(
+						OdometryUtils.changeToRobotCenteredCoordinates(
 								motionProfile.calculate(
 										initialVelocity,
 										new MovementVector(25,25,2*Math.PI - 0.001,AngleUnit.RADIANS),
