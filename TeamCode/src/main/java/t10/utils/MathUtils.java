@@ -118,6 +118,11 @@ public class MathUtils {
 		);
 	}
 
+	public static double solveAcceleration(double displacement, double initialVelocity, double finalVelocity)
+	{
+		return ((Math.pow(finalVelocity,2) - Math.pow(initialVelocity,2)) / (2 * displacement));
+	}
+
 	public static double solveQuadraticFormula(double a, double b, double c) {
 		double determinant = Math.pow(b, 2) - 4 * a * c;
 		double numerator = -b + Math.sqrt(determinant);
