@@ -13,6 +13,8 @@ import t10.localizer.Localizer;
 import t10.localizer.OdometryCoefficientSet;
 import t10.localizer.OdometryIMULocalizerFast;
 import t10.localizer.OdometryLocalizerFast;
+import t10.localizer.OdometryIMULocalizer;
+import t10.localizer.OdometryLocalizer;
 import t10.motion.hardware.Motor;
 import t10.motion.mecanum.MecanumDriver;
 import t10.vision.Webcam;
