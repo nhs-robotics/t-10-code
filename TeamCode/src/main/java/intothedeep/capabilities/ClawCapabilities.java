@@ -71,6 +71,10 @@ public class ClawCapabilities implements Loop {
 		this.setOpen(!this.isOpen);
 	}
 
+	public void setAbsoluteMode(boolean absoluteMode) {
+		this.isAbsoluteMode = absoluteMode;
+	}
+
 	public void setOpen(boolean isOpen) {
 		if (isOpen == this.isOpen) {
 			return;
