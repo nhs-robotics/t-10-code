@@ -83,19 +83,19 @@ public class CompetitionTeleOp extends BootstrappedOpMode {
 				// todo: check inversion
 				.rightJoystick.onMove((x, y) -> this.crane.setPowerManually(-y)).ok()
 				.leftJoystick.onMove((x, y) -> this.armRotation.setPowerManually(-y)).ok()
-				.b.onPress(() -> {
+				.x.onPress(() -> {
 					armExtension.setTargetPosition(ArmExtensionCapabilities.POSITION_FULLY_RETRACTED);
 					armRotation.setTargetPosition(400);
 					claw.setPreset(ClawCapabilities.ClawPreset.FORWARD, true,true);
 				}).ok()
 				.a.onPress(() -> this.claw.toggleClaw()).ok()
-				.x.onPress(() -> {
+				.b.onPress(() -> {
 					armRotation.setTargetPosition(628);
 					armExtension.setTargetPosition(-1400);
 				}).ok()
 				/*Todo: add basket presets for d-pad*/;
 
-		this.claw.setPreset(ClawCapabilities.ClawPreset.UP, true);
+		this.claw.setPreset(ClawCapabilities.ClawPreset.FORWARD, true);
 		this.t_armRotation = this.telemetry.addData("armRotation", "");
 		this.t_armExtension = this.telemetry.addData("armExtension", "");
 		this.ups = this.telemetry.addData("ups", 0);
