@@ -1,7 +1,6 @@
 package t10.localizer;
 
 import t10.Loop;
-import t10.geometry.MovementVector;
 import t10.geometry.Point;
 
 // TODO: Implement velocity and acceleration.
@@ -17,6 +16,4 @@ public interface Localizer<T extends Point> extends Loop {
 	 * @return The that represents where the robot is in relation to the field.
 	 */
 	T getFieldCentric();
-
-	MovementVector getVelocity();
 }

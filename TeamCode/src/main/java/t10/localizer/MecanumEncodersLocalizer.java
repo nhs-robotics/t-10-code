@@ -3,7 +3,6 @@ package t10.localizer;
 import intothedeep.Constants;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-import t10.geometry.MovementVector;
 import t10.geometry.Pose;
 import t10.motion.hardware.MotorEncoder;
 import t10.motion.mecanum.MecanumCoefficientMatrix;
@@ -86,11 +85,5 @@ public class MecanumEncodersLocalizer implements Localizer<Pose> {
 		this.lastBrInches = this.br.getCurrentInches();
 		this.lastFlInches = this.fl.getCurrentInches();
 		this.lastBlInches = this.bl.getCurrentInches();
-	}
-
-	@Override
-	public MovementVector getVelocity()
-	{
-		return null;
 	}
 }

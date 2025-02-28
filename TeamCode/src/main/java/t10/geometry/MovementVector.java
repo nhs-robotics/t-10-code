@@ -132,11 +132,4 @@ public class MovementVector implements Serializable {
     public String toString() {
         return String.format("{%f; %f; %f}", vertical, horizontal, rotation);
     }
-
-	public boolean equals(MovementVector other) {
-		if(this.getVertical() == other.getVertical() && this.getHorizontal() == other.getHorizontal() && this.rotation == other.getRotation() && this.angleUnit == other.angleUnit) {
-			return true;
-		}
-		return false;
-	}
 }
