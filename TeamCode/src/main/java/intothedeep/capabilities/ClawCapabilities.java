@@ -8,7 +8,7 @@ import t10.auto.AutoAction;
 
 public class ClawCapabilities implements Loop {
 	private static final double CLAW_OPEN_POSITION = -0.9;
-	private static final double CLAW_CLOSED_POSITION = 0.55;
+	private static final double CLAW_CLOSED_POSITION = 0.65;
 	private final SnowballConfig config;
 	private boolean isAbsoluteMode = false;
 	private boolean isOpen = false;
