@@ -29,6 +29,7 @@ public class OdometryIMULocalizerFast extends OdometryIMULocalizer {
 				perpendicularWheelOffset,
 				imu
 		);
+
 		this.theOctoQuad = octoQuad;
 		this.rightChannel = rightChannel;
 		this.leftChannel = leftChannel;

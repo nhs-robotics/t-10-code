@@ -39,8 +39,8 @@ public class AprilTagLocalizer implements Localizer<Point> {
 				.setTagLibrary(AprilTagGameDatabase.getCurrentGameTagLibrary())
 				.setTagFamily(tagFamily)
 				.setCameraPose(
-						new Position(DistanceUnit.INCH, 0, 0, 0, 0),
-						new YawPitchRollAngles(AngleUnit.DEGREES, 0, -90, 0, 0)
+						new Position(DistanceUnit.INCH, 0, -8.5, 0, 0),
+						new YawPitchRollAngles(AngleUnit.DEGREES, 180, -90, 0, 0)
 				)
 				.setLensIntrinsics(focalLengthX, focalLengthY, principalPointX, principalPointY)
 				.build();

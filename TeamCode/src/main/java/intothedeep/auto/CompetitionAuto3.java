@@ -1,14 +1,19 @@
 package intothedeep.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import intothedeep.Constants;
 import intothedeep.capabilities.ArmExtensionCapabilities;
 import intothedeep.capabilities.ClawCapabilities;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+
 import t10.auto.AutoAction;
 import t10.auto.MoveToAction;
 import t10.auto.SequentialAction;
+import t10.geometry.Point;
 import t10.geometry.Pose;
+import t10.localizer.AprilTagLocalizer;
 import t10.metrics.Metric;
 
 @Autonomous
@@ -28,7 +33,7 @@ public class CompetitionAuto3 extends EasyAuto {
 		this.autoSequence = sequentially(
 				scoreFirst(10),
 				getNextAfterScore(),
-				scoreFirst(6),
+				scoreFirst(4),
 				park()
 		);
 	}
@@ -114,11 +119,11 @@ public class CompetitionAuto3 extends EasyAuto {
 		super.loop();
 
 		this.localizer.loop();
+		this.pose = this.localizer.getFieldCentric();
 		this.autoSequence.loop();
 		this.armRotation.loop();
 		this.armExtension.loop();
 		this.crane.loop();
 		this.claw.loop();
-		this.pose = this.localizer.getFieldCentric();
 	}
 }
