@@ -106,6 +106,14 @@ public class ClawCapabilities implements Loop {
 	}
 
 	public void setPreset(ClawPreset preset, boolean isAbsoluteMode) {
+		this.setOpen(false);
+		this.isAbsoluteMode = isAbsoluteMode;
+		this.setRotation(preset.servoRotatePosition);
+		this.setTwist(0);
+	}
+
+	public void setPreset(ClawPreset preset, boolean isOpen, boolean isAbsoluteMode) {
+		this.setOpen(isOpen);
 		this.isAbsoluteMode = isAbsoluteMode;
 		this.setRotation(preset.servoRotatePosition);
 		this.setTwist(0);
@@ -131,7 +139,7 @@ public class ClawCapabilities implements Loop {
 		@Override
 		public void init() {
 			this.clawCapabilities.setOpen(this.isOpen);
-			this.clawCapabilities.setPreset(this.clawPreset, this.isAbsoluteRotation);
+			this.clawCapabilities.setPreset(this.clawPreset, this.isOpen, this.isAbsoluteRotation);
 		}
 
 		@Override
