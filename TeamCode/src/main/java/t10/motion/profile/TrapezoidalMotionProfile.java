@@ -134,11 +134,10 @@ class TrapMotionInLine {
 		 this.direction = Math.signum(distance);
 		 this.finalVelocity = endVelocity;
 		 this.acceleration = Math.abs(acceleration);
-		 maxSpeed = Math.abs(maxSpeed);
 
 
-		 double fullAccelerationDistance = MathUtils.solveDisplacement(maxSpeed * direction, initialVelocity, this.acceleration * direction) * direction;
-		 double targetToEndVelocityDistance = MathUtils.solveDisplacement(endVelocity, maxSpeed * direction, this.acceleration * direction * -1) * direction;
+		 double fullAccelerationDistance = MathUtils.solveDisplacement(maxSpeed, initialVelocity, this.acceleration * direction) * direction;
+		 double targetToEndVelocityDistance = MathUtils.solveDisplacement(endVelocity, maxSpeed, this.acceleration * direction * -1) * direction;
 
 		 if (Math.abs(fullAccelerationDistance + targetToEndVelocityDistance) < Math.abs(distance)) {
 			 // WILL cruise.
@@ -221,7 +220,7 @@ class TrapMotionInLine {
 
 		if (peakVelocity > 0) {
 			if (deltaDistance < accelerateDistance) {
-				if(deltaDistance < minDeltaDist)
+				if(Math.abs(deltaDistance) < Math.abs(minDeltaDist))
 				{
 					state = "below min";
 					return Math.abs(minSpeed);
@@ -232,11 +231,9 @@ class TrapMotionInLine {
 			} else if (cruiseDistance != 0 && accelerateDistance < deltaDistance && deltaDistance < accelerateDistance + cruiseDistance) {
 				state = "cruising";
 				return peakVelocity;
-
 			} else if (deltaDistance > cruiseDistance + accelerateDistance && deltaDistance + lookAhead < distance) {
 				state = "decelerating";
 				return MathUtils.solveVelocity(peakVelocity, -Math.abs(acceleration), deltaDistance - (cruiseDistance + accelerateDistance) + lookAhead);
-
 			} else {
 				state = "finished";
 				finished = true;
@@ -245,7 +242,7 @@ class TrapMotionInLine {
 
 		} else if (peakVelocity < 0) {
 			if (deltaDistance > accelerateDistance) {
-				if(deltaDistance > minDeltaDist){
+				if(Math.abs(deltaDistance) < Math.abs(minDeltaDist)){
 					state = "Below Min";
 					return -Math.abs(minSpeed);
 				}
