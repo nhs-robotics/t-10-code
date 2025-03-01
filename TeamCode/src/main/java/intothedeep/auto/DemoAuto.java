@@ -40,6 +40,16 @@ public class DemoAuto extends EasyAuto {
 		this.controller = new GController(this.gamepad1);
 
 		this.autoSequence = sequentially(
+
+				waitForButton(controller.a),
+				claw(ClawCapabilities.ClawPreset.DOWN, true, true),
+				armRotation(ArmRotationCapabilities.POSITION_INSPECTION),
+				sleep(500),
+				armRotation(ArmRotationCapabilities.POSITION_FULLY_DOWNWARDS),
+				sleep(500),
+				armRotation(ArmRotationCapabilities.POSITION_INSPECTION),
+				sleep(500),
+				armRotation(ArmRotationCapabilities.POSITION_FULLY_DOWNWARDS),
 				waitForButton(controller.a),
 				new MoveToAction(
 						this.localizer,
@@ -78,16 +88,7 @@ public class DemoAuto extends EasyAuto {
 				simultaneously(
 						armExtension(ArmExtensionCapabilities.POSITION_FULLY_RETRACTED),
 						armRotation(ArmRotationCapabilities.POSITION_FULLY_DOWNWARDS),
-						crane(CraneCapabilities.POSITION_BOTTOM)),
-				waitForButton(controller.a),
-				claw(ClawCapabilities.ClawPreset.DOWN, true, true),
-				armRotation(ArmRotationCapabilities.POSITION_INSPECTION),
-				sleep(500),
-				armRotation(ArmRotationCapabilities.POSITION_FULLY_DOWNWARDS),
-				sleep(500),
-				armRotation(ArmRotationCapabilities.POSITION_INSPECTION),
-				sleep(500),
-				armRotation(ArmRotationCapabilities.POSITION_FULLY_DOWNWARDS)
+						crane(CraneCapabilities.POSITION_BOTTOM))
 		);
 	}
 
