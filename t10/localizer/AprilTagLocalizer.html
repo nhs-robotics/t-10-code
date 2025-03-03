@@ -77,12 +77,12 @@ loadScripts(document, 'script');</script>
 <section class="class-description" id="class-description">
 <dl class="notes">
 <dt>All Implemented Interfaces:</dt>
-<dd><code><a href="Localizer.html" title="interface in t10.localizer">Localizer</a>&lt;<a href="../geometry/Pose.html" title="class in t10.geometry">Pose</a>&gt;</code>, <code><a href="../Loop.html" title="interface in t10">Loop</a></code></dd>
+<dd><code><a href="Localizer.html" title="interface in t10.localizer">Localizer</a>&lt;<a href="../geometry/Point.html" title="class in t10.geometry">Point</a>&gt;</code>, <code><a href="../Loop.html" title="interface in t10">Loop</a></code></dd>
 </dl>
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">AprilTagLocalizer</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>
-implements <a href="Localizer.html" title="interface in t10.localizer">Localizer</a>&lt;<a href="../geometry/Pose.html" title="class in t10.geometry">Pose</a>&gt;</span></div>
+implements <a href="Localizer.html" title="interface in t10.localizer">Localizer</a>&lt;<a href="../geometry/Point.html" title="class in t10.geometry">Point</a>&gt;</span></div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -136,7 +136,7 @@ implements <a href="Localizer.html" title="interface in t10.localizer">Localizer
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../geometry/Pose.html" title="class in t10.geometry">Pose</a></code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../geometry/Point.html" title="class in t10.geometry">Point</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getFieldCentric()" class="member-name-link">getFieldCentric</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
@@ -145,7 +145,7 @@ implements <a href="Localizer.html" title="interface in t10.localizer">Localizer
 <div class="block">Gets called in loop.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setFieldCentric(t10.geometry.Pose)" class="member-name-link">setFieldCentric</a><wbr>(<a href="../geometry/Pose.html" title="class in t10.geometry">Pose</a>&nbsp;pose)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setFieldCentric(t10.geometry.Point)" class="member-name-link">setFieldCentric</a><wbr>(<a href="../geometry/Point.html" title="class in t10.geometry">Point</a>&nbsp;point)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the reference.</div>
 </div>
@@ -222,26 +222,26 @@ implements <a href="Localizer.html" title="interface in t10.localizer">Localizer
 </section>
 </li>
 <li>
-<section class="detail" id="setFieldCentric(t10.geometry.Pose)">
+<section class="detail" id="setFieldCentric(t10.geometry.Point)">
 <h3>setFieldCentric</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setFieldCentric</span><wbr><span class="parameters">(<a href="../geometry/Pose.html" title="class in t10.geometry">Pose</a>&nbsp;pose)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setFieldCentric</span><wbr><span class="parameters">(<a href="../geometry/Point.html" title="class in t10.geometry">Point</a>&nbsp;point)</span></div>
 <div class="block"><span class="descfrm-type-label">Description copied from interface:&nbsp;<code><a href="Localizer.html#setFieldCentric(T)">Localizer</a></code></span></div>
 <div class="block">Sets the reference.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="Localizer.html#setFieldCentric(T)">setFieldCentric</a></code>&nbsp;in interface&nbsp;<code><a href="Localizer.html" title="interface in t10.localizer">Localizer</a>&lt;<a href="../geometry/Pose.html" title="class in t10.geometry">Pose</a>&gt;</code></dd>
+<dd><code><a href="Localizer.html#setFieldCentric(T)">setFieldCentric</a></code>&nbsp;in interface&nbsp;<code><a href="Localizer.html" title="interface in t10.localizer">Localizer</a>&lt;<a href="../geometry/Point.html" title="class in t10.geometry">Point</a>&gt;</code></dd>
 <dt>Parameters:</dt>
-<dd><code>pose</code> - The reference pose.</dd>
+<dd><code>point</code> - The reference pose.</dd>
 </dl>
 </section>
 </li>
 <li>
 <section class="detail" id="getFieldCentric()">
 <h3>getFieldCentric</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="../geometry/Pose.html" title="class in t10.geometry">Pose</a></span>&nbsp;<span class="element-name">getFieldCentric</span>()</div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="../geometry/Point.html" title="class in t10.geometry">Point</a></span>&nbsp;<span class="element-name">getFieldCentric</span>()</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="Localizer.html#getFieldCentric()">getFieldCentric</a></code>&nbsp;in interface&nbsp;<code><a href="Localizer.html" title="interface in t10.localizer">Localizer</a>&lt;<a href="../geometry/Pose.html" title="class in t10.geometry">Pose</a>&gt;</code></dd>
+<dd><code><a href="Localizer.html#getFieldCentric()">getFieldCentric</a></code>&nbsp;in interface&nbsp;<code><a href="Localizer.html" title="interface in t10.localizer">Localizer</a>&lt;<a href="../geometry/Point.html" title="class in t10.geometry">Point</a>&gt;</code></dd>
 <dt>Returns:</dt>
 <dd>The that represents where the robot is in relation to the field.</dd>
 </dl>

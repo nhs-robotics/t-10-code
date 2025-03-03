@@ -69,7 +69,7 @@ loadScripts(document, 'script');</script>
 <!-- ======== START OF CLASS DATA ======== -->
 <div class="header">
 <div class="sub-title"><span class="package-label-in-type">Package</span>&nbsp;<a href="package-summary.html">t10.localizer</a></div>
-<h1 title="Interface Localizer" class="title">Interface Localizer&lt;T extends <a href="../geometry/Pose.html" title="class in t10.geometry">Pose</a>&gt;</h1>
+<h1 title="Interface Localizer" class="title">Interface Localizer&lt;T extends <a href="../geometry/Point.html" title="class in t10.geometry">Point</a>&gt;</h1>
 </div>
 <section class="class-description" id="class-description">
 <dl class="notes">
@@ -78,10 +78,10 @@ loadScripts(document, 'script');</script>
 </dl>
 <dl class="notes">
 <dt>All Known Implementing Classes:</dt>
-<dd><code><a href="AprilTagLocalizer.html" title="class in t10.localizer">AprilTagLocalizer</a></code>, <code><a href="LocalizerPriorityOrderer.html" title="class in t10.localizer">LocalizerPriorityOrderer</a></code>, <code><a href="MecanumEncodersLocalizer.html" title="class in t10.localizer">MecanumEncodersLocalizer</a></code>, <code><a href="OdometryIMULocalizer.html" title="class in t10.localizer">OdometryIMULocalizer</a></code>, <code><a href="OdometryIMULocalizerFast.html" title="class in t10.localizer">OdometryIMULocalizerFast</a></code>, <code><a href="OdometryLocalizer.html" title="class in t10.localizer">OdometryLocalizer</a></code>, <code><a href="OdometryLocalizerFast.html" title="class in t10.localizer">OdometryLocalizerFast</a></code></dd>
+<dd><code><a href="AprilTagLocalizer.html" title="class in t10.localizer">AprilTagLocalizer</a></code>, <code><a href="MecanumEncodersLocalizer.html" title="class in t10.localizer">MecanumEncodersLocalizer</a></code>, <code><a href="OdometryIMULocalizer.html" title="class in t10.localizer">OdometryIMULocalizer</a></code>, <code><a href="OdometryIMULocalizerFast.html" title="class in t10.localizer">OdometryIMULocalizerFast</a></code>, <code><a href="OdometryLocalizer.html" title="class in t10.localizer">OdometryLocalizer</a></code>, <code><a href="OdometryLocalizerFast.html" title="class in t10.localizer">OdometryLocalizerFast</a></code></dd>
 </dl>
 <hr>
-<div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">Localizer&lt;T extends <a href="../geometry/Pose.html" title="class in t10.geometry">Pose</a>&gt;</span><span class="extends-implements">
+<div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">Localizer&lt;T extends <a href="../geometry/Point.html" title="class in t10.geometry">Point</a>&gt;</span><span class="extends-implements">
 extends <a href="../Loop.html" title="interface in t10">Loop</a></span></div>
 </section>
 <section class="summary">
@@ -124,7 +124,7 @@ extends <a href="../Loop.html" title="interface in t10">Loop</a></span></div>
 <ul class="member-list">
 <li>
 <section class="detail" id="setFieldCentric(T)">
-<h3 id="setFieldCentric(t10.geometry.Pose)">setFieldCentric</h3>
+<h3 id="setFieldCentric(t10.geometry.Point)">setFieldCentric</h3>
 <div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">setFieldCentric</span><wbr><span class="parameters">(<a href="Localizer.html" title="type parameter in Localizer">T</a>&nbsp;pose)</span></div>
 <div class="block">Sets the reference.</div>
 <dl class="notes">
