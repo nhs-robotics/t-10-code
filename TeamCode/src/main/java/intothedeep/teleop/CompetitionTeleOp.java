@@ -45,6 +45,14 @@ public class CompetitionTeleOp extends BootstrappedOpMode {
 	private Telemetry.Item t_armRotation;
 	private Telemetry.Item t_armExtension;
 	private Telemetry.Item ups;
+	private Telemetry.Item bl_voltage;
+	private Telemetry.Item br_voltage;
+	private Telemetry.Item fl_voltage;
+	private Telemetry.Item fr_voltage;
+	private Telemetry.Item crane_l_voltage;
+	private Telemetry.Item crane_r_voltage;
+	private Telemetry.Item arm_rot_voltage;
+	private Telemetry.Item arm_ext_voltage;
 
 	@Override
 	public void init() {
@@ -83,22 +91,32 @@ public class CompetitionTeleOp extends BootstrappedOpMode {
 				// todo: check inversion
 				.rightJoystick.onMove((x, y) -> this.crane.setPowerManually(-y)).ok()
 				.leftJoystick.onMove((x, y) -> this.armRotation.setPowerManually(-y)).ok()
-				.x.onPress(() -> {
+				.a.onPress(() -> {
 					armExtension.setTargetPosition(ArmExtensionCapabilities.POSITION_FULLY_RETRACTED);
 					armRotation.setTargetPosition(400);
 					claw.setPreset(ClawCapabilities.ClawPreset.FORWARD, true,true);
 				}).ok()
-				.a.onPress(() -> this.claw.toggleClaw()).ok()
+				.x.onPress(() -> this.claw.toggleClaw()).ok()
 				.b.onPress(() -> {
+					claw.setPreset(ClawCapabilities.ClawPreset.UP, true);
 					armRotation.setTargetPosition(628);
 					armExtension.setTargetPosition(-1400);
+					claw.setPreset(ClawCapabilities.ClawPreset.UP,true);
 				}).ok()
-				/*Todo: add basket presets for d-pad*/;
+		/*Todo: add basket presets for d-pad*/;
 
 		this.claw.setPreset(ClawCapabilities.ClawPreset.FORWARD, true);
 		this.t_armRotation = this.telemetry.addData("armRotation", "");
 		this.t_armExtension = this.telemetry.addData("armExtension", "");
 		this.ups = this.telemetry.addData("ups", 0);
+		this.bl_voltage = this.telemetry.addData("bl v", 0);
+		this.br_voltage = this.telemetry.addData("br v", 0);
+		this.fl_voltage = this.telemetry.addData("fl v", 0);
+		this.fr_voltage = this.telemetry.addData("fr v", 0);
+		this.crane_l_voltage = this.telemetry.addData("crane l v", 0);
+		this.crane_r_voltage = this.telemetry.addData("crane r v", 0);
+		this.arm_ext_voltage = this.telemetry.addData("arm ext v", 0);
+		this.arm_rot_voltage = this.telemetry.addData("arm rot v", 0);
 	}
 
 	@Override
@@ -120,6 +138,17 @@ public class CompetitionTeleOp extends BootstrappedOpMode {
 		this.t_armRotation.setValue(this.armRotation.getPosition());
 		this.t_armExtension.setValue(this.armExtension.getPosition());
 		this.ups.setValue(updates / ((System.currentTimeMillis() / 1000L + 1) - startUpdates));
+		this.bl_voltage.setValue(this.hardwareMap.voltageSensor.get("BL").getVoltage());
+		this.br_voltage.setValue(this.hardwareMap.voltageSensor.get("BR").getVoltage());
+		this.fl_voltage.setValue(this.hardwareMap.voltageSensor.get("FL").getVoltage());
+		this.fr_voltage.setValue(this.hardwareMap.voltageSensor.get("FR").getVoltage());
+		this.crane_l_voltage.setValue(this.hardwareMap.voltageSensor.get("LiftRight").getVoltage());
+		this.crane_r_voltage.setValue(this.hardwareMap.voltageSensor.get("LiftLeft").getVoltage());
+		this.arm_ext_voltage.setValue(this.hardwareMap.voltageSensor.get("ArmExtension").getVoltage());
+		this.arm_rot_voltage.setValue(this.hardwareMap.voltageSensor.get("ArmRotation").getVoltage());
+
+
+
 		this.g1.loop();
 		this.g2.loop();
 		this.telemetry.update();
