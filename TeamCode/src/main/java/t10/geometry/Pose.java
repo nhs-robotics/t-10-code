@@ -1,6 +1,8 @@
 package t10.geometry;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 
 /**
  * A 2D Point with a direction.
@@ -11,6 +13,11 @@ public class Pose extends Point {
 	public Pose(double y, double x, double heading, AngleUnit angleUnit) {
 		super(x, y);
 		this.headingRadians = angleUnit.toRadians(heading);
+	}
+
+	public Pose(Pose2D pose2D) {
+		super(pose2D.getX(DistanceUnit.INCH), pose2D.getY(DistanceUnit.INCH));
+		this.headingRadians = pose2D.getHeading(AngleUnit.RADIANS);
 	}
 
 	/**
@@ -74,5 +81,9 @@ public class Pose extends Point {
 
 	public static Pose fromMovementVector(MovementVector vector3D) {
 		return new Pose(vector3D.getVertical(), vector3D.getHorizontal(), vector3D.getRotation(), AngleUnit.DEGREES);
+	}
+
+	public static Pose2D toPose2D(Pose pose) {
+		return new Pose2D(DistanceUnit.INCH, pose.x, pose.y, AngleUnit.RADIANS,pose.getHeading(AngleUnit.RADIANS));
 	}
 }

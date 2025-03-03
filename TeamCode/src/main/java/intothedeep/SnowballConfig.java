@@ -8,11 +8,13 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import t10.bootstrap.AbstractRobotConfiguration;
 import t10.bootstrap.Hardware;
+import t10.bootstrap.PinPointHardware;
 import t10.geometry.Pose;
 import t10.localizer.Localizer;
 import t10.localizer.OdometryCoefficientSet;
 import t10.localizer.OdometryIMULocalizerFast;
 import t10.localizer.OdometryLocalizerFast;
+import t10.localizer.PinPointLocalizer;
 import t10.motion.hardware.Motor;
 import t10.motion.mecanum.MecanumDriver;
 import t10.vision.Webcam;
@@ -92,6 +94,9 @@ public class SnowballConfig extends AbstractRobotConfiguration {
 	@Hardware(name = "Webcam")
 	public Webcam webcam;
 
+	@Hardware(name = "PinPoint")
+	public PinPointHardware pinPoint;
+
 	public SnowballConfig(HardwareMap hardwareMap) {
 		super(hardwareMap);
 
@@ -111,17 +116,13 @@ public class SnowballConfig extends AbstractRobotConfiguration {
 
 	@Override
 	public Localizer<Pose> createLocalizer() {
-		return new OdometryIMULocalizerFast(
-				new OdometryCoefficientSet(1, 1, -1),
-				octoQuad,
-				4,
-				6,
-				5,
-				11.5,
-				-6.5,
-				Constants.Odometry.TICKS_PER_ODOMETRY_REVOLUTION,
-				Constants.Odometry.ODOMETRY_WHEEL_DIAMETER_IN,
-				this.imu
+		return new PinPointLocalizer(
+				pinPoint,
+				0,
+				PinPointHardware.EncoderDirection.REVERSED,
+				0,
+				PinPointHardware.EncoderDirection.FORWARD,
+				PinPointHardware.GoBildaOdometryPods.goBILDA_SWINGARM_POD
 		);
 	}
 }
