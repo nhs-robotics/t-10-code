@@ -108,11 +108,11 @@ loadScripts(document, 'script');</script>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Enum Constant</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><code><a href="#COLLECT_WALL_SPECIMEN" class="member-name-link">COLLECT_WALL_SPECIMEN</a></code></div>
+<div class="col-first even-row-color"><code><a href="#DOWN" class="member-name-link">DOWN</a></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><code><a href="#DOWN" class="member-name-link">DOWN</a></code></div>
+<div class="col-first odd-row-color"><code><a href="#FORWARD" class="member-name-link">FORWARD</a></code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
-<div class="col-first even-row-color"><code><a href="#FORWARD" class="member-name-link">FORWARD</a></code></div>
+<div class="col-first even-row-color"><code><a href="#SAFE_MAX" class="member-name-link">SAFE_MAX</a></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
 <div class="col-first odd-row-color"><code><a href="#UP" class="member-name-link">UP</a></code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
@@ -128,21 +128,12 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Field</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><code>static final double</code></div>
-<div class="col-second even-row-color"><code><a href="#defaultTwistPosition" class="member-name-link">defaultTwistPosition</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><code>static final double</code></div>
-<div class="col-second odd-row-color"><code><a href="#maxRotationNotDefaultTwist" class="member-name-link">maxRotationNotDefaultTwist</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
 <div class="col-first even-row-color"><code>static final int</code></div>
 <div class="col-second even-row-color"><code><a href="#minExtensionWhenNeeded" class="member-name-link">minExtensionWhenNeeded</a></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><code>final boolean</code></div>
-<div class="col-second odd-row-color"><code><a href="#needsToBeExtended" class="member-name-link">needsToBeExtended</a></code></div>
+<div class="col-first odd-row-color"><code>final double</code></div>
+<div class="col-second odd-row-color"><code><a href="#servoRotatePosition" class="member-name-link">servoRotatePosition</a></code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
-<div class="col-first even-row-color"><code>final double</code></div>
-<div class="col-second even-row-color"><code><a href="#servoRotatePosition" class="member-name-link">servoRotatePosition</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
 </div>
 </section>
 </li>
@@ -195,9 +186,9 @@ the order they are declared.</div>
 </section>
 </li>
 <li>
-<section class="detail" id="COLLECT_WALL_SPECIMEN">
-<h3>COLLECT_WALL_SPECIMEN</h3>
-<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="ClawCapabilities.ClawPreset.html" title="enum class in intothedeep.capabilities">ClawCapabilities.ClawPreset</a></span>&nbsp;<span class="element-name">COLLECT_WALL_SPECIMEN</span></div>
+<section class="detail" id="SAFE_MAX">
+<h3>SAFE_MAX</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="ClawCapabilities.ClawPreset.html" title="enum class in intothedeep.capabilities">ClawCapabilities.ClawPreset</a></span>&nbsp;<span class="element-name">SAFE_MAX</span></div>
 </section>
 </li>
 <li>
@@ -227,26 +218,6 @@ the order they are declared.</div>
 </section>
 </li>
 <li>
-<section class="detail" id="defaultTwistPosition">
-<h3>defaultTwistPosition</h3>
-<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">double</span>&nbsp;<span class="element-name">defaultTwistPosition</span></div>
-<dl class="notes">
-<dt>See Also:</dt>
-<dd>
-<ul class="see-list">
-<li><a href="../../constant-values.html#intothedeep.capabilities.ClawCapabilities.ClawPreset.defaultTwistPosition">Constant Field Values</a></li>
-</ul>
-</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="needsToBeExtended">
-<h3>needsToBeExtended</h3>
-<div class="member-signature"><span class="modifiers">public final</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">needsToBeExtended</span></div>
-</section>
-</li>
-<li>
 <section class="detail" id="minExtensionWhenNeeded">
 <h3>minExtensionWhenNeeded</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">minExtensionWhenNeeded</span></div>
@@ -255,20 +226,6 @@ the order they are declared.</div>
 <dd>
 <ul class="see-list">
 <li><a href="../../constant-values.html#intothedeep.capabilities.ClawCapabilities.ClawPreset.minExtensionWhenNeeded">Constant Field Values</a></li>
-</ul>
-</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="maxRotationNotDefaultTwist">
-<h3>maxRotationNotDefaultTwist</h3>
-<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">double</span>&nbsp;<span class="element-name">maxRotationNotDefaultTwist</span></div>
-<dl class="notes">
-<dt>See Also:</dt>
-<dd>
-<ul class="see-list">
-<li><a href="../../constant-values.html#intothedeep.capabilities.ClawCapabilities.ClawPreset.maxRotationNotDefaultTwist">Constant Field Values</a></li>
 </ul>
 </dd>
 </dl>
