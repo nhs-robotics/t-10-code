@@ -8,10 +8,11 @@ import intothedeep.capabilities.ClawCapabilities;
 import intothedeep.capabilities.CraneCapabilities;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 import t10.auto.MoveToAction;
@@ -39,18 +40,36 @@ public class CompetitionTeleOp extends BootstrappedOpMode {
 	private Localizer<Pose> localizer;
 	private long updates;
 	private long startUpdates;
+	private VoltageSensor myControlHubVoltageSensor;
 
 	@Metric
 	public Pose pose;
 	private Telemetry.Item t_armRotation;
 	private Telemetry.Item t_armExtension;
 	private Telemetry.Item ups;
+	@Metric
+	private Telemetry.Item bl_voltage;
+	@Metric
+	private Telemetry.Item br_voltage;
+	@Metric
+	private Telemetry.Item fl_voltage;
+	@Metric
+	private Telemetry.Item fr_voltage;
+	@Metric
+	private Telemetry.Item crane_l_voltage;
+	@Metric
+	private Telemetry.Item crane_r_voltage;
+	@Metric
+	private Telemetry.Item arm_rot_voltage;
+	@Metric
+	private Telemetry.Item arm_ext_voltage;
 
 	@Override
 	public void init() {
 		super.init();
 
 		this.config = new SnowballConfig(this.hardwareMap);
+		myControlHubVoltageSensor = hardwareMap.get(VoltageSensor.class, "Control Hub");
 
 		// Robot Capabilities
 		this.crane = new CraneCapabilities(this.config);
@@ -101,6 +120,14 @@ public class CompetitionTeleOp extends BootstrappedOpMode {
 		this.t_armRotation = this.telemetry.addData("armRotation", "");
 		this.t_armExtension = this.telemetry.addData("armExtension", "");
 		this.ups = this.telemetry.addData("ups", 0);
+		this.bl_voltage = this.telemetry.addData("bl v", 0);
+		this.br_voltage = this.telemetry.addData("br v", 0);
+		this.fl_voltage = this.telemetry.addData("fl v", 0);
+		this.fr_voltage = this.telemetry.addData("fr v", 0);
+		this.crane_l_voltage = this.telemetry.addData("crane l v", 0);
+		this.crane_r_voltage = this.telemetry.addData("crane r v", 0);
+		this.arm_ext_voltage = this.telemetry.addData("arm ext v", 0);
+		this.arm_rot_voltage = this.telemetry.addData("arm rot v", 0);
 	}
 
 	@Override
@@ -122,6 +149,14 @@ public class CompetitionTeleOp extends BootstrappedOpMode {
 		this.t_armRotation.setValue(this.armRotation.getPosition());
 		this.t_armExtension.setValue(this.armExtension.getPosition());
 		this.ups.setValue(updates / ((System.currentTimeMillis() / 1000L + 1) - startUpdates));
+		this.bl_voltage.setValue(this.config.bl.motor.getCurrent(CurrentUnit.AMPS));
+		this.br_voltage.setValue(this.config.br.motor.getCurrent(CurrentUnit.AMPS));
+		this.fl_voltage.setValue(this.config.fl.motor.getCurrent(CurrentUnit.AMPS));
+		this.fr_voltage.setValue(this.config.fr.motor.getCurrent(CurrentUnit.AMPS));
+		this.crane_l_voltage.setValue(this.config.liftLeft.motor.getCurrent(CurrentUnit.AMPS));
+		this.crane_r_voltage.setValue(this.config.liftRight.motor.getCurrent(CurrentUnit.AMPS));
+		this.arm_ext_voltage.setValue(this.config.armExtension.motor.getCurrent(CurrentUnit.AMPS));
+		this.arm_rot_voltage.setValue(this.config.armRotation.motor.getCurrent(CurrentUnit.AMPS));
 
 
 
