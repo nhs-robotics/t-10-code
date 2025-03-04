@@ -166,10 +166,9 @@ public class ClawCapabilities implements Loop {
 	//Min rotation past which must be at default: 0.65
 
 	public enum ClawPreset {
-		UP(1, true),
-		COLLECT_WALL_SPECIMEN(0.8, true),
-		FORWARD(0.72, true),
-		DOWN(0.36, false);
+		UP(0.98, true),
+		FORWARD(0.67, true),
+		DOWN(0.31, false);
 
 		public final double servoRotatePosition;
 		public static final double defaultTwistPosition = 1;
