@@ -105,7 +105,7 @@ public class CompetitionAuto extends EasyAuto {
 								armExtension(0),
 								armRotation(ArmRotationCapabilities.getTargetPositionAngle(15.7))
 						),
-						claw(ClawCapabilities.ClawPreset.COLLECT_WALL_SPECIMEN, true, true)
+						claw(ClawCapabilities.ClawPreset.FORWARD, true, true)
 				),
 				armExtension((int) (ArmExtensionCapabilities.POSITION_FULLY_EXTENDED * 0.56)),
 //				moveTo(new Pose(35.25, 57, 90, AngleUnit.DEGREES)),

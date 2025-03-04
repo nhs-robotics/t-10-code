@@ -29,6 +29,6 @@ public class ServoPositioner extends BootstrappedOpMode {
 	public void loop() {
 		super.loop();
 		this.g.loop();
-		this.config.clawTwist.setPosition(pos);
+		this.config.clawRotate.setPosition(pos);
 	}
 }
