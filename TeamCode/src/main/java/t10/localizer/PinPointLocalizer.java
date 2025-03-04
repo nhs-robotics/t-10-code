@@ -36,23 +36,49 @@ public class PinPointLocalizer implements Localizer<Pose> {
 	private PinPointHardware pinPoint;
 
 
-
-	public PinPointLocalizer(PinPointHardware pinPoint, double xOffset, PinPointHardware.EncoderDirection xDir, double yOffset, PinPointHardware.EncoderDirection yDir, double encoderResolution) {
+	/**
+	 *
+	 * The center of rotation of the robot is the point it rotates around when spinning.
+	 * It can be found by finding the intersection of the two lines made by diagonal wheel pairs.
+	 *
+	 * @param pinPoint The PinPoint device
+	 * @param yPodOffsetFromCenter The distance in the x-direction (right is positive) of the forward-backward pod from the robot's center of rotation
+	 * @param yDirection The direction the y-pod is oriented
+	 * @param xPodOffsetFromCenter The distance in the y-direction (forward is positive) of the right-left pod from the robot's center of rotation
+	 * @param xDirection The direction the x-pod is oriented
+	 * @param encoderResolution The number of ticks per mm of the encoders attached to the PinPoint
+	 */
+	public PinPointLocalizer(PinPointHardware pinPoint, double yPodOffsetFromCenter, PinPointHardware.EncoderDirection yDirection, double xPodOffsetFromCenter, PinPointHardware.EncoderDirection xDirection, double encoderResolution) {
 		this.pinPoint = pinPoint;
 		this.pinPoint.setEncoderResolution(encoderResolution);
 		//For them, x-left is positive, so the inputted offset is negative. That's intentional. It's not causing your bug, I promise
-		this.pinPoint.setOffsets(-xOffset,yOffset);
-		this.pinPoint.setEncoderDirections(pinPoint.invertDirection(xDir),yDir);
+		//Also, they want values in mm instead of inches. Thus, 25.4
+		this.pinPoint.setOffsets(-yPodOffsetFromCenter * 25.4,xPodOffsetFromCenter * 25.4);
+		//For them, the x-pod detects changes in y and the y-pod detects changes in x. This, too, is not your bug
+		this.pinPoint.setEncoderDirections(pinPoint.invertDirection(yDirection),xDirection);
 		this.pinPoint.resetPosAndIMU();
 	}
 
-
-	public PinPointLocalizer(PinPointHardware pinPoint, double xOffset, PinPointHardware.EncoderDirection xDir, double yOffset, PinPointHardware.EncoderDirection yDir, PinPointHardware.GoBildaOdometryPods pods) {
+	/**
+	 *
+	 * The center of rotation of the robot is the point it rotates around when spinning.
+	 * It can be found by finding the intersection of the two lines made by diagonal wheel pairs.
+	 *
+	 * @param pinPoint The PinPoint device
+	 * @param yPodOffsetFromCenter The distance in the x-direction (right is positive) of the forward-backward pod from the robot's center of rotation
+	 * @param yDirection The direction the y-pod is oriented
+	 * @param xPodOffsetFromCenter The distance in the y-direction (forward is positive) of the right-left pod from the robot's center of rotation
+	 * @param xDirection The direction the x-pod is oriented
+	 * @param pods The type of pods you are using
+	 */
+	public PinPointLocalizer(PinPointHardware pinPoint, double yPodOffsetFromCenter, PinPointHardware.EncoderDirection yDirection, double xPodOffsetFromCenter, PinPointHardware.EncoderDirection xDirection, PinPointHardware.GoBildaOdometryPods pods) {
 		this.pinPoint = pinPoint;
 		this.pinPoint.setEncoderResolution(pods);
 		//For them, x-left is positive, so the inputted offset is negative. That's intentional. It's not causing your bug, I promise
-		this.pinPoint.setOffsets(-xOffset,yOffset);
-		this.pinPoint.setEncoderDirections(pinPoint.invertDirection(xDir),yDir);
+		//Also, they want values in mm instead of inches. Thus, 25.4
+		this.pinPoint.setOffsets(-yPodOffsetFromCenter * 25.4,xPodOffsetFromCenter * 25.4);
+		//For them, the x-pod detects changes in y and the y-pod detects changes in x. This, too, is not your bug
+		this.pinPoint.setEncoderDirections(pinPoint.invertDirection(yDirection),xDirection);
 		this.pinPoint.resetPosAndIMU();
 	}
 
