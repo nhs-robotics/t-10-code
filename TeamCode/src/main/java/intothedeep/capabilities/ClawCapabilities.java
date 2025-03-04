@@ -13,11 +13,10 @@ public class ClawCapabilities implements Loop {
 	private boolean isAbsoluteMode = false;
 	private boolean isOpen = false;
 	private double positionRotate = 0;
-	private double positionTwist = 0;
 	private boolean isRotateDirty = true;
-	private boolean isTwistDirty = true;
 	private boolean isGripDirty = true;
 	private long operationCompletionTime;
+	private final int maxExtensionPosition = -1230;
 
 	public ClawCapabilities(SnowballConfig c) {
 		this.config = c;
@@ -25,16 +24,29 @@ public class ClawCapabilities implements Loop {
 
 	@Override
 	public void loop() {
-		if (this.isAbsoluteMode) {
-			this.config.clawRotate.setPosition(calculateAbsolutePosition(this.positionRotate));
-		} else if (this.isRotateDirty) {
-			this.config.clawRotate.setPosition(this.positionRotate);
-			this.isRotateDirty = false;
+		if(config.armExtension.encoder.getCurrentTicks() < maxExtensionPosition) {
+			if (this.isAbsoluteMode) {
+				this.config.clawRotate.setPosition(calculateAbsolutePosition(this.positionRotate));
+			} else if (this.isRotateDirty) {
+				this.config.clawRotate.setPosition(this.positionRotate);
+				this.isRotateDirty = false;
+			}
 		}
-
-		if (this.isTwistDirty) {
-			this.config.clawTwist.setPosition(this.positionTwist);
-			this.isTwistDirty = false;
+		else if(this.isAbsoluteMode) {
+			if(calculateAbsolutePosition(positionRotate) < 0.7) {
+				this.config.clawRotate.setPosition(calculateAbsolutePosition(this.positionRotate));
+			}
+			else {
+				this.config.clawRotate.setPosition(0.7);
+			}
+		}
+		else {
+			if(positionRotate < 0.7) {
+				this.config.clawRotate.setPosition(positionRotate);
+			}
+			else {
+				this.config.clawRotate.setPosition(0.7);
+			}
 		}
 
 		if (this.isGripDirty) {
@@ -85,21 +97,11 @@ public class ClawCapabilities implements Loop {
 		this.operationCompletionTime = System.currentTimeMillis() + 350;
 	}
 
-	public void setTwist(double position) {
-		if (this.positionTwist == position) {
-			return;
-		}
-
-		this.positionTwist = position;
-		this.isTwistDirty = true;
-		this.operationCompletionTime = System.currentTimeMillis() + 350;
-	}
-
 	public void setRotation(double position) {
 		if (this.positionRotate == position) {
 			return;
 		}
-
+		setOpen(false);
 		this.positionRotate = position;
 		this.isRotateDirty = true;
 		this.operationCompletionTime = System.currentTimeMillis() + 750;
@@ -109,14 +111,12 @@ public class ClawCapabilities implements Loop {
 		this.setOpen(false);
 		this.isAbsoluteMode = isAbsoluteMode;
 		this.setRotation(preset.servoRotatePosition);
-		this.setTwist(0);
 	}
 
 	public void setPreset(ClawPreset preset, boolean isOpen, boolean isAbsoluteMode) {
 		this.setOpen(isOpen);
 		this.isAbsoluteMode = isAbsoluteMode;
 		this.setRotation(preset.servoRotatePosition);
-		this.setTwist(0);
 	}
 
 	public boolean isAtTargetPosition() {
@@ -166,20 +166,16 @@ public class ClawCapabilities implements Loop {
 	//Min rotation past which must be at default: 0.65
 
 	public enum ClawPreset {
-		UP(1, true),
-		COLLECT_WALL_SPECIMEN(0.8, true),
-		FORWARD(0.72, true),
-		DOWN(0.36, false);
+		UP(1),
+		SAFE_MAX(0.7),
+		FORWARD(0.72),
+		DOWN(0.36);
 
 		public final double servoRotatePosition;
-		public static final double defaultTwistPosition = 1;
-		public final boolean needsToBeExtended;
 		public static final int minExtensionWhenNeeded = -565;
-		public static final double maxRotationNotDefaultTwist = 0.65;
 
-		ClawPreset(double servoRotatePosition, boolean needsToBeExtended) {
+		ClawPreset(double servoRotatePosition) {
 			this.servoRotatePosition = servoRotatePosition;
-			this.needsToBeExtended = needsToBeExtended;
 		}
 	}
 }
