@@ -26,16 +26,28 @@ import java.util.Arrays;
 
 public class PinPointHardware extends I2cDeviceSynchDevice<I2cDeviceSynchSimple> {
 
+	private byte[] bufferLength = new byte[4];
+	private ByteBuffer diagnostics = ByteBuffer.wrap(bufferLength);
 	private int deviceStatus   = 0;
+	private ByteBuffer deviceStatusBuffer = ByteBuffer.wrap(bufferLength);
 	private int loopTime       = 0;
+	private ByteBuffer loopTimeBuffer = ByteBuffer.wrap(bufferLength);
 	private int xEncoderValue  = 0;
+	private ByteBuffer xValBuffer = ByteBuffer.wrap(bufferLength);
 	private int yEncoderValue  = 0;
+	private ByteBuffer yValBuffer = ByteBuffer.wrap(bufferLength);
 	private float xPosition    = 0;
+	private ByteBuffer xPosBuffer = ByteBuffer.wrap(bufferLength);
 	private float yPosition    = 0;
+	private ByteBuffer yPosBuffer = ByteBuffer.wrap(bufferLength);
 	private float hOrientation = 0;
+	private ByteBuffer hOrientationBuffer = ByteBuffer.wrap(bufferLength);
 	private float xVelocity    = 0;
+	private ByteBuffer xVeloBuffer = ByteBuffer.wrap(bufferLength);
 	private float yVelocity    = 0;
+	private ByteBuffer yVeloBuffer = ByteBuffer.wrap(bufferLength);
 	private float hVelocity    = 0;
+	private ByteBuffer hVeloBuffer = ByteBuffer.wrap(bufferLength);
 
 	private static final float goBILDA_SWINGARM_POD = 13.26291192f; //ticks-per-mm for the goBILDA Swingarm Pod
 	private static final float goBILDA_4_BAR_POD    = 19.89436789f; //ticks-per-mm for the goBILDA 4-Bar Pod
@@ -155,8 +167,8 @@ public class PinPointHardware extends I2cDeviceSynchDevice<I2cDeviceSynchSimple>
 	 * @param reg the register to read from
 	 * @return returns an int that contains the value stored in the read register
 	 */
-	private int readInt(Register reg){
-		return byteArrayToInt(deviceClient.read(reg.bVal,4), ByteOrder.LITTLE_ENDIAN);
+	private int readInt(Register reg, ByteBuffer buffer){
+		return byteArrayToInt(deviceClient.read(reg.bVal,4), ByteOrder.LITTLE_ENDIAN, buffer);
 	}
 
 	/**
@@ -244,16 +256,26 @@ public class PinPointHardware extends I2cDeviceSynchDevice<I2cDeviceSynchSimple>
 	 */
 	public void update(){
 		byte[] bArr   = deviceClient.read(Register.BULK_READ.bVal, 40);
-		deviceStatus  = byteArrayToInt(Arrays.copyOfRange  (bArr, 0, 4),  ByteOrder.LITTLE_ENDIAN);
-		loopTime      = byteArrayToInt(Arrays.copyOfRange  (bArr, 4, 8),  ByteOrder.LITTLE_ENDIAN);
-		xEncoderValue = byteArrayToInt(Arrays.copyOfRange  (bArr, 8, 12), ByteOrder.LITTLE_ENDIAN);
-		yEncoderValue = byteArrayToInt(Arrays.copyOfRange  (bArr, 12,16), ByteOrder.LITTLE_ENDIAN);
-		xPosition     = byteArrayToFloat(Arrays.copyOfRange(bArr, 16,20), ByteOrder.LITTLE_ENDIAN);
-		yPosition     = byteArrayToFloat(Arrays.copyOfRange(bArr, 20,24), ByteOrder.LITTLE_ENDIAN);
-		hOrientation  = byteArrayToFloat(Arrays.copyOfRange(bArr, 24,28), ByteOrder.LITTLE_ENDIAN);
-		xVelocity     = byteArrayToFloat(Arrays.copyOfRange(bArr, 28,32), ByteOrder.LITTLE_ENDIAN);
-		yVelocity     = byteArrayToFloat(Arrays.copyOfRange(bArr, 32,36), ByteOrder.LITTLE_ENDIAN);
-		hVelocity     = byteArrayToFloat(Arrays.copyOfRange(bArr, 36,40), ByteOrder.LITTLE_ENDIAN);
+		deviceStatus  = byteArrayToInt(Arrays.copyOfRange  (bArr, 0, 4),  ByteOrder.LITTLE_ENDIAN, deviceStatusBuffer);
+		loopTime      = byteArrayToInt(Arrays.copyOfRange  (bArr, 4, 8),  ByteOrder.LITTLE_ENDIAN, loopTimeBuffer);
+		xEncoderValue = byteArrayToInt(Arrays.copyOfRange  (bArr, 8, 12), ByteOrder.LITTLE_ENDIAN, xValBuffer);
+		yEncoderValue = byteArrayToInt(Arrays.copyOfRange  (bArr, 12,16), ByteOrder.LITTLE_ENDIAN, yValBuffer);
+		xPosition     = byteArrayToFloat(Arrays.copyOfRange(bArr, 16,20), ByteOrder.LITTLE_ENDIAN, xPosBuffer);
+		yPosition     = byteArrayToFloat(Arrays.copyOfRange(bArr, 20,24), ByteOrder.LITTLE_ENDIAN, yPosBuffer);
+		hOrientation  = byteArrayToFloat(Arrays.copyOfRange(bArr, 24,28), ByteOrder.LITTLE_ENDIAN, hOrientationBuffer);
+		xVelocity     = byteArrayToFloat(Arrays.copyOfRange(bArr, 28,32), ByteOrder.LITTLE_ENDIAN, xVeloBuffer);
+		yVelocity     = byteArrayToFloat(Arrays.copyOfRange(bArr, 32,36), ByteOrder.LITTLE_ENDIAN, yVeloBuffer);
+		hVelocity     = byteArrayToFloat(Arrays.copyOfRange(bArr, 36,40), ByteOrder.LITTLE_ENDIAN, hVeloBuffer);
+	}
+
+	private int byteArrayToInt(byte[] byteArray, ByteOrder byteOrder, ByteBuffer buffer) {
+		buffer.put(byteArray);
+		return buffer.order(byteOrder).getInt();
+	}
+
+	private float byteArrayToFloat(byte[] byteArray, ByteOrder byteOrder, ByteBuffer buffer) {
+		buffer.put(byteArray);
+		return buffer.order(byteOrder).getInt();
 	}
 
 	/**
@@ -384,12 +406,12 @@ public class PinPointHardware extends I2cDeviceSynchDevice<I2cDeviceSynchSimple>
 	 * Checks the deviceID of the Odometry Computer. Should return 1.
 	 * @return 1 if device is functional.
 	 */
-	public int getDeviceID(){return readInt(Register.DEVICE_ID);}
+	public int getDeviceID(){return readInt(Register.DEVICE_ID, diagnostics);}
 
 	/**
 	 * @return the firmware version of the Odometry Computer
 	 */
-	public int getDeviceVersion(){return readInt(Register.DEVICE_VERSION); }
+	public int getDeviceVersion(){return readInt(Register.DEVICE_VERSION, diagnostics); }
 
 	public float getYawScalar(){return readFloat(Register.YAW_SCALAR); }
 
@@ -504,4 +526,16 @@ public class PinPointHardware extends I2cDeviceSynchDevice<I2cDeviceSynchSimple>
 
 
 
+}
+
+enum ByteBufferType {
+	DEVICE_STATUS,
+	LOOP_TIME,
+	X_ENCODER_VAL,
+	Y_ENCODER_VAL,
+	X_POS,
+	Y_POS,
+	X_VELO,
+	Y_VELO,
+	H_VELO
 }
