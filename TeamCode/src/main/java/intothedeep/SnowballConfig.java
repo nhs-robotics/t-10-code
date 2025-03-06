@@ -108,9 +108,9 @@ public class SnowballConfig extends AbstractRobotConfiguration {
 	public Localizer<Pose> createLocalizer() {
 		return new PinPointLocalizer(
 				pinPoint,
-				0.125,
+				0,
 				PinPointHardware.EncoderDirection.FORWARD,
-				1.375,
+				-1.5,
 				PinPointHardware.EncoderDirection.REVERSED,
 				PinPointHardware.GoBildaOdometryPods.goBILDA_4_BAR_POD
 		);

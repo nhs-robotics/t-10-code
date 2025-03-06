@@ -48,6 +48,6 @@ public class OdometryUtils {
 
 	//These two are the same because inversion undoes inversion, but they are left separate for clarity
 	public static Pose convertFromOurConventionsToFTCField(Pose pose) {
-		return new Pose(-pose.getX(),pose.getY(),-pose.getHeading(AngleUnit.RADIANS) + Math.PI,AngleUnit.RADIANS);
+		return new Pose(pose.getX(),-pose.getY(),-pose.getHeading(AngleUnit.RADIANS) + Math.PI,AngleUnit.RADIANS);
 	}
 }

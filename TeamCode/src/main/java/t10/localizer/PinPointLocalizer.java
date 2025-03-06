@@ -85,7 +85,7 @@ public class PinPointLocalizer implements Localizer<Pose> {
 
 	@Override
 	public void setFieldCentric(Pose pose) {
-		pinPoint.setPosition(Pose.toPose2D(OdometryUtils.convertFromFTCFieldToOurConventions(pose)));
+		pinPoint.setPosition(Pose.toPose2D(OdometryUtils.convertFromOurConventionsToFTCField(pose)));
 	}
 
 	@Override
