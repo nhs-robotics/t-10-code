@@ -137,8 +137,8 @@ public class CompetitionTeleOp extends BootstrappedOpMode {
 		this.t_armExtension.setValue(this.armExtension.getPosition());
 		this.ups.setValue(updates / ((System.currentTimeMillis() / 1000L + 1) - startUpdates));
 		Pose pose = localizer.getFieldCentric();
-		this.posY.setValue(pose.getX());
-		this.posX.setValue(pose.getY());
+		this.posX.setValue(pose.getX());
+		this.posY.setValue(pose.getY());
 		this.posH.setValue(pose.getHeading(AngleUnit.DEGREES));
 
 

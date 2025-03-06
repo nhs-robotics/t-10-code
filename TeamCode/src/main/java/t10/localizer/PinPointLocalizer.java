@@ -24,7 +24,7 @@ package t10.localizer;
 
 import static com.qualcomm.robotcore.util.TypeConversion.byteArrayToInt;
 
-import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import t10.bootstrap.PinPointHardware;
 import t10.geometry.Pose;
@@ -34,6 +34,7 @@ public class PinPointLocalizer implements Localizer<Pose> {
 
 
 	private PinPointHardware pinPoint;
+	private double initialAngle;
 
 
 	/**
@@ -42,21 +43,21 @@ public class PinPointLocalizer implements Localizer<Pose> {
 	 * It can be found by finding the intersection of the two lines made by diagonal wheel pairs.
 	 *
 	 * @param pinPoint The PinPoint device
-	 * @param yPodOffsetFromCenter The distance in the x-direction (right is positive) of the forward-backward pod from the robot's center of rotation
-	 * @param yDirection The direction the y-pod (which measures delta in the y direction) is oriented
-	 * @param xPodOffsetFromCenter The distance in the y-direction (forward is positive) of the right-left pod from the robot's center of rotation
-	 * @param xDirection The direction the x-pod (which measures delta in the x direction) is oriented
+	 * @param xPodOffsetFromCenter The distance in the x-direction (right is positive) of the forward-backward pod from the robot's center of rotation
+	 * @param xDirection The direction the y-pod (which measures delta in the y direction) is oriented
+	 * @param yPodOffsetFromCenter The distance in the y-direction (forward is positive) of the right-left pod from the robot's center of rotation
+	 * @param yDirection The direction the x-pod (which measures delta in the x direction) is oriented
 	 * @param encoderResolution The number of ticks per mm of the encoders attached to the PinPoint
 	 */
-	public PinPointLocalizer(PinPointHardware pinPoint, double yPodOffsetFromCenter, PinPointHardware.EncoderDirection yDirection, double xPodOffsetFromCenter, PinPointHardware.EncoderDirection xDirection, double encoderResolution) {
+	public PinPointLocalizer(PinPointHardware pinPoint, double xPodOffsetFromCenter, PinPointHardware.EncoderDirection xDirection, double yPodOffsetFromCenter, PinPointHardware.EncoderDirection yDirection, double encoderResolution) {
 		this.pinPoint = pinPoint;
+		this.pinPoint.resetPosAndIMU();
 		this.pinPoint.setEncoderResolution(encoderResolution);
 		//For them, x-left is positive, so the inputted offset is negative. That's intentional. It's not causing your bug, I promise
 		//Also, they want values in mm instead of inches. Thus, 25.4
-		this.pinPoint.setOffsets(-yPodOffsetFromCenter * 25.4,xPodOffsetFromCenter * 25.4);
+		this.pinPoint.setOffsets(-xPodOffsetFromCenter * 25.4,yPodOffsetFromCenter * 25.4);
 		//For them, the x-pod detects changes in y and the y-pod detects changes in x. This, too, is not your bug
-		this.pinPoint.setEncoderDirections(pinPoint.invertDirection(yDirection),xDirection);
-		this.pinPoint.resetPosAndIMU();
+		this.pinPoint.setEncoderDirections(xDirection,yDirection);
 	}
 
 	/**
@@ -65,35 +66,34 @@ public class PinPointLocalizer implements Localizer<Pose> {
 	 * It can be found by finding the intersection of the two lines made by diagonal wheel pairs.
 	 *
 	 * @param pinPoint The PinPoint device
-	 * @param yPodOffsetFromCenter The distance in the x-direction (right is positive) of the forward-backward pod from the robot's center of rotation
-	 * @param yDirection The direction the y-pod (which measures delta in the y direction) is oriented
-	 * @param xPodOffsetFromCenter The distance in the y-direction (forward is positive) of the right-left pod from the robot's center of rotation
-	 * @param xDirection The direction the x-pod (which measures delta in the x direction) is oriented
+	 * @param xPodOffsetFromCenter The distance in the x-direction (right is positive) of the forward-backward pod from the robot's center of rotation
+	 * @param xDirection The direction the y-pod (which measures delta in the y direction) is oriented
+	 * @param yPodOffsetFromCenter The distance in the y-direction (forward is positive) of the right-left pod from the robot's center of rotation
+	 * @param yDirection The direction the x-pod (which measures delta in the x direction) is oriented
 	 * @param pods The type of pods you are using
 	 */
-	public PinPointLocalizer(PinPointHardware pinPoint, double yPodOffsetFromCenter, PinPointHardware.EncoderDirection yDirection, double xPodOffsetFromCenter, PinPointHardware.EncoderDirection xDirection, PinPointHardware.GoBildaOdometryPods pods) {
+	public PinPointLocalizer(PinPointHardware pinPoint, double xPodOffsetFromCenter, PinPointHardware.EncoderDirection xDirection, double yPodOffsetFromCenter, PinPointHardware.EncoderDirection yDirection, PinPointHardware.GoBildaOdometryPods pods) {
 		this.pinPoint = pinPoint;
+		this.pinPoint.resetPosAndIMU();
 		this.pinPoint.setEncoderResolution(pods);
 		//For them, x-left is positive, so the inputted offset is negative. That's intentional. It's not causing your bug, I promise
 		//Also, they want values in mm instead of inches. Thus, 25.4
-		this.pinPoint.setOffsets(-yPodOffsetFromCenter * 25.4,xPodOffsetFromCenter * 25.4);
-		//For them, the x-pod detects changes in y and the y-pod detects changes in x. This, too, is not your bug
-		this.pinPoint.setEncoderDirections(pinPoint.invertDirection(yDirection),xDirection);
-		this.pinPoint.resetPosAndIMU();
+		this.pinPoint.setOffsets(-xPodOffsetFromCenter * 25.4,yPodOffsetFromCenter * 25.4);
+		this.pinPoint.setEncoderDirections(xDirection,yDirection);
 	}
 
 	@Override
 	public void setFieldCentric(Pose pose) {
-		pinPoint.setPosition(Pose.toPose2D(pose));
+		pinPoint.setPosition(Pose.toPose2D(convertToOurConventions(pose)));
 	}
 
 	@Override
 	public Pose getFieldCentric() {
-		return new Pose(pinPoint.getPosition());
+		return convertToOurConventions(new Pose(pinPoint.getPosition()));
 	}
 
 	public Pose getVelocity() {
-		return new Pose(pinPoint.getVelocity());
+		return convertToOurConventions(new Pose(pinPoint.getVelocity()));
 	}
 
 	public String status() {
@@ -107,5 +107,14 @@ public class PinPointLocalizer implements Localizer<Pose> {
 	@Override
 	public void loop() {
 		pinPoint.update();
+	}
+
+	@Override
+	public boolean isDoneInitializing() {
+		return pinPoint.getDeviceStatus() == PinPointHardware.DeviceStatus.READY;
+	}
+
+	private Pose convertToOurConventions(Pose pose) {
+		return new Pose(pose.getX(), pose.getY(), -pose.getHeading(AngleUnit.RADIANS), AngleUnit.RADIANS);
 	}
 }

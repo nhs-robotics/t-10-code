@@ -75,6 +75,11 @@ public class MecanumEncodersLocalizer implements Localizer<Pose> {
 	}
 
 	@Override
+	public boolean isDoneInitializing() {
+		return true;
+	}
+
+	@Override
 	public void setFieldCentric(Pose pose) {
 		this.fieldCentricPose = pose;
 		this.fr.reset();

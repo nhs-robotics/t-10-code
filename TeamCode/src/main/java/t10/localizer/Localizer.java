@@ -16,4 +16,6 @@ public interface Localizer<T extends Point> extends Loop {
 	 * @return The that represents where the robot is in relation to the field.
 	 */
 	T getFieldCentric();
+
+	boolean isDoneInitializing();
 }

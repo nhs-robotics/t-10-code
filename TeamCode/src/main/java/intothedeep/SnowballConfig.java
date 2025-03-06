@@ -52,9 +52,6 @@ public class SnowballConfig extends AbstractRobotConfiguration {
 	)
 	public Motor br;
 
-	@Hardware(name = "imu")
-	public BNO055IMU imu;
-
 	@Hardware(
 			name = "LiftRight",
 			ticksPerRevolution = Constants.TickCounts.MOVEMENT_MOTOR_TICK_COUNT
@@ -79,9 +76,6 @@ public class SnowballConfig extends AbstractRobotConfiguration {
 	)
 	public Motor armRotation;
 
-	@Hardware(name = "OctoQuad")
-	public OctoQuad octoQuad;
-
 	@Hardware(name = "ClawRotate")
 	public Servo clawRotate;
 
@@ -97,7 +91,6 @@ public class SnowballConfig extends AbstractRobotConfiguration {
 	public SnowballConfig(HardwareMap hardwareMap) {
 		super(hardwareMap);
 
-		this.imu.initialize(Constants.IMU_PARAMETERS);
 	}
 
 	@Override
@@ -115,11 +108,12 @@ public class SnowballConfig extends AbstractRobotConfiguration {
 	public Localizer<Pose> createLocalizer() {
 		return new PinPointLocalizer(
 				pinPoint,
-				0,
-				PinPointHardware.EncoderDirection.REVERSED,
-				-1.5,
+				0.125,
+				PinPointHardware.EncoderDirection.FORWARD,
+				-1.375,
 				PinPointHardware.EncoderDirection.FORWARD,
 				PinPointHardware.GoBildaOdometryPods.goBILDA_4_BAR_POD
 		);
 	}
 }
+
