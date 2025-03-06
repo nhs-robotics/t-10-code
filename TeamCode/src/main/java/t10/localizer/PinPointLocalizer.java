@@ -43,9 +43,9 @@ public class PinPointLocalizer implements Localizer<Pose> {
 	 *
 	 * @param pinPoint The PinPoint device
 	 * @param yPodOffsetFromCenter The distance in the x-direction (right is positive) of the forward-backward pod from the robot's center of rotation
-	 * @param yDirection The direction the y-pod is oriented
+	 * @param yDirection The direction the y-pod (which measures delta in the y direction) is oriented
 	 * @param xPodOffsetFromCenter The distance in the y-direction (forward is positive) of the right-left pod from the robot's center of rotation
-	 * @param xDirection The direction the x-pod is oriented
+	 * @param xDirection The direction the x-pod (which measures delta in the x direction) is oriented
 	 * @param encoderResolution The number of ticks per mm of the encoders attached to the PinPoint
 	 */
 	public PinPointLocalizer(PinPointHardware pinPoint, double yPodOffsetFromCenter, PinPointHardware.EncoderDirection yDirection, double xPodOffsetFromCenter, PinPointHardware.EncoderDirection xDirection, double encoderResolution) {
@@ -66,9 +66,9 @@ public class PinPointLocalizer implements Localizer<Pose> {
 	 *
 	 * @param pinPoint The PinPoint device
 	 * @param yPodOffsetFromCenter The distance in the x-direction (right is positive) of the forward-backward pod from the robot's center of rotation
-	 * @param yDirection The direction the y-pod is oriented
+	 * @param yDirection The direction the y-pod (which measures delta in the y direction) is oriented
 	 * @param xPodOffsetFromCenter The distance in the y-direction (forward is positive) of the right-left pod from the robot's center of rotation
-	 * @param xDirection The direction the x-pod is oriented
+	 * @param xDirection The direction the x-pod (which measures delta in the x direction) is oriented
 	 * @param pods The type of pods you are using
 	 */
 	public PinPointLocalizer(PinPointHardware pinPoint, double yPodOffsetFromCenter, PinPointHardware.EncoderDirection yDirection, double xPodOffsetFromCenter, PinPointHardware.EncoderDirection xDirection, PinPointHardware.GoBildaOdometryPods pods) {

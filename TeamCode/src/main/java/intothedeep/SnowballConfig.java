@@ -117,9 +117,9 @@ public class SnowballConfig extends AbstractRobotConfiguration {
 				pinPoint,
 				0,
 				PinPointHardware.EncoderDirection.REVERSED,
-				0,
+				-1.5,
 				PinPointHardware.EncoderDirection.FORWARD,
-				PinPointHardware.GoBildaOdometryPods.goBILDA_SWINGARM_POD
+				PinPointHardware.GoBildaOdometryPods.goBILDA_4_BAR_POD
 		);
 	}
 }
