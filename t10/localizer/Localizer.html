@@ -78,7 +78,7 @@ loadScripts(document, 'script');</script>
 </dl>
 <dl class="notes">
 <dt>All Known Implementing Classes:</dt>
-<dd><code><a href="AprilTagLocalizer.html" title="class in t10.localizer">AprilTagLocalizer</a></code>, <code><a href="MecanumEncodersLocalizer.html" title="class in t10.localizer">MecanumEncodersLocalizer</a></code>, <code><a href="OdometryIMULocalizer.html" title="class in t10.localizer">OdometryIMULocalizer</a></code>, <code><a href="OdometryIMULocalizerFast.html" title="class in t10.localizer">OdometryIMULocalizerFast</a></code>, <code><a href="OdometryLocalizer.html" title="class in t10.localizer">OdometryLocalizer</a></code>, <code><a href="OdometryLocalizerFast.html" title="class in t10.localizer">OdometryLocalizerFast</a></code></dd>
+<dd><code><a href="AprilTagLocalizer.html" title="class in t10.localizer">AprilTagLocalizer</a></code>, <code><a href="MecanumEncodersLocalizer.html" title="class in t10.localizer">MecanumEncodersLocalizer</a></code>, <code><a href="OdometryIMULocalizer.html" title="class in t10.localizer">OdometryIMULocalizer</a></code>, <code><a href="OdometryIMULocalizerFast.html" title="class in t10.localizer">OdometryIMULocalizerFast</a></code>, <code><a href="OdometryLocalizer.html" title="class in t10.localizer">OdometryLocalizer</a></code>, <code><a href="OdometryLocalizerFast.html" title="class in t10.localizer">OdometryLocalizerFast</a></code>, <code><a href="PinPointLocalizer.html" title="class in t10.localizer">PinPointLocalizer</a></code></dd>
 </dl>
 <hr>
 <div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">Localizer&lt;T extends <a href="../geometry/Point.html" title="class in t10.geometry">Point</a>&gt;</span><span class="extends-implements">
@@ -100,9 +100,12 @@ extends <a href="../Loop.html" title="interface in t10">Loop</a></span></div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="Localizer.html" title="type parameter in Localizer">T</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getFieldCentric()" class="member-name-link">getFieldCentric</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#setFieldCentric(T)" class="member-name-link">setFieldCentric</a><wbr>(<a href="Localizer.html" title="type parameter in Localizer">T</a>&nbsp;pose)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isDoneInitializing()" class="member-name-link">isDoneInitializing</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#setFieldCentric(T)" class="member-name-link">setFieldCentric</a><wbr>(<a href="Localizer.html" title="type parameter in Localizer">T</a>&nbsp;pose)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Sets the reference.</div>
 </div>
 </div>
@@ -141,6 +144,12 @@ extends <a href="../Loop.html" title="interface in t10">Loop</a></span></div>
 <dt>Returns:</dt>
 <dd>The that represents where the robot is in relation to the field.</dd>
 </dl>
+</section>
+</li>
+<li>
+<section class="detail" id="isDoneInitializing()">
+<h3>isDoneInitializing</h3>
+<div class="member-signature"><span class="return-type">boolean</span>&nbsp;<span class="element-name">isDoneInitializing</span>()</div>
 </section>
 </li>
 </ul>
