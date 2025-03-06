@@ -28,6 +28,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import t10.bootstrap.PinPointHardware;
 import t10.geometry.Pose;
+import t10.utils.OdometryUtils;
 
 
 public class PinPointLocalizer implements Localizer<Pose> {
@@ -84,16 +85,17 @@ public class PinPointLocalizer implements Localizer<Pose> {
 
 	@Override
 	public void setFieldCentric(Pose pose) {
-		pinPoint.setPosition(Pose.toPose2D(convertToOurConventions(pose)));
+		pinPoint.setPosition(Pose.toPose2D(OdometryUtils.convertFromFTCFieldToOurConventions(pose)));
 	}
 
 	@Override
 	public Pose getFieldCentric() {
-		return convertToOurConventions(new Pose(pinPoint.getPosition()));
+		//return new Pose(pinPoint.getPosition());
+		return OdometryUtils.convertFromFTCFieldToOurConventions(new Pose(pinPoint.getPosition()));
 	}
 
 	public Pose getVelocity() {
-		return convertToOurConventions(new Pose(pinPoint.getVelocity()));
+		return OdometryUtils.convertFromFTCFieldToOurConventions(new Pose(pinPoint.getVelocity()));
 	}
 
 	public String status() {
@@ -112,9 +114,5 @@ public class PinPointLocalizer implements Localizer<Pose> {
 	@Override
 	public boolean isDoneInitializing() {
 		return pinPoint.getDeviceStatus() == PinPointHardware.DeviceStatus.READY;
-	}
-
-	private Pose convertToOurConventions(Pose pose) {
-		return new Pose(pose.getX(), pose.getY(), -pose.getHeading(AngleUnit.RADIANS), AngleUnit.RADIANS);
 	}
 }
