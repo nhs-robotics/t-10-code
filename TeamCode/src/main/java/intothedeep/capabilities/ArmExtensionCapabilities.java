@@ -5,31 +5,32 @@ import intothedeep.SnowballConfig;
 import t10.Loop;
 import t10.auto.AutoAction;
 import t10.motion.hardware.Motor;
+import t10.utils.PIDController;
 
 public class ArmExtensionCapabilities implements Loop {
 	public static final int POSITION_FULLY_RETRACTED = 0;
 	public static final int POSITION_FULLY_EXTENDED = -1700;
 	public static final int MAX_ERROR_ALLOWED = 40;
 	private final Motor armExtension;
+	private final PIDController armExtensionStabilizer;
 	private int targetPosition;
 	private boolean isManuallyControlled;
 
 	public ArmExtensionCapabilities(SnowballConfig config) {
 		this.armExtension = config.armExtension;
 		this.isManuallyControlled = true;
+		this.armExtensionStabilizer = new PIDController(0.0225, 0, 0);
 	}
 
 	@Override
 	public void loop() {
 		if (!this.isManuallyControlled) {
-			double error = this.targetPosition - this.getPosition();
-			double power = error * 0.045 * -1;
+			double power = armExtensionStabilizer.calculate(
+					this.getPosition(),
+					this.targetPosition
+			) * -1;
 
-			if (this.isAtTargetPosition()) {
-				this.setPower(0);
-			} else {
-				this.setPower(power);
-			}
+			this.setPower(power);
 		}
 	}
 
