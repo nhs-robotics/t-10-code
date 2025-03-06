@@ -96,4 +96,9 @@ public class AprilTagLocalizer implements Localizer<Point> {
 	public Point getFieldCentric() {
 		return this.fieldCentricPoint;
 	}
+
+	@Override
+	public boolean isDoneInitializing() {
+		return true;
+	}
 }

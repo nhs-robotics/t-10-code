@@ -117,4 +117,9 @@ public class OdometryLocalizer implements Localizer<Pose> {
 	public Pose getFieldCentric() {
 		return this.fieldCentricPose;
 	}
+
+	@Override
+	public boolean isDoneInitializing() {
+		return true;
+	}
 }

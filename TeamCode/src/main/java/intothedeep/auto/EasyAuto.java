@@ -36,7 +36,6 @@ public abstract class EasyAuto extends BootstrappedOpMode {
 		// Driving & Localization
 		this.driver = this.config.createMecanumDriver();
 		this.localizer = this.config.createLocalizer();
-		this.localizer.setFieldCentric(this.startPose);
 
 		// Capabilities
 		this.armExtension = new ArmExtensionCapabilities(config);
@@ -50,6 +49,11 @@ public abstract class EasyAuto extends BootstrappedOpMode {
 		this.crane.setTargetPosition(CraneCapabilities.POSITION_BOTTOM);
 		this.claw.setOpen(false);  // Keep closed to grasp a block for auto
 		this.claw.setPreset(ClawCapabilities.ClawPreset.DOWN, true);
+		while(!localizer.isDoneInitializing()) {
+			localizer.loop();
+		}
+
+		this.localizer.setFieldCentric(this.startPose);
 	}
 
 	@Override
