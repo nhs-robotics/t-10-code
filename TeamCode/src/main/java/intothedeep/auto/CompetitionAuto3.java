@@ -1,19 +1,14 @@
 package intothedeep.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import intothedeep.Constants;
 import intothedeep.capabilities.ArmExtensionCapabilities;
 import intothedeep.capabilities.ClawCapabilities;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-
 import t10.auto.AutoAction;
 import t10.auto.MoveToAction;
 import t10.auto.SequentialAction;
-import t10.geometry.Point;
 import t10.geometry.Pose;
-import t10.localizer.AprilTagLocalizer;
 import t10.metrics.Metric;
 
 @Autonomous
@@ -31,15 +26,15 @@ public class CompetitionAuto3 extends EasyAuto {
 		super.init();
 
 		this.autoSequence = sequentially(
-				scoreFirst(10),
-				shuffleOne(),
-				getNextAfterScore(),
-				scoreFirst(4),
+				scoreSpecimen(10),
+				shuffleSamples(1),
+				getSpecimenFromObservationZone(),
+				scoreSpecimen(4),
 				park()
 		);
 	}
 
-	private AutoAction shuffleOne() {
+	private AutoAction shuffleSamples(int number) {
 
 		return sequentially(
 				claw(ClawCapabilities.ClawPreset.FORWARD, true, false),
@@ -112,7 +107,7 @@ public class CompetitionAuto3 extends EasyAuto {
 		);
 	}
 
-	private AutoAction getNextAfterScore() {
+	private AutoAction getSpecimenFromObservationZone() {
 		return sequentially(
 				claw(ClawCapabilities.ClawPreset.FORWARD, true, true),
 				armExtension(ArmExtensionCapabilities.POSITION_FULLY_RETRACTED),
@@ -141,13 +136,13 @@ public class CompetitionAuto3 extends EasyAuto {
 		);
 	}
 
-	private AutoAction scoreFirst(double y) {
+	private AutoAction scoreSpecimen(double yPosition) {
 		return sequentially(
 				armRotation(628),
 				new MoveToAction(
 						this.localizer,
 						this.driver,
-						new Pose(y, 52, -90, AngleUnit.DEGREES),
+						new Pose(yPosition, 52, -90, AngleUnit.DEGREES),
 						2,
 						100,
 						30,
@@ -158,7 +153,7 @@ public class CompetitionAuto3 extends EasyAuto {
 				new MoveToAction(
 						this.localizer,
 						this.driver,
-						new Pose(y, 31.5, -90, AngleUnit.DEGREES),
+						new Pose(yPosition, 31.5, -90, AngleUnit.DEGREES),
 						3,
 						100,
 						30,
