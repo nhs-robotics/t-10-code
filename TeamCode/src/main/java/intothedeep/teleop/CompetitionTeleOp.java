@@ -32,6 +32,7 @@ public class CompetitionTeleOp extends BootstrappedOpMode {
 	private Localizer<Pose> localizer;
 	private long updates;
 	private long startUpdates;
+	private double rotationProportion = 1;
 	private VoltageSensor myControlHubVoltageSensor;
 
 	@Metric
@@ -92,8 +93,8 @@ public class CompetitionTeleOp extends BootstrappedOpMode {
 				.leftTrigger.whileDown(proportion -> this.armExtension.setPowerManually(-proportion)).onRelease(() -> this.armExtension.setPowerManually(0)).ok()
 				.leftBumper.onPress(() -> this.armExtension.setTargetPosition(0)).ok()
 				// todo: check inversion
-				.rightJoystick.onMove((x, y) -> this.crane.setPowerManually(-y)).ok()
-				.leftJoystick.onMove((x, y) -> this.armRotation.setPowerManually(-y)).ok()
+				.rightJoystick.onMove((x, y) -> this.crane.setPowerManually(y)).ok()
+				.leftJoystick.onMove((x, y) -> this.armRotation.setPowerManually(-y * rotationProportion)).ok()
 				.a.onPress(() -> {
 					armExtension.setTargetPosition(ArmExtensionCapabilities.POSITION_FULLY_RETRACTED);
 					armRotation.setTargetPosition(400);
@@ -106,6 +107,7 @@ public class CompetitionTeleOp extends BootstrappedOpMode {
 					armExtension.setTargetPosition(-1400);
 					claw.setPreset(ClawCapabilities.ClawPreset.UP,true);
 				}).ok()
+				.dpadDown.onToggleOn(() -> rotationProportion = 0.25).onToggleOff(() -> rotationProportion = 1).ok()
 		/*Todo: add basket presets for d-pad*/;
 
 		this.claw.setPreset(ClawCapabilities.ClawPreset.FORWARD, true);
