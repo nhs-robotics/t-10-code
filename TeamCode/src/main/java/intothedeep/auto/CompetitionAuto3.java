@@ -1,6 +1,7 @@
 package intothedeep.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 import intothedeep.capabilities.ArmExtensionCapabilities;
 import intothedeep.capabilities.ClawCapabilities;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -21,6 +22,9 @@ public class CompetitionAuto3 extends EasyAuto {
 	@Metric
 	public Pose pose;
 	private SequentialAction autoSequence;
+	private VoltageSensor voltageSensor;
+	@Metric
+	public double voltage;
 
 	public CompetitionAuto3() {
 		super(new Pose(36, 62, -90, AngleUnit.DEGREES));
@@ -29,7 +33,7 @@ public class CompetitionAuto3 extends EasyAuto {
 	@Override
 	public void init() {
 		super.init();
-
+		voltageSensor = hardwareMap.get(VoltageSensor.class, "Control Hub");
 		this.autoSequence = sequentially(
 				transitionToShuffle(),
 				shuffleSamples(0),
@@ -247,5 +251,6 @@ public class CompetitionAuto3 extends EasyAuto {
 		this.armExtension.loop();
 		this.crane.loop();
 		this.claw.loop();
+		this.voltage = this.voltageSensor.getVoltage();
 	}
 }
