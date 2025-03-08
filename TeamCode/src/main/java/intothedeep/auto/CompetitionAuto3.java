@@ -37,14 +37,16 @@ public class CompetitionAuto3 extends EasyAuto {
 		this.autoSequence = sequentially(
 				transitionToShuffle(),
 				shuffleSamples(0),
-				shuffleSamples(12),
+				shuffleSamples(10),
 				shuffleSamples(17),
 				getSpecimenFromObservationZone(),
-				scoreSpecimenFromOver(12),
-				getSpecimenFromObservationZone(),
-				scoreSpecimenFromOver(10),
+				scoreSpecimenFromOver(9),
 				getSpecimenFromObservationZone(),
 				scoreSpecimenFromOver(8),
+				getSpecimenFromObservationZone(),
+				scoreSpecimenFromOver(7),
+				getSpecimenFromObservationZone(),
+				scoreSpecimenFromOver(6),
 				park()
 		);
 	}
@@ -52,59 +54,58 @@ public class CompetitionAuto3 extends EasyAuto {
 	private AutoAction transitionToShuffle() {
 		return simultaneously(
 			armExtension(ArmExtensionCapabilities.POSITION_FULLY_RETRACTED),
-			claw(ClawCapabilities.ClawPreset.FORWARD, true, false)
-//			new MoveToAction(
-//					this.localizer,
-//					this.driver,
-//					new Pose(36, 40, -90, AngleUnit.DEGREES),
-//					5,
-//					3,
-//					50,
-//					60
-//			)
+			claw(ClawCapabilities.ClawPreset.FORWARD, true, false),
+			new MoveToAction(
+					this.localizer,
+					this.driver,
+					new Pose(38, 26, -90, AngleUnit.DEGREES),
+					5,
+					100,
+					100, 60
+			)
 		);
 	}
 
 	private AutoAction shuffleSamples(int yOffset) {
 		return sequentially(
-				// go from start to shuffle first one
+				// go to shuffle position
 				new MoveToAction(
 						this.localizer,
 						this.driver,
-						new Pose(38+yOffset, 18, -90, AngleUnit.DEGREES),
-						3,
-						3,
-						100, 60
+						new Pose(38 + yOffset, 26, -90, AngleUnit.DEGREES),
+						3.5,
+						100,
+						80, 60
 				),
 
-//				// position precisely behind first one
+				// position roughly behind the target sample
 				new MoveToAction(
 						this.localizer,
 						this.driver,
-						new Pose(45 + yOffset, 20, -90, AngleUnit.DEGREES),
-						2,
+						new Pose(45 + yOffset, 16, -90, AngleUnit.DEGREES),
 						3,
-						35, 60
-				),
-//
-//				// shuffle first one into observation zone
-				new MoveToAction(
-						this.localizer,
-						this.driver,
-						new Pose(45 + yOffset, 53, -90, AngleUnit.DEGREES),
-						3,
-						3,
-						50, 60
+						100,
+						60, 60
 				),
 
+				// shuffle target sample into observation zone
 				new MoveToAction(
 						this.localizer,
 						this.driver,
-						new Pose(45 + yOffset, 40, -90, AngleUnit.DEGREES),
-						2,
-						3,
-						50, 60
+						new Pose(45 + yOffset, 48, -90, AngleUnit.DEGREES),
+						5,
+						100,
+						80, 60
 				)
+
+//				new MoveToAction(
+//						this.localizer,
+//						this.driver,
+//						new Pose(45 + yOffset, 40, -90, AngleUnit.DEGREES),
+//						5,
+//						3,
+//						50, 60
+//				)
 		);
 	}
 
@@ -135,7 +136,7 @@ public class CompetitionAuto3 extends EasyAuto {
 							this.driver,
 							new Pose(37, 49, 90, AngleUnit.DEGREES),
 							4,
-							2,
+							10,
 							40,
 							60
 					),
@@ -145,10 +146,10 @@ public class CompetitionAuto3 extends EasyAuto {
 				new MoveToAction(
 						this.localizer,
 						this.driver,
-						new Pose(37, 59, 90, AngleUnit.DEGREES),
-						4,
+						new Pose(35, 58, 90, AngleUnit.DEGREES),
+						2,
 						3,
-						15, 60
+						30, 60
 				),
 				claw(ClawCapabilities.ClawPreset.FORWARD, false, true)
 //				new MoveToAction(
@@ -196,11 +197,11 @@ public class CompetitionAuto3 extends EasyAuto {
 					new MoveToAction(
 							this.localizer,
 							this.driver,
-							new Pose(yPosition, 52, -90, AngleUnit.DEGREES),
-							2,
-							100,
-							50,
-							50
+							new Pose(yPosition, 47, -90, AngleUnit.DEGREES),
+							3,
+							10,
+							60,
+							80
 					),
 					armExtension(ArmExtensionCapabilities.POSITION_FULLY_EXTENDED),
 					claw(ClawCapabilities.ClawPreset.FORWARD, false, true)
@@ -208,7 +209,7 @@ public class CompetitionAuto3 extends EasyAuto {
 				new MoveToAction(
 						this.localizer,
 						this.driver,
-						new Pose(yPosition, 41, -90, AngleUnit.DEGREES),
+						new Pose(yPosition, 40.5, -90, AngleUnit.DEGREES),
 						3,
 						100,
 						30,
@@ -216,7 +217,6 @@ public class CompetitionAuto3 extends EasyAuto {
 				),
 				claw(ClawCapabilities.ClawPreset.DOWN, false, true),
 				simultaneously(
-						claw(ClawCapabilities.ClawPreset.DOWN, true, true),
 						new MoveToAction(
 								this.localizer,
 								this.driver,
@@ -225,7 +225,9 @@ public class CompetitionAuto3 extends EasyAuto {
 								100,
 								50,
 								50
-						)
+						),
+						armExtension(ArmExtensionCapabilities.POSITION_FULLY_RETRACTED),
+						claw(ClawCapabilities.ClawPreset.DOWN, true, true)
 				)
 		);
 	}
