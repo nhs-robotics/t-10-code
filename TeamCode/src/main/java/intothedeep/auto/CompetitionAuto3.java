@@ -187,7 +187,7 @@ public class CompetitionAuto3 extends EasyAuto {
 							60,
 							80
 					),
-					armExtension(ArmExtensionCapabilities.POSITION_FULLY_EXTENDED),
+					armExtension(ArmExtensionCapabilities.POSITION_FULLY_EXTENDED + 10),
 					claw(ClawCapabilities.ClawPreset.FORWARD, false, true)
 				),
 				new MoveToAction(
@@ -207,7 +207,7 @@ public class CompetitionAuto3 extends EasyAuto {
 								new Pose(yPosition, 45, -90, AngleUnit.DEGREES),
 								3,
 								100,
-								50,
+								30,
 								50
 						),
 						armExtension(ArmExtensionCapabilities.POSITION_FULLY_EXTENDED + 200),
