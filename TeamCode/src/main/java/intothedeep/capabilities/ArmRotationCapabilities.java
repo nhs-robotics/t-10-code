@@ -14,7 +14,7 @@ import t10.utils.PIDController;
  */
 public class ArmRotationCapabilities implements Loop {
 	public static final int POSITION_FULLY_DOWNWARDS = -50;
-	public static final int POSITION_INSPECTION = 725;
+	public static final int POSITION_INSPECTION = 745;
 	public static final int POSITION_FULLY_UPWARDS = 788;
 	private static final int MAX_ERROR_ALLOWED = 25;
 	private final Motor armRotation;
