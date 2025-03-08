@@ -19,7 +19,7 @@ public class ArmExtensionCapabilities implements Loop {
 	public ArmExtensionCapabilities(SnowballConfig config) {
 		this.armExtension = config.armExtension;
 		this.isManuallyControlled = true;
-		this.armExtensionStabilizer = new PIDController(0.0225, 0, 0);
+		this.armExtensionStabilizer = new PIDController(0.0165, 0, 0);
 	}
 
 	@Override

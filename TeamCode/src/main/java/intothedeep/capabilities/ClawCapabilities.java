@@ -33,19 +33,19 @@ public class ClawCapabilities implements Loop {
 			}
 		}
 		else if(this.isAbsoluteMode) {
-			if(calculateAbsolutePosition(positionRotate) < 0.7) {
+			if(calculateAbsolutePosition(positionRotate) < 0.65) {
 				this.config.clawRotate.setPosition(calculateAbsolutePosition(this.positionRotate));
 			}
 			else {
-				this.config.clawRotate.setPosition(0.7);
+				this.config.clawRotate.setPosition(0.65);
 			}
 		}
 		else {
-			if(positionRotate < 0.7) {
+			if(positionRotate < 0.65) {
 				this.config.clawRotate.setPosition(positionRotate);
 			}
 			else {
-				this.config.clawRotate.setPosition(0.7);
+				this.config.clawRotate.setPosition(0.65);
 			}
 		}
 
@@ -94,7 +94,7 @@ public class ClawCapabilities implements Loop {
 
 		this.isOpen = isOpen;
 		this.isGripDirty = true;
-		this.operationCompletionTime = System.currentTimeMillis() + 350;
+		this.operationCompletionTime = System.currentTimeMillis() + 150;
 	}
 
 	public void setRotation(double position) {
@@ -104,7 +104,7 @@ public class ClawCapabilities implements Loop {
 		setOpen(false);
 		this.positionRotate = position;
 		this.isRotateDirty = true;
-		this.operationCompletionTime = System.currentTimeMillis() + 750;
+		this.operationCompletionTime = System.currentTimeMillis() + 200;
 	}
 
 	public void setPreset(ClawPreset preset, boolean isAbsoluteMode) {

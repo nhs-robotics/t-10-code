@@ -1,9 +1,15 @@
 package intothedeep.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 import intothedeep.capabilities.ArmExtensionCapabilities;
 import intothedeep.capabilities.ClawCapabilities;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+
+import java.security.InvalidParameterException;
+
+import intothedeep.capabilities.CraneCapabilities;
 
 import t10.auto.AutoAction;
 import t10.auto.MoveToAction;
@@ -16,91 +22,94 @@ public class CompetitionAuto3 extends EasyAuto {
 	@Metric
 	public Pose pose;
 	private SequentialAction autoSequence;
+	private VoltageSensor voltageSensor;
+	@Metric
+	public double voltage;
 
 	public CompetitionAuto3() {
-		super(new Pose(10, 62, -90, AngleUnit.DEGREES));
+		super(new Pose(12, 62, -90, AngleUnit.DEGREES));
 	}
 
 	@Override
 	public void init() {
 		super.init();
-
+		voltageSensor = hardwareMap.get(VoltageSensor.class, "Control Hub");
 		this.autoSequence = sequentially(
-				scoreSpecimen(10),
-				shuffleSamples(1),
+				scoreSpecimenFromOver(9),
 				getSpecimenFromObservationZone(),
-				scoreSpecimen(4),
+				scoreSpecimenFromOver(6.5),
+				transitionToShuffle(),
+				shuffleSamples(0),
+				shuffleSamples(10),
+//				shuffleSamples(17),
+				getSpecimenFromObservationZone(),
+				scoreSpecimenFromOver(4),
+				getSpecimenFromObservationZone(),
+				scoreSpecimenFromOver(1.5),
 				park()
 		);
 	}
 
-	private AutoAction shuffleSamples(int number) {
+	private AutoAction transitionToShuffle() {
+		return simultaneously(
+			armExtension(ArmExtensionCapabilities.POSITION_FULLY_RETRACTED),
+			claw(ClawCapabilities.ClawPreset.FORWARD, true, false),
+			new MoveToAction(
+					this.localizer,
+					this.driver,
+					new Pose(28, 45, -90, AngleUnit.DEGREES),
+					2,
+					100,
+					60, 60
+			)
+		);
+	}
 
+	private AutoAction shuffleSamples(int yOffset) {
 		return sequentially(
-				claw(ClawCapabilities.ClawPreset.FORWARD, true, false),
-				armExtension(ArmExtensionCapabilities.POSITION_FULLY_RETRACTED),
+				// go to shuffle position
 				new MoveToAction(
 						this.localizer,
 						this.driver,
-						new Pose(36, 40, -90, AngleUnit.DEGREES),
+						new Pose(38 + yOffset, 24, -90, AngleUnit.DEGREES),
+						3.5,
+						100,
+						80, 60
+				),
+
+				// position roughly behind the target sample
+				new MoveToAction(
+						this.localizer,
+						this.driver,
+						new Pose(45 + yOffset, 16, -90, AngleUnit.DEGREES),
+						3,
+						100,
+						60, 60
+				),
+
+				// shuffle target sample into observation zone
+				new MoveToAction(
+						this.localizer,
+						this.driver,
+						new Pose(45 + yOffset, 48, -90, AngleUnit.DEGREES),
 						5,
-						3,
-						50,
-						60
-				),
-
-				// go from start to shuffle first one
-				new MoveToAction(
-						this.localizer,
-						this.driver,
-						new Pose(36, 20, -90, AngleUnit.DEGREES),
-						3,
-						3,
-						50, 60
-				),
-
-				// position precisely behind first one
-				new MoveToAction(
-						this.localizer,
-						this.driver,
-						new Pose(45, 16, -90, AngleUnit.DEGREES),
-						2,
-						3,
-						50, 60
-				),
-
-				// shuffle first one into observation zone
-				new MoveToAction(
-						this.localizer,
-						this.driver,
-						new Pose(45, 48, -90, AngleUnit.DEGREES),
-						5,
-						3,
-						50, 60
-				),
-
-				new MoveToAction(
-						this.localizer,
-						this.driver,
-						new Pose(45, 40, 0, AngleUnit.DEGREES),
-						2,
-						3,
-						50, 60
+						100,
+						80, 60
 				)
 		);
 	}
 
 	private AutoAction park() {
-		return sequentially(
-				claw(ClawCapabilities.ClawPreset.FORWARD, true, false),
+		return simultaneously(
 				armExtension(ArmExtensionCapabilities.POSITION_FULLY_RETRACTED),
+				claw(ClawCapabilities.ClawPreset.FORWARD, true, false),
 				new MoveToAction(
 						this.localizer,
 						this.driver,
 						new Pose(50, 57, -90, AngleUnit.DEGREES),
 						3,
 						3,
-						60,
+						80,
 						50
 				),
 				armRotation(0)
@@ -109,28 +118,28 @@ public class CompetitionAuto3 extends EasyAuto {
 
 	private AutoAction getSpecimenFromObservationZone() {
 		return sequentially(
-				claw(ClawCapabilities.ClawPreset.FORWARD, true, true),
-				armExtension(ArmExtensionCapabilities.POSITION_FULLY_RETRACTED),
 				simultaneously(
-						new MoveToAction(
-								this.localizer,
-								this.driver,
-								new Pose(45, 63, 0, AngleUnit.DEGREES),
-								4,
-								2,
-								40,
-								60
-						),
-						armRotation(400)
+					armExtension(ArmExtensionCapabilities.POSITION_FULLY_RETRACTED),
+					claw(ClawCapabilities.ClawPreset.FORWARD, true, true),
+					new MoveToAction(
+							this.localizer,
+							this.driver,
+							new Pose(37, 49, 90, AngleUnit.DEGREES),
+							4,
+							10,
+							40,
+							60
+					),
+					armRotation(410)
 				),
-				sleep(500),
+				claw(ClawCapabilities.ClawPreset.FORWARD, true, true),
 				new MoveToAction(
 						this.localizer,
 						this.driver,
-						new Pose(56, 63, 0, AngleUnit.DEGREES),
-						4,
+						new Pose(37, 58, 90, AngleUnit.DEGREES),
+						2,
 						3,
-						35, 60
+						30, 60
 				),
 				claw(ClawCapabilities.ClawPreset.FORWARD, false, true)
 		);
@@ -138,17 +147,19 @@ public class CompetitionAuto3 extends EasyAuto {
 
 	private AutoAction scoreSpecimen(double yPosition) {
 		return sequentially(
-				armRotation(628),
-				new MoveToAction(
-						this.localizer,
-						this.driver,
-						new Pose(yPosition, 52, -90, AngleUnit.DEGREES),
-						2,
-						100,
-						30,
-						50
+				simultaneously(
+						armRotation(628),
+						new MoveToAction(
+								this.localizer,
+								this.driver,
+								new Pose(yPosition, 54, -90, AngleUnit.DEGREES),
+								2,
+								100,
+								30,
+								50
+						)
 				),
-				armExtension(-1400),
+				armExtension(-1530),
 				claw(ClawCapabilities.ClawPreset.UP, false, true),
 				new MoveToAction(
 						this.localizer,
@@ -160,6 +171,48 @@ public class CompetitionAuto3 extends EasyAuto {
 						50
 				),
 				claw(ClawCapabilities.ClawPreset.UP, true, true)
+		);
+	}
+
+	private AutoAction scoreSpecimenFromOver(double yPosition) {
+		return sequentially(
+				simultaneously(
+					armRotation(887),
+					new MoveToAction(
+							this.localizer,
+							this.driver,
+							new Pose(yPosition, 47, -90, AngleUnit.DEGREES),
+							3,
+							10,
+							60,
+							80
+					),
+					armExtension(ArmExtensionCapabilities.POSITION_FULLY_EXTENDED + 10),
+					claw(ClawCapabilities.ClawPreset.FORWARD, false, true)
+				),
+				new MoveToAction(
+						this.localizer,
+						this.driver,
+						new Pose(yPosition, 40.5, -90, AngleUnit.DEGREES),
+						3,
+						100,
+						30,
+						50
+				),
+				claw(ClawCapabilities.ClawPreset.DOWN, false, true),
+				simultaneously(
+						new MoveToAction(
+								this.localizer,
+								this.driver,
+								new Pose(yPosition, 45, -90, AngleUnit.DEGREES),
+								3,
+								100,
+								30,
+								50
+						),
+						armExtension(ArmExtensionCapabilities.POSITION_FULLY_EXTENDED + 200),
+						claw(ClawCapabilities.ClawPreset.DOWN, true, true)
+				)
 		);
 	}
 
@@ -184,5 +237,6 @@ public class CompetitionAuto3 extends EasyAuto {
 		this.armExtension.loop();
 		this.crane.loop();
 		this.claw.loop();
+		this.voltage = this.voltageSensor.getVoltage();
 	}
 }
