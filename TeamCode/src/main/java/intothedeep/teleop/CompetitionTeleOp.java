@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
+import t10.auto.MoveToAction;
 import t10.bootstrap.BootstrappedOpMode;
 import t10.gamepad.GController;
 import t10.geometry.Pose;
@@ -33,7 +34,6 @@ public class CompetitionTeleOp extends BootstrappedOpMode {
 	private long updates;
 	private long startUpdates;
 	private double rotationProportion = 1;
-	private VoltageSensor myControlHubVoltageSensor;
 
 	@Metric
 	public Pose pose;
@@ -62,7 +62,6 @@ public class CompetitionTeleOp extends BootstrappedOpMode {
 		super.init();
 
 		this.config = new SnowballConfig(this.hardwareMap);
-		myControlHubVoltageSensor = hardwareMap.get(VoltageSensor.class, "Control Hub");
 
 		// Robot Capabilities
 		this.crane = new CraneCapabilities(this.config);
@@ -89,25 +88,36 @@ public class CompetitionTeleOp extends BootstrappedOpMode {
 		// G2 controls the intake/outtake
 		this.g2 = new GController(this.gamepad2)
 				.rightTrigger.whileDown(proportion -> this.armExtension.setPowerManually(proportion)).onRelease(() -> this.armExtension.setPowerManually(0)).ok()
-				.rightBumper.onPress(() -> this.armExtension.setTargetPosition((int) (ArmExtensionCapabilities.POSITION_FULLY_EXTENDED))).ok()
+				.rightBumper.onPress(() -> this.armExtension.setTargetPosition((int) (0.75 * ArmExtensionCapabilities.POSITION_FULLY_EXTENDED))).ok()
 				.leftTrigger.whileDown(proportion -> this.armExtension.setPowerManually(-proportion)).onRelease(() -> this.armExtension.setPowerManually(0)).ok()
-				.leftBumper.onPress(() -> this.armExtension.setTargetPosition(0)).ok()
-				// todo: check inversion
+				.leftBumper.onPress(() -> {
+					this.armExtension.setTargetPosition(0);
+					this.claw.setPreset(ClawCapabilities.ClawPreset.DOWN, true);
+				}).ok()
 				.rightJoystick.onMove((x, y) -> this.crane.setPowerManually(y)).ok()
 				.leftJoystick.onMove((x, y) -> this.armRotation.setPowerManually(-y * rotationProportion)).ok()
 				.a.onPress(() -> {
+					claw.setPreset(ClawCapabilities.ClawPreset.DOWN,true);
 					armExtension.setTargetPosition(ArmExtensionCapabilities.POSITION_FULLY_RETRACTED);
-					armRotation.setTargetPosition(400);
-					claw.setPreset(ClawCapabilities.ClawPreset.FORWARD, true,true);
+					armRotation.setTargetPosition(0);
+					claw.setOpen(true);
+				}).ok()
+				.b.onPress(() -> {
+					armExtension.setTargetPosition(ArmExtensionCapabilities.POSITION_FULLY_RETRACTED);
+					armRotation.setTargetPosition(445);
+					claw.setPreset(ClawCapabilities.ClawPreset.FORWARD, false, true);
 				}).ok()
 				.x.onPress(() -> this.claw.toggleClaw()).ok()
-				.b.onPress(() -> {
-					claw.setPreset(ClawCapabilities.ClawPreset.UP, true);
-					armRotation.setTargetPosition(628);
-					armExtension.setTargetPosition(-1400);
-					claw.setPreset(ClawCapabilities.ClawPreset.UP,true);
+				.dpadUp.onPress(() -> {
+							armRotation.setTargetPosition(887);
+							armExtension.setTargetPosition(ArmExtensionCapabilities.POSITION_FULLY_EXTENDED + 10);
+							claw.setPreset(ClawCapabilities.ClawPreset.FORWARD, false, true);
 				}).ok()
-				.dpadDown.onToggleOn(() -> rotationProportion = 0.25).onToggleOff(() -> rotationProportion = 1).ok()
+				.dpadDown.onPress(() -> {
+					claw.setPreset(ClawCapabilities.ClawPreset.DOWN, false, true);
+					armExtension.setTargetPosition(ArmExtensionCapabilities.POSITION_FULLY_EXTENDED + 200);
+				}).ok()
+				.dpadRight.onToggleOn(() -> rotationProportion = 0.25).onToggleOff(() -> rotationProportion = 1).ok()
 		/*Todo: add basket presets for d-pad*/;
 
 		this.claw.setPreset(ClawCapabilities.ClawPreset.FORWARD, true);
