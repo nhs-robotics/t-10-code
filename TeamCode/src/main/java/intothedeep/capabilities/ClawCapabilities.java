@@ -104,7 +104,7 @@ public class ClawCapabilities implements Loop {
 		setOpen(false);
 		this.positionRotate = position;
 		this.isRotateDirty = true;
-		this.operationCompletionTime = System.currentTimeMillis() + 750;
+		this.operationCompletionTime = System.currentTimeMillis() + 200;
 	}
 
 	public void setPreset(ClawPreset preset, boolean isAbsoluteMode) {

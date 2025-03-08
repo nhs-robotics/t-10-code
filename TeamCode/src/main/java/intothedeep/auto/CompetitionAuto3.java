@@ -23,7 +23,7 @@ public class CompetitionAuto3 extends EasyAuto {
 	private SequentialAction autoSequence;
 
 	public CompetitionAuto3() {
-		super(new Pose(36, 62, -90, AngleUnit.DEGREES));
+		super(new Pose(12, 62, -90, AngleUnit.DEGREES));
 	}
 
 	@Override
@@ -31,18 +31,17 @@ public class CompetitionAuto3 extends EasyAuto {
 		super.init();
 
 		this.autoSequence = sequentially(
+				scoreSpecimenFromOver(9),
+				getSpecimenFromObservationZone(),
+				scoreSpecimenFromOver(6.5),
 				transitionToShuffle(),
 				shuffleSamples(0),
 				shuffleSamples(10),
-				shuffleSamples(17),
+//				shuffleSamples(17),
 				getSpecimenFromObservationZone(),
-				scoreSpecimenFromOver(9),
+				scoreSpecimenFromOver(4),
 				getSpecimenFromObservationZone(),
-				scoreSpecimenFromOver(8),
-				getSpecimenFromObservationZone(),
-				scoreSpecimenFromOver(7),
-				getSpecimenFromObservationZone(),
-				scoreSpecimenFromOver(6),
+				scoreSpecimenFromOver(1.5),
 				park()
 		);
 	}
@@ -54,10 +53,10 @@ public class CompetitionAuto3 extends EasyAuto {
 			new MoveToAction(
 					this.localizer,
 					this.driver,
-					new Pose(38, 26, -90, AngleUnit.DEGREES),
-					5,
+					new Pose(28, 45, -90, AngleUnit.DEGREES),
+					2,
 					100,
-					100, 60
+					60, 60
 			)
 		);
 	}
@@ -68,7 +67,7 @@ public class CompetitionAuto3 extends EasyAuto {
 				new MoveToAction(
 						this.localizer,
 						this.driver,
-						new Pose(38 + yOffset, 26, -90, AngleUnit.DEGREES),
+						new Pose(38 + yOffset, 24, -90, AngleUnit.DEGREES),
 						3.5,
 						100,
 						80, 60
@@ -93,15 +92,6 @@ public class CompetitionAuto3 extends EasyAuto {
 						100,
 						80, 60
 				)
-
-//				new MoveToAction(
-//						this.localizer,
-//						this.driver,
-//						new Pose(45 + yOffset, 40, -90, AngleUnit.DEGREES),
-//						5,
-//						3,
-//						50, 60
-//				)
 		);
 	}
 
@@ -136,40 +126,34 @@ public class CompetitionAuto3 extends EasyAuto {
 							40,
 							60
 					),
-					armRotation(380)
+					armRotation(410)
 				),
 				claw(ClawCapabilities.ClawPreset.FORWARD, true, true),
 				new MoveToAction(
 						this.localizer,
 						this.driver,
-						new Pose(35, 58, 90, AngleUnit.DEGREES),
+						new Pose(37, 58, 90, AngleUnit.DEGREES),
 						2,
 						3,
 						30, 60
 				),
 				claw(ClawCapabilities.ClawPreset.FORWARD, false, true)
-//				new MoveToAction(
-//						this.localizer,
-//						this.driver,
-//						new Pose(37, 49, 0, AngleUnit.DEGREES),
-//						4,
-//						3,
-//						15, 60
-//				)
 		);
 	}
 
 	private AutoAction scoreSpecimen(double yPosition) {
 		return sequentially(
-				armRotation(628),
-				new MoveToAction(
-						this.localizer,
-						this.driver,
-						new Pose(yPosition, 54, -90, AngleUnit.DEGREES),
-						2,
-						100,
-						30,
-						50
+				simultaneously(
+						armRotation(628),
+						new MoveToAction(
+								this.localizer,
+								this.driver,
+								new Pose(yPosition, 54, -90, AngleUnit.DEGREES),
+								2,
+								100,
+								30,
+								50
+						)
 				),
 				armExtension(-1530),
 				claw(ClawCapabilities.ClawPreset.UP, false, true),
@@ -188,8 +172,8 @@ public class CompetitionAuto3 extends EasyAuto {
 
 	private AutoAction scoreSpecimenFromOver(double yPosition) {
 		return sequentially(
-				armRotation(887),
 				simultaneously(
+					armRotation(887),
 					new MoveToAction(
 							this.localizer,
 							this.driver,
@@ -222,7 +206,7 @@ public class CompetitionAuto3 extends EasyAuto {
 								50,
 								50
 						),
-						armExtension(ArmExtensionCapabilities.POSITION_FULLY_RETRACTED),
+						armExtension(ArmExtensionCapabilities.POSITION_FULLY_EXTENDED + 200),
 						claw(ClawCapabilities.ClawPreset.DOWN, true, true)
 				)
 		);
