@@ -23,8 +23,6 @@ public class CompetitionAuto3 extends EasyAuto {
 	public Pose pose;
 	private SequentialAction autoSequence;
 	private VoltageSensor voltageSensor;
-	@Metric
-	public double voltage;
 
 	public CompetitionAuto3() {
 		super(new Pose(12, 62, -90, AngleUnit.DEGREES));
@@ -33,7 +31,6 @@ public class CompetitionAuto3 extends EasyAuto {
 	@Override
 	public void init() {
 		super.init();
-		voltageSensor = hardwareMap.get(VoltageSensor.class, "Control Hub");
 		this.autoSequence = sequentially(
 				scoreSpecimenFromOver(9),
 				getSpecimenFromObservationZone(),
@@ -237,6 +234,5 @@ public class CompetitionAuto3 extends EasyAuto {
 		this.armExtension.loop();
 		this.crane.loop();
 		this.claw.loop();
-		this.voltage = this.voltageSensor.getVoltage();
 	}
 }
