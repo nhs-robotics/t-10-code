@@ -7,16 +7,9 @@ import intothedeep.capabilities.ArmRotationCapabilities;
 import intothedeep.capabilities.ClawCapabilities;
 import intothedeep.capabilities.CraneCapabilities;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
 
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-
-import t10.auto.MoveToAction;
 import t10.bootstrap.BootstrappedOpMode;
 import t10.gamepad.GController;
-import t10.geometry.Pose;
-import t10.localizer.Localizer;
 import t10.metrics.Metric;
 import t10.motion.mecanum.MecanumDriver;
 
@@ -30,13 +23,10 @@ public class CompetitionTeleOp extends BootstrappedOpMode {
 	private ClawCapabilities claw;
 	private ArmExtensionCapabilities armExtension;
 	private ArmRotationCapabilities armRotation;
-	private Localizer<Pose> localizer;
 	private long updates;
 	private long startUpdates;
 	private double rotationProportion = 0.25;
 
-	@Metric
-	public Pose pose;
 	private Telemetry.Item t_armRotation;
 	private Telemetry.Item t_armExtension;
 	private Telemetry.Item ups;
@@ -71,8 +61,6 @@ public class CompetitionTeleOp extends BootstrappedOpMode {
 
 		// Driving
 		this.driver = this.config.createMecanumDriver();
-		this.localizer = this.config.createLocalizer();
-		this.localizer.setFieldCentric(new Pose(0, 64, -90, AngleUnit.DEGREES));
 
 		// Gamepad
 		// G1 controls the robot's moveTo.
@@ -92,6 +80,9 @@ public class CompetitionTeleOp extends BootstrappedOpMode {
 				.leftTrigger.whileDown(proportion -> this.armExtension.setPowerManually(-proportion)).onRelease(() -> this.armExtension.setPowerManually(0)).ok()
 				.leftBumper.onPress(() -> {
 					this.armExtension.setTargetPosition(0);
+					if(armRotation.getPosition() < 30) {
+						armRotation.setTargetPosition(30);
+					}
 					this.claw.setPreset(ClawCapabilities.ClawPreset.DOWN, true);
 				}).ok()
 				.rightJoystick.onMove((x, y) -> this.crane.setPowerManually(y)).ok()
@@ -99,12 +90,12 @@ public class CompetitionTeleOp extends BootstrappedOpMode {
 				.a.onPress(() -> {
 					claw.setPreset(ClawCapabilities.ClawPreset.DOWN,true);
 					armExtension.setTargetPosition(ArmExtensionCapabilities.POSITION_FULLY_RETRACTED);
-					armRotation.setTargetPosition(0);
+					armRotation.setTargetPosition(25);
 					claw.setOpen(true);
 				}).ok()
 				.b.onPress(() -> {
 					armExtension.setTargetPosition(ArmExtensionCapabilities.POSITION_FULLY_RETRACTED);
-					armRotation.setTargetPosition(410);
+					armRotation.setTargetPosition(440);
 					claw.setPreset(ClawCapabilities.ClawPreset.FORWARD, true, true);
 				}).ok()
 				.x.onPress(() -> this.claw.toggleClaw()).ok()
@@ -125,9 +116,6 @@ public class CompetitionTeleOp extends BootstrappedOpMode {
 		this.t_armRotation = this.telemetry.addData("armRotation", "");
 		this.t_armExtension = this.telemetry.addData("armExtension", "");
 		this.ups = this.telemetry.addData("ups", 0);
-		this.posY = this.telemetry.addData("y", 0);
-		this.posX = this.telemetry.addData("x", 0);
-		this.posH = this.telemetry.addData("rotation", 0);
 	}
 
 	@Override
@@ -144,14 +132,9 @@ public class CompetitionTeleOp extends BootstrappedOpMode {
 			this.driver.useGamepad(this.gamepad1, this.g1.x.isToggled() ? 1 : 0.25);
 		}
 
-		this.localizer.loop();
-		this.pose = this.localizer.getFieldCentric();
 		this.t_armRotation.setValue(this.armRotation.getPosition());
 		this.t_armExtension.setValue(this.armExtension.getPosition());
 		this.ups.setValue(updates / ((System.currentTimeMillis() / 1000L + 1) - startUpdates));
-		this.posX.setValue(pose.getX());
-		this.posY.setValue(pose.getY());
-		this.posH.setValue(pose.getHeading(AngleUnit.DEGREES));
 
 
 

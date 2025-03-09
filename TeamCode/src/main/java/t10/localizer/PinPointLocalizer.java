@@ -24,6 +24,7 @@ package t10.localizer;
 
 import static com.qualcomm.robotcore.util.TypeConversion.byteArrayToInt;
 
+import com.qualcomm.hardware.lynx.LynxNackException;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import t10.bootstrap.PinPointHardware;
@@ -108,7 +109,10 @@ public class PinPointLocalizer implements Localizer<Pose> {
 
 	@Override
 	public void loop() {
-		pinPoint.update();
+		try {
+			pinPoint.update();
+		} catch (LynxNackException e) {
+		}
 	}
 
 	@Override

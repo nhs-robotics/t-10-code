@@ -208,9 +208,9 @@ public class CompetitionAuto3 extends EasyAuto {
 								50
 						),
 //						armRotation(Claw)
-						armExtension(ArmExtensionCapabilities.POSITION_FULLY_EXTENDED + 200),
-						claw(ClawCapabilities.ClawPreset.DOWN, true, true)
-				)
+						armExtension(ArmExtensionCapabilities.POSITION_FULLY_EXTENDED + 200)
+				),
+				claw(ClawCapabilities.ClawPreset.DOWN, true, true)
 		);
 	}
 

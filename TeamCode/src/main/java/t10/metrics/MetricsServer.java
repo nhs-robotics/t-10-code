@@ -21,12 +21,10 @@ import t10.metrics.packet.MetricsCameraFramePacket;
 import t10.metrics.packet.MetricsNewConnectionPacket;
 import t10.metrics.packet.MetricsPacket;
 import t10.metrics.packet.MetricsUpdatePacket;
-import t10.vision.Webcam;
 
 public class MetricsServer extends WebSocketServer implements Loop {
 	private final BootstrappedOpMode opMode;
 	private final List<Field> metricFields;
-	private Webcam webcam;
 
 	public MetricsServer(BootstrappedOpMode opMode) {
 		super(new InetSocketAddress(51631));
@@ -66,69 +64,65 @@ public class MetricsServer extends WebSocketServer implements Loop {
 
 	@Override
 	public void loop() {
-		if (this.webcam != null) {
-			webcam.visionPortal.getFrameBitmap(Continuation.createTrivial(bitmap -> {
-				if (MetricsServer.this.getConnections().isEmpty()) {
-					return;
-				}
-
-				ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-				bitmap.compress(Bitmap.CompressFormat.JPEG, 15, outputStream);
-				String jpegBase64 = Base64.encodeToString(outputStream.toByteArray(), Base64.DEFAULT);
-				MetricsCameraFramePacket pkt = new MetricsCameraFramePacket();
-				pkt.jpegBase64 = jpegBase64;
-
-				MetricsServer.this.sendPacket(pkt);
-			}));
-		}
-
-		for (Field metricField : metricFields) {
-			metricField.setAccessible(true);
-
-			try {
-				Object o = metricField.get(this.opMode);
-				Class<?> metricFieldType = metricField.getType();
-				MetricsUpdatePacket metricsUpdatePacket = new MetricsUpdatePacket();
-				metricsUpdatePacket.metricName = metricField.getName();
-
-				if (metricFieldType == Double.class || metricFieldType == Float.class) {
-					metricsUpdatePacket.metricType = MetricsUpdatePacket.MetricsType.DOUBLE;
-					metricsUpdatePacket.metricValue = o;
-				} else if (metricFieldType == String.class) {
-					metricsUpdatePacket.metricType = MetricsUpdatePacket.MetricsType.STRING;
-					metricsUpdatePacket.metricValue = o;
-				} else if (metricFieldType == Point.class) {
-					metricsUpdatePacket.metricType = MetricsUpdatePacket.MetricsType.POINT;
-
-					if (o != null) {
-						metricsUpdatePacket.metricValue = new MetricsUpdatePacket.MetricTypePoint((Point) o);
-					}
-				} else if (metricFieldType == Pose.class) {
-					metricsUpdatePacket.metricType = MetricsUpdatePacket.MetricsType.POSE;
-
-					if (o != null) {
-						metricsUpdatePacket.metricValue = new MetricsUpdatePacket.MetricTypePose((Pose) o);
-					}
-				} else {
-					metricsUpdatePacket.metricType = MetricsUpdatePacket.MetricsType.STRING;
-
-					if (o != null) {
-						metricsUpdatePacket.metricValue = o.toString();
-					}
-				}
-
-				this.sendPacket(metricsUpdatePacket);
-			} catch (IllegalAccessException e) {
-				throw new RuntimeException(e);
-			}
-		}
+//		if (this.webcam != null) {
+//			webcam.visionPortal.getFrameBitmap(Continuation.createTrivial(bitmap -> {
+//				if (MetricsServer.this.getConnections().isEmpty()) {
+//					return;
+//				}
+//
+//				ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+//				bitmap.compress(Bitmap.CompressFormat.JPEG, 15, outputStream);
+//				String jpegBase64 = Base64.encodeToString(outputStream.toByteArray(), Base64.DEFAULT);
+//				MetricsCameraFramePacket pkt = new MetricsCameraFramePacket();
+//				pkt.jpegBase64 = jpegBase64;
+//
+//				MetricsServer.this.sendPacket(pkt);
+//			}));
+//		}
+//
+//		for (Field metricField : metricFields) {
+//			metricField.setAccessible(true);
+//
+//			try {
+//				Object o = metricField.get(this.opMode);
+//				Class<?> metricFieldType = metricField.getType();
+//				MetricsUpdatePacket metricsUpdatePacket = new MetricsUpdatePacket();
+//				metricsUpdatePacket.metricName = metricField.getName();
+//
+//				if (metricFieldType == Double.class || metricFieldType == Float.class) {
+//					metricsUpdatePacket.metricType = MetricsUpdatePacket.MetricsType.DOUBLE;
+//					metricsUpdatePacket.metricValue = o;
+//				} else if (metricFieldType == String.class) {
+//					metricsUpdatePacket.metricType = MetricsUpdatePacket.MetricsType.STRING;
+//					metricsUpdatePacket.metricValue = o;
+//				} else if (metricFieldType == Point.class) {
+//					metricsUpdatePacket.metricType = MetricsUpdatePacket.MetricsType.POINT;
+//
+//					if (o != null) {
+//						metricsUpdatePacket.metricValue = new MetricsUpdatePacket.MetricTypePoint((Point) o);
+//					}
+//				} else if (metricFieldType == Pose.class) {
+//					metricsUpdatePacket.metricType = MetricsUpdatePacket.MetricsType.POSE;
+//
+//					if (o != null) {
+//						metricsUpdatePacket.metricValue = new MetricsUpdatePacket.MetricTypePose((Pose) o);
+//					}
+//				} else {
+//					metricsUpdatePacket.metricType = MetricsUpdatePacket.MetricsType.STRING;
+//
+//					if (o != null) {
+//						metricsUpdatePacket.metricValue = o.toString();
+//					}
+//				}
+//
+//				this.sendPacket(metricsUpdatePacket);
+//			} catch (IllegalAccessException e) {
+//				throw new RuntimeException(e);
+//			}
+//		}
 	}
 
 	public void sendPacket(MetricsPacket packet) {
 		this.broadcast(packet.toString());
-	}
-
-	public void streamWebcam(Webcam webcam) {
-		this.webcam = webcam;
 	}
 }

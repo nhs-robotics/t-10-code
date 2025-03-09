@@ -39,7 +39,7 @@ public abstract class BootstrappedOpMode extends OpMode {
 	 * Initializes a {@link BootstrappedOpMode}.in developer mode.
 	 */
 	public BootstrappedOpMode() {
-		this(false);
+		this(true);
 	}
 
 	@Override
@@ -51,20 +51,20 @@ public abstract class BootstrappedOpMode extends OpMode {
 
 		// Only run the MetricsServer when NOT in production mode
 		if (!this.isProductionMode) {
-			this.metrics = new MetricsServer(this);
-			this.metrics.start();
-
-			this.multithreadingService.execute(() -> {
-				while (this.isRunning) {
-					this.metrics.loop();
-				}
-
-				try {
-					this.metrics.stop();
-				} catch (IOException | InterruptedException e) {
-					throw new RuntimeException(e);
-				}
-			});
+//			this.metrics = new MetricsServer(this);
+//			this.metrics.start();
+//
+//			this.multithreadingService.execute(() -> {
+//				while (this.isRunning) {
+//					this.metrics.loop();
+//				}
+//
+//				try {
+//					this.metrics.stop();
+//				} catch (IOException | InterruptedException e) {
+//					throw new RuntimeException(e);
+//				}
+//			});
 		}
 
 		// Perform one bulk read for optimization

@@ -8,8 +8,8 @@ import t10.motion.hardware.Motor;
 import t10.utils.PIDController;
 
 public class ArmExtensionCapabilities implements Loop {
-	public static final int POSITION_FULLY_RETRACTED = 0;
-	public static final int POSITION_FULLY_EXTENDED = -1700;
+	public static final int POSITION_FULLY_RETRACTED = -10;
+	public static final int POSITION_FULLY_EXTENDED = -1700 + 10;
 	public static final int MAX_ERROR_ALLOWED = 40;
 	private final Motor armExtension;
 	private final PIDController armExtensionStabilizer;
@@ -19,7 +19,7 @@ public class ArmExtensionCapabilities implements Loop {
 	public ArmExtensionCapabilities(SnowballConfig config) {
 		this.armExtension = config.armExtension;
 		this.isManuallyControlled = true;
-		this.armExtensionStabilizer = new PIDController(0.0145, 0, 0);
+		this.armExtensionStabilizer = new PIDController(0.0125, 0, 0);
 	}
 
 	@Override

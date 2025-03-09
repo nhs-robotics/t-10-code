@@ -3,6 +3,7 @@ package t10.bootstrap;
 import static com.qualcomm.robotcore.util.TypeConversion.byteArrayToInt;
 
 import com.qualcomm.hardware.lynx.LynxI2cDeviceSynch;
+import com.qualcomm.hardware.lynx.LynxNackException;
 import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynchDevice;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynchSimple;
@@ -242,7 +243,7 @@ public class PinPointHardware extends I2cDeviceSynchDevice<I2cDeviceSynchSimple>
 	/**
 	 * Call this once per loop to read new data from the Odometry Computer. Data will only update once this is called.
 	 */
-	public void update(){
+	public void update() throws LynxNackException {
 		byte[] bArr   = deviceClient.read(Register.BULK_READ.bVal, 40);
 		deviceStatus  = byteArrayToInt(Arrays.copyOfRange  (bArr, 0, 4),  ByteOrder.LITTLE_ENDIAN);
 		loopTime      = byteArrayToInt(Arrays.copyOfRange  (bArr, 4, 8),  ByteOrder.LITTLE_ENDIAN);

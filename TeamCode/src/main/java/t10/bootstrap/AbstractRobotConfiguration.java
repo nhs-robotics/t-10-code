@@ -11,7 +11,6 @@ import t10.localizer.Localizer;
 import t10.motion.hardware.Motor;
 import t10.motion.hardware.MotorEncoder;
 import t10.motion.mecanum.MecanumDriver;
-import t10.vision.Webcam;
 
 /**
  * <p>Sets fields marked with @{@link Hardware} to their initialized value based on the {@link OpMode#hardwareMap}.</p>
@@ -32,9 +31,7 @@ public abstract class AbstractRobotConfiguration {
 					Class<?> type = field.getType();
 					Object o;
 
-					if (type.equals(Webcam.class)) {
-						o = new Webcam(hardwareMap, configName);
-					} else if (type.equals(Motor.class)) {
+					if (type.equals(Motor.class)) {
 						o = new Motor(hardwareMap.get(DcMotorEx.class, configName), hardware.ticksPerRevolution(), hardware.diameterIn(), hardware.gearRatio());
 						((Motor) o).motor.setZeroPowerBehavior(hardware.zeroPowerBehavior());
 					} else if (type.equals(MotorEncoder.class)) {
