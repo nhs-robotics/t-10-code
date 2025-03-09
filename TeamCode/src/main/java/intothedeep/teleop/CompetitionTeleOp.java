@@ -90,17 +90,18 @@ public class CompetitionTeleOp extends BootstrappedOpMode {
 				.a.onPress(() -> {
 					claw.setPreset(ClawCapabilities.ClawPreset.DOWN,true);
 					armExtension.setTargetPosition(ArmExtensionCapabilities.POSITION_FULLY_RETRACTED);
-					armRotation.setTargetPosition(25);
+					armRotation.setTargetPosition(35);
 					claw.setOpen(true);
 				}).ok()
 				.b.onPress(() -> {
 					armExtension.setTargetPosition(ArmExtensionCapabilities.POSITION_FULLY_RETRACTED);
 					armRotation.setTargetPosition(440);
 					claw.setPreset(ClawCapabilities.ClawPreset.FORWARD, true, true);
+					claw.setOpen(true);
 				}).ok()
 				.x.onPress(() -> this.claw.toggleClaw()).ok()
 				.dpadUp.onPress(() -> {
-							armRotation.setTargetPosition(887);
+							armRotation.setTargetPosition(894);
 							armExtension.setTargetPosition(ArmExtensionCapabilities.POSITION_FULLY_EXTENDED + 10);
 							claw.setPreset(ClawCapabilities.ClawPreset.FORWARD, false, true);
 				}).ok()
