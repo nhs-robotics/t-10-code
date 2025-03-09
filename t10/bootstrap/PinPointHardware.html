@@ -387,8 +387,13 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="update()">
 <h3>update</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">update</span>()</div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">update</span>()
+            throws <span class="exceptions">com.qualcomm.hardware.lynx.LynxNackException</span></div>
 <div class="block">Call this once per loop to read new data from the Odometry Computer. Data will only update once this is called.</div>
+<dl class="notes">
+<dt>Throws:</dt>
+<dd><code>com.qualcomm.hardware.lynx.LynxNackException</code></dd>
+</dl>
 </section>
 </li>
 <li>
