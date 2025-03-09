@@ -36,7 +36,7 @@ public class CompetitionAuto3 extends EasyAuto {
 				getSpecimenFromObservationZone(),
 				scoreSpecimenFromOver(6.5),
 				transitionToShuffle(),
-				shuffleSamples(0),
+				shuffleSamples(-1.5),
 				shuffleSamples(10),
 //				shuffleSamples(17),
 				getSpecimenFromObservationZone(),
@@ -62,7 +62,7 @@ public class CompetitionAuto3 extends EasyAuto {
 		);
 	}
 
-	private AutoAction shuffleSamples(int yOffset) {
+	private AutoAction shuffleSamples(double yOffset) {
 		return sequentially(
 				// go to shuffle position
 				new MoveToAction(

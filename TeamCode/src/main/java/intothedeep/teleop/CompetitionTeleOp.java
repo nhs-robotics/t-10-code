@@ -33,7 +33,7 @@ public class CompetitionTeleOp extends BootstrappedOpMode {
 	private Localizer<Pose> localizer;
 	private long updates;
 	private long startUpdates;
-	private double rotationProportion = 1;
+	private double rotationProportion = 0.25;
 
 	@Metric
 	public Pose pose;
@@ -104,8 +104,8 @@ public class CompetitionTeleOp extends BootstrappedOpMode {
 				}).ok()
 				.b.onPress(() -> {
 					armExtension.setTargetPosition(ArmExtensionCapabilities.POSITION_FULLY_RETRACTED);
-					armRotation.setTargetPosition(445);
-					claw.setPreset(ClawCapabilities.ClawPreset.FORWARD, false, true);
+					armRotation.setTargetPosition(410);
+					claw.setPreset(ClawCapabilities.ClawPreset.FORWARD, true, true);
 				}).ok()
 				.x.onPress(() -> this.claw.toggleClaw()).ok()
 				.dpadUp.onPress(() -> {
@@ -114,10 +114,11 @@ public class CompetitionTeleOp extends BootstrappedOpMode {
 							claw.setPreset(ClawCapabilities.ClawPreset.FORWARD, false, true);
 				}).ok()
 				.dpadDown.onPress(() -> {
+					armRotation.setTargetPosition(887);
 					claw.setPreset(ClawCapabilities.ClawPreset.DOWN, false, true);
 					armExtension.setTargetPosition(ArmExtensionCapabilities.POSITION_FULLY_EXTENDED + 200);
 				}).ok()
-				.dpadRight.onToggleOn(() -> rotationProportion = 0.25).onToggleOff(() -> rotationProportion = 1).ok()
+				.dpadRight.onToggleOff(() -> rotationProportion = 0.25).onToggleOn(() -> rotationProportion = 1).ok()
 		/*Todo: add basket presets for d-pad*/;
 
 		this.claw.setPreset(ClawCapabilities.ClawPreset.FORWARD, true);
