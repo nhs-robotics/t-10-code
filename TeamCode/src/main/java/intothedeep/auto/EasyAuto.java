@@ -49,9 +49,8 @@ public abstract class EasyAuto extends BootstrappedOpMode {
 		this.crane.setTargetPosition(CraneCapabilities.POSITION_BOTTOM);
 		this.claw.setOpen(false);  // Keep closed to grasp a block for auto
 		this.claw.setRotation(0.03);
-		while(!localizer.isDoneInitializing()) {
-			localizer.loop();
-		}
+
+		do {localizer.loop();} while(!localizer.isDoneInitializing());
 
 		this.localizer.setFieldCentric(this.startPose);
 	}
